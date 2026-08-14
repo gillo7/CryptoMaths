@@ -1,0 +1,6 @@
+# Deployment notes (contains server-specific details)
+DEPLOY.md
+
+# OS / editor
+.DS_Store
+*.swp

@@ -193,7 +193,7 @@ function Base64Explorer() {
         </div>
       )}
       <p className="hex-result">
-        Base64 <code>{fullBase64 || '—'}</code>
+        Base64 <code>{fullBase64 || '-'}</code>
       </p>
     </div>
   )
@@ -231,7 +231,7 @@ function MultiboxExplorer() {
         {rows.map(([label, value]) => (
           <div className="multibox-row" key={label}>
             <span className="multibox-label">{label}</span>
-            <code className="multibox-value">{value || '—'}</code>
+            <code className="multibox-value">{value || '-'}</code>
           </div>
         ))}
       </div>

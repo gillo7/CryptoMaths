@@ -139,6 +139,18 @@ function Hashing() {
           ))}
         </div>
       </section>
+
+      <section>
+        <h2>Quiz!</h2>
+        <a
+          href="https://www.wikiclass.org/exercise/wd8jm0obhyys5ep"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-link"
+        >
+          Take the Hashing quiz on Wikiclass →
+        </a>
+      </section>
     </main>
   )
 }

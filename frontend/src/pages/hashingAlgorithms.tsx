@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import Placeholder from './Placeholder'
 import Md5Explorer from './Md5Explorer'
 import Md5CollisionDemo from './Md5CollisionDemo'
+import LmExplorer from './LmExplorer'
+import LmCrackerDemo from './LmCrackerDemo'
 
 export interface HashingAlgorithm {
   slug: string
@@ -87,7 +89,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           <code>KGS!@#$%</code>. The two resulting 8-byte outputs are then
           concatenated into the final 16-byte LM hash.
         </p>
-        <Placeholder label="LM hash function, input box, LM output, via OpenSSL backend" />
+        <LmExplorer />
         <p>
           Why is this catastrophically weak? Splitting into two independent
           7-character halves is the fatal flaw. Instead of an attacker
@@ -121,7 +123,16 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           hardware, and was secure for around 15 years before being
           broken.
         </p>
-        <Placeholder label="LM cracker via John the Ripper" />
+        <p>
+          Try it yourself below. Type a password and only its LM hash gets
+          sent to the server - never the password itself, exactly like a
+          real attacker who's stolen a hash dump and nothing else. To keep
+          the crack fast on this site's modest hardware, the demo is
+          restricted to short passwords (up to 5 letters/digits); real
+          cracking rigs make short work of considerably longer LM
+          passwords too, for exactly the reasons explained above.
+        </p>
+        <LmCrackerDemo />
       </>
     ),
   },

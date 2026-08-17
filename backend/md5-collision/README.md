@@ -17,9 +17,8 @@ rather than trusting the value straight off the wire.
 Collision generation is done by [`md5collgen`](https://github.com/zhijieshi/md5collgen),
 a build of **Marc Stevens'** `fastcoll` algorithm from his
 [HashClash](https://github.com/cr-marcstevens/hashclash) project. All of
-the actual cryptanalysis is his work — this service just shells out to
-his tool and serves the result. This credit is also shown directly on the
-MD5 page itself, next to the demo.
+the actual cryptanalysis is his work - this service just shells out to
+his tool and serves the result.
 
 See Stevens, "On Collisions for Hash Functions MD4, MD5, HAVAL-128 and
 RIPEMD" (2007) for the underlying research.
@@ -37,11 +36,12 @@ node server.js   # listens on 127.0.0.1:8095 by default (set PORT to change)
 ```
 
 Intended to run behind nginx as an internal-only service, proxied at
-`/api/hashing/md5-collision` — see the repo's `DEPLOY.md`.
+`/api/hashing/md5-collision` - see the repo's `DEPLOY.md`.
 
 ## Safety notes
 
-`md5collgen` is CPU-heavy (observed 0.5-7s per run on the production
-server, 4 cores). This service queues requests so only one search runs at
-a time, and each run has a 20s timeout. Rate limiting per-IP is handled at
-the nginx layer, not here.
+`md5collgen` is CPU-heavy (observed 0.5-7.4s per run on the production
+server, 4 cores, with rare outliers over 20s). This service queues
+requests so only one search runs at a time, and each run has a 45s
+timeout for safety margin. Rate limiting per-IP is handled at the nginx
+layer, not here.

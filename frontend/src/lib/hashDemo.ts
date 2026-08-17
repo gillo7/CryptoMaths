@@ -35,7 +35,7 @@ function desEncryptFixedString(keyBytes: number[]): string {
   return encrypted.ciphertext.toString(CryptoJS.enc.Hex)
 }
 
-function lmHash(password: string): string {
+export function lmHash(password: string): string {
   const upper = password.toUpperCase()
   const bytes = new Array(14).fill(0)
   for (let i = 0; i < Math.min(14, upper.length); i++) {

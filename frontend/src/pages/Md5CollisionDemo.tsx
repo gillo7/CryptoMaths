@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { md5 } from 'hash-wasm'
 
 function hexToBytes(hex: string): Uint8Array {
@@ -7,6 +7,29 @@ function hexToBytes(hex: string): Uint8Array {
     bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
   }
   return bytes
+}
+
+// Renders a hex string with byte-pairs that differ from `other` wrapped in
+// <mark>, grouped into runs so a real collision (a handful of scattered
+// differing bytes among 128) is actually visible rather than looking like
+// two identical blobs at a glance.
+function DiffHex({ hex, other }: { hex: string; other: string }) {
+  const parts: ReactNode[] = []
+  let i = 0
+  while (i < hex.length) {
+    const isDiff = hex.slice(i, i + 2) !== other.slice(i, i + 2)
+    let j = i
+    while (
+      j < hex.length &&
+      (hex.slice(j, j + 2) !== other.slice(j, j + 2)) === isDiff
+    ) {
+      j += 2
+    }
+    const chunk = hex.slice(i, j)
+    parts.push(isDiff ? <mark key={i}>{chunk}</mark> : chunk)
+    i = j
+  }
+  return <>{parts}</>
 }
 
 interface CollisionResult {
@@ -62,11 +85,15 @@ function Md5CollisionDemo() {
         <div className="multibox">
           <div className="multibox-row">
             <span className="multibox-label">Message 1</span>
-            <code className="multibox-value">{result.msg1}</code>
+            <code className="multibox-value">
+              <DiffHex hex={result.msg1} other={result.msg2} />
+            </code>
           </div>
           <div className="multibox-row">
             <span className="multibox-label">Message 2</span>
-            <code className="multibox-value">{result.msg2}</code>
+            <code className="multibox-value">
+              <DiffHex hex={result.msg2} other={result.msg1} />
+            </code>
           </div>
           <div className="multibox-row">
             <span className="multibox-label">MD5 of both</span>
@@ -77,19 +104,6 @@ function Md5CollisionDemo() {
           </div>
         </div>
       )}
-
-      <p className="collision-credit">
-        Collision generated live on this server using <code>fastcoll</code>,
-        an algorithm by{' '}
-        <a
-          href="https://github.com/cr-marcstevens/hashclash"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Marc Stevens
-        </a>
-        .
-      </p>
     </div>
   )
 }

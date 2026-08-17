@@ -197,6 +197,7 @@
 }
 
 .multibox-value {
+  display: block;
   overflow-wrap: anywhere;
   font-size: 14px;
 }
@@ -206,11 +207,9 @@
   font-size: 15px;
 }
 
-.collision-credit {
-  font-size: 13px;
-  color: var(--text);
-}
-
-.collision-credit a {
+.multibox-value mark {
+  background: var(--accent-bg);
   color: var(--accent);
+  border-radius: 3px;
+  font-weight: 700;
 }

@@ -16,8 +16,8 @@ time) rather than just static text, and wraps up with a short quiz provided on W
 
 | Topic | Status |
 | --- | --- |
-| Encoding | ✅ Live - ASCII, hex, Base64 (+ octal/Base32/Base58), all four with interactive explorers and a quiz |
-| Hashing | Not started |
+| Encoding | Live - ASCII, hex, Base64 (+ octal/Base32/Base58), all four with interactive explorers and a quiz |
+| Hashing | In progress - intro/salting/attacks + a live multi-algorithm hash explorer done; MD5 fully built with a live, freshly-generated MD5 collision demo; the other 8 algorithms are still placeholders |
 | Symmetric Encryption | Not started |
 | Asymmetric Encryption | Not started |
 | Signatures and Certificates | Not started |
@@ -28,7 +28,9 @@ time) rather than just static text, and wraps up with a short quiz provided on W
 - [React 19](https://react.dev/) + [react-router](https://reactrouter.com/)
 - [Vite](https://vite.dev/) for dev/build tooling
 - [oxlint](https://oxc.rs/) for linting
-- No backend - fully static, deployed as a Vite build behind nginx
+- Mostly a static Vite build behind nginx - the few demos that need real
+  compute (e.g. the live MD5 collision generator) are backed by small,
+  standalone Node services in `backend/` - see [backend/README.md](backend/README.md)
 
 ## Getting started
 

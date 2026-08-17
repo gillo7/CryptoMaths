@@ -40,10 +40,22 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
         </p>
         <Md5Explorer />
         <p>
-          Nowadays, creating a MD5 collision is trivial (seconds on
-          ordinary hardware), which completely undermines its use anywhere
-          collision resistance matters: digital signatures, certificate
-          validation and, obviously, passwords.
+          Nowadays, creating a MD5 collision is trivial - even the modest
+          Raspberry Pi 4 B powering this very site can find one in a few
+          seconds, as demonstrated below. This completely undermines MD5's
+          use anywhere collision resistance matters: digital signatures,
+          certificate validation and, obviously, passwords.
+        </p>
+        <p>
+          This only works one way. The demo below builds both messages
+          together from scratch, so they're engineered from the start to
+          share a hash - that's a collision. It can't take a hash that
+          already exists and find a second message to match it afterwards;
+          that's called a preimage attack, and MD5 has no practical break
+          for it. That gap is exactly why MD5 checksums still catch
+          accidental corruption just fine, but should never be trusted
+          anywhere someone could swap one document for another - signatures,
+          certificates, license keys.
         </p>
         <Md5CollisionDemo />
         <p>

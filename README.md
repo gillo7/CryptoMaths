@@ -17,7 +17,7 @@ time) rather than just static text, and wraps up with a short quiz provided on W
 | Topic | Status |
 | --- | --- |
 | Encoding | Live - ASCII, hex, Base64 (+ octal/Base32/Base58), all four with interactive explorers and a quiz |
-| Hashing | In progress - intro/salting/attacks + a live multi-algorithm hash explorer done; MD5 fully built with a live, freshly-generated MD5 collision demo; the other 8 algorithms are still placeholders |
+| Hashing | In progress - intro/salting/attacks + a live multi-algorithm hash explorer done; MD5 and LM fully built (live collision generator and a live John the Ripper cracking demo, respectively); the other 7 algorithms are still placeholders |
 | Symmetric Encryption | Not started |
 | Asymmetric Encryption | Not started |
 | Signatures and Certificates | Not started |
@@ -29,8 +29,9 @@ time) rather than just static text, and wraps up with a short quiz provided on W
 - [Vite](https://vite.dev/) for dev/build tooling
 - [oxlint](https://oxc.rs/) for linting
 - Mostly a static Vite build behind nginx - the few demos that need real
-  compute (e.g. the live MD5 collision generator) are backed by small,
-  standalone Node services in `backend/` - see [backend/README.md](backend/README.md)
+  compute (e.g. the live MD5 collision generator, the live John the Ripper
+  cracking demo) are backed by small, standalone Node services in
+  `backend/` - see [backend/README.md](backend/README.md)
 
 ## Getting started
 

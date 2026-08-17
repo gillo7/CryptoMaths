@@ -1,9 +1,17 @@
 import type { ReactNode } from 'react'
-import Placeholder from './Placeholder'
 import Md5Explorer from './Md5Explorer'
 import Md5CollisionDemo from './Md5CollisionDemo'
 import LmExplorer from './LmExplorer'
 import LmCrackerDemo from './LmCrackerDemo'
+import NtlmExplorer from './NtlmExplorer'
+import Sha1Explorer from './Sha1Explorer'
+import Sha2Explorer from './Sha2Explorer'
+import BcryptExplorer from './BcryptExplorer'
+import BenchmarkExplorer from './BenchmarkExplorer'
+import Sha3Explorer from './Sha3Explorer'
+import ScryptExplorer from './ScryptExplorer'
+import ScryptBenchmarkExplorer from './ScryptBenchmarkExplorer'
+import Argon2Explorer from './Argon2Explorer'
 
 export interface HashingAlgorithm {
   slug: string
@@ -167,7 +175,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           raw hash itself is never sent over the wire during authentication
           (an improvement over some older, weaker LM-era approaches).
         </p>
-        <Placeholder label="NTLM hash demo" />
+        <NtlmExplorer />
         <p>
           It is still considered weak today, despite having some of its
           flaws fixed. It still has no salting and the same password used
@@ -200,7 +208,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           Git's commit hashing, PGP, and countless software integrity
           checks.
         </p>
-        <Placeholder label="SHA-1 examples via OpenSSL" />
+        <Sha1Explorer />
         <p>
           SHA-1 is of the same family as MD5 conceptually, but bigger and
           stronger. It takes any length input and produces a fixed 160-bit
@@ -217,7 +225,24 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           certificate chains but it is being replaced by its stronger
           follow-up, SHA-2.
         </p>
-        <Placeholder label="“SHAttered” article preview" />
+        <a
+          href="/articles/shattered.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Research paper - PDF</span>
+          <p className="article-title">The first collision for full SHA-1</p>
+          <p className="article-byline">
+            Marc Stevens, Elie Bursztein, Pierre Karpman, Ange Albertini,
+            Yarik Markov - CWI Amsterdam / Google Research, 2017
+          </p>
+          <p className="article-excerpt">
+            "We demonstrate that SHA-1 collision attacks have finally
+            become practical by providing the first known instance of a
+            collision."
+          </p>
+        </a>
       </>
     ),
   },
@@ -235,7 +260,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           the two most common variants. SHA-256 is the default hashing
           algorithm used these days: Bitcoin, TLS, Git, etc.
         </p>
-        <Placeholder label="Different demonstrations of variants of SHA-2, via OpenSSL" />
+        <Sha2Explorer />
         <p>
           The reason SHA-2 is stronger than SHA-1 is not simply the larger
           numbers. It uses more internal rounds, different message
@@ -292,7 +317,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           self-describing: it carries its own salt and cost factor right
           in the output, so verification never needs external metadata.
         </p>
-        <Placeholder label="Example of Bcrypt hashing via OpenSSL" />
+        <BcryptExplorer />
         <p>
           MD5, SHA-1, SHA-2, even NTLM, are all fast by design, that's a
           feature for file integrity or general hashing, but a liability
@@ -306,7 +331,11 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           part of its output. This alone kills rainbow tables and the
           "same password, same hash" problem that plagued LM and NTLM.
         </p>
-        <Placeholder label="Speed benchmark speedtest via MD5 / SHA-2 and Bcrypt (10, 12, etc), via OpenSSL" />
+        <p>
+          See the difference for yourself: compare how long MD5, SHA-256,
+          and Bcrypt actually take to compute.
+        </p>
+        <BenchmarkExplorer />
         <p>
           Bcrypt runs its internal Blowfish-based key-expansion algorithm
           through a configurable number of rounds (typically 10 to 12
@@ -369,7 +398,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           SHA-3 wouldn't automatically be vulnerable: it doesn't share
           that structural DNA.
         </p>
-        <Placeholder label="Working examples of SHA-3/Keccak" />
+        <Sha3Explorer />
         <p>
           It is standardised, available, used in some newer protocols and
           libraries, but it hasn't displaced SHA-2, largely because
@@ -390,7 +419,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           password hasher, but a tool for deriving strong encryption keys
           from passphrases. It quickly got adopted far more broadly.
         </p>
-        <Placeholder label="Examples of Scrypt via OpenSSL" />
+        <ScryptExplorer />
         <p>
           It uses a genuinely new axis of defence: bcrypt made cracking
           slow by adding rounds that consumed CPU time. Scrypt asks a
@@ -416,7 +445,11 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           both fronts independently, where bcrypt can only increase CPU
           time cost.
         </p>
-        <Placeholder label="Benchmark SHA-2 / scrypt (with different parameter selection)" />
+        <p>
+          See the difference for yourself: compare how long SHA-256 and
+          Scrypt take to compute at different cost parameters.
+        </p>
+        <ScryptBenchmarkExplorer />
       </>
     ),
   },
@@ -436,7 +469,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           with the benefit of years of scrutiny on bcrypt and scrypt's
           real-world weaknesses already known.
         </p>
-        <Placeholder label="Argon2 example via OpenSSL" />
+        <Argon2Explorer />
         <p>
           The idea is to use the same memory-hardness principle as scrypt,
           but refined: Argon2 keeps scrypt's core insight (make cracking

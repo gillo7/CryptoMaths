@@ -59,6 +59,10 @@ function utf16leBytes(str: string): Uint8Array {
   return out
 }
 
+export async function ntlmHash(password: string): Promise<string> {
+  return md4(utf16leBytes(password))
+}
+
 // Reduced cost parameters so the demo stays responsive on a click - not
 // representative of real-world recommended settings for these algorithms.
 const DEMO_BCRYPT_COST = 10
@@ -68,13 +72,13 @@ const DEMO_ARGON2_PARAMS = { parallelism: 1, iterations: 2, memorySize: 1024 }
 export async function computeAllHashes(password: string): Promise<HashResult[]> {
   const randomSalt = () => crypto.getRandomValues(new Uint8Array(16))
 
-  const [md5Hash, sha1Hash, sha256Hash, sha3Hash, ntlmHash, bcryptHash, scryptHash, argon2Hash] =
+  const [md5Hash, sha1Hash, sha256Hash, sha3Hash, ntlmHashValue, bcryptHash, scryptHash, argon2Hash] =
     await Promise.all([
       md5(password),
       sha1(password),
       sha256(password),
       sha3(password, 256),
-      md4(utf16leBytes(password)),
+      ntlmHash(password),
       bcrypt({
         password,
         salt: randomSalt(),
@@ -100,7 +104,7 @@ export async function computeAllHashes(password: string): Promise<HashResult[]> 
   return [
     { slug: 'md5', label: 'MD5', value: md5Hash },
     { slug: 'lm', label: 'LM', value: lmHash(password) },
-    { slug: 'ntlm', label: 'NTLM', value: ntlmHash },
+    { slug: 'ntlm', label: 'NTLM', value: ntlmHashValue },
     { slug: 'sha-1', label: 'SHA-1', value: sha1Hash },
     { slug: 'sha-2', label: 'SHA-2', value: sha256Hash },
     { slug: 'sha-3', label: 'SHA-3', value: sha3Hash },

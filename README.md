@@ -17,7 +17,7 @@ time) rather than just static text, and wraps up with a short quiz provided on W
 | Topic | Status |
 | --- | --- |
 | Encoding | Live - ASCII, hex, Base64 (+ octal/Base32/Base58), all four with interactive explorers and a quiz |
-| Hashing | In progress - intro/salting/attacks + a live multi-algorithm hash explorer done; MD5 and LM fully built (live collision generator and a live John the Ripper cracking demo, respectively); the other 7 algorithms are still placeholders |
+| Hashing | Live - intro/salting/attacks, a live multi-algorithm hash explorer, and all 9 algorithm pages (MD5, LM, NTLM, SHA-1, SHA-2, Bcrypt, SHA-3, Scrypt, Argon2) built out with live demos, including a real MD5 collision generator and a real John the Ripper cracking demo |
 | Symmetric Encryption | Not started |
 | Asymmetric Encryption | Not started |
 | Signatures and Certificates | Not started |

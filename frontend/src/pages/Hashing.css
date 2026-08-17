@@ -46,27 +46,6 @@
   white-space: pre;
 }
 
-.content-placeholder {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  border: 1px dashed var(--border);
-  border-radius: 8px;
-  background: var(--code-bg);
-}
-
-.placeholder-badge {
-  flex-shrink: 0;
-  font-family: var(--heading);
-  font-weight: 500;
-  font-size: 13px;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 2px 10px;
-}
-
 .algo-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(160px, 1fr));
@@ -212,4 +191,90 @@
   color: var(--accent);
   border-radius: 3px;
   font-weight: 700;
+}
+
+.article-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--code-bg);
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.article-preview:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  transform: translateY(-2px);
+}
+
+.article-kicker {
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.article-title {
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--text-h);
+}
+
+.article-byline {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.article-excerpt {
+  font-size: 14px;
+  font-style: italic;
+  line-height: 145%;
+  margin-top: 4px;
+}
+
+.demo-note {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.cost-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cost-button {
+  padding: 8px 14px;
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.cost-button:hover {
+  border-color: var(--accent-border);
+}
+
+.cost-button-active {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent);
 }

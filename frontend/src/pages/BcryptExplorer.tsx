@@ -4,7 +4,7 @@ import { bcrypt } from 'hash-wasm'
 const COST_OPTIONS = [8, 10, 12, 14]
 
 function BcryptExplorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [cost, setCost] = useState(10)
   const [status, setStatus] = useState<'idle' | 'loading'>('idle')
   const [hash, setHash] = useState('')

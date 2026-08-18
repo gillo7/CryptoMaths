@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { computeAllHashes, type HashResult } from '../lib/hashDemo'
 
 function HashExplorer() {
-  const [password, setPassword] = useState('Cipher')
+  const [password, setPassword] = useState('')
   const [results, setResults] = useState<HashResult[] | null>(null)
   const [loading, setLoading] = useState(false)
 

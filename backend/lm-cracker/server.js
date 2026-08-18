@@ -26,6 +26,7 @@ async function crackLmHash(lmHash) {
   try {
     await writeFile(hashFile, `demo:1000:${lmHash}:0:::\n`, 'utf8')
 
+    const start = performance.now()
     await execFile(
       JOHN_BIN,
       [
@@ -36,6 +37,7 @@ async function crackLmHash(lmHash) {
       ],
       { cwd: dir, timeout: CRACK_TIMEOUT_MS },
     )
+    const elapsedMs = Math.round(performance.now() - start)
 
     const { stdout } = await execFile(
       JOHN_BIN,
@@ -46,8 +48,8 @@ async function crackLmHash(lmHash) {
     // --show prints "user:password:uid:hash:::" per cracked entry - only
     // present at all if this specific hash was actually cracked.
     const line = stdout.split('\n').find((l) => l.startsWith('demo:'))
-    if (!line) return { cracked: false }
-    return { cracked: true, password: line.split(':')[1] }
+    if (!line) return { cracked: false, elapsedMs }
+    return { cracked: true, password: line.split(':')[1], elapsedMs }
   } finally {
     await rm(dir, { recursive: true, force: true })
   }

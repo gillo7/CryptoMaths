@@ -9,7 +9,7 @@ const VARIANTS = [
 ]
 
 function Sha2Explorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [hashes, setHashes] = useState<string[]>(['', '', '', ''])
 
   useEffect(() => {

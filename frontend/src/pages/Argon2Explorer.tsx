@@ -12,7 +12,7 @@ type VariantName = keyof typeof VARIANTS
 const DEMO_PARAMS = { parallelism: 1, iterations: 3, memorySize: 4096 }
 
 function Argon2Explorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [variant, setVariant] = useState<VariantName>('Argon2id')
   const [status, setStatus] = useState<'idle' | 'loading'>('idle')
   const [hash, setHash] = useState('')

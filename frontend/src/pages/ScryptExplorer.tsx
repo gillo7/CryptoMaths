@@ -4,7 +4,7 @@ import { scrypt } from 'hash-wasm'
 const COST_OPTIONS = [1024, 4096, 16384, 65536]
 
 function ScryptExplorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [costFactor, setCostFactor] = useState(16384)
   const [status, setStatus] = useState<'idle' | 'loading'>('idle')
   const [hash, setHash] = useState('')

@@ -134,11 +134,12 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
         <p>
           Try it yourself below. Type a password and only its LM hash gets
           sent to the server - never the password itself, exactly like a
-          real attacker who's stolen a hash dump and nothing else. To keep
-          the crack fast on this site's modest hardware, the demo is
-          restricted to short passwords (up to 5 letters/digits); real
-          cracking rigs make short work of considerably longer LM
-          passwords too, for exactly the reasons explained above.
+          real attacker who's stolen a hash dump and nothing else. The
+          server actually runs John the Ripper against it, restricted to
+          short passwords (up to 5 letters/digits) to keep the crack fast
+          on this site's modest hardware; real cracking rigs make short
+          work of considerably longer LM passwords too, for exactly the
+          reasons explained above.
         </p>
         <LmCrackerDemo />
       </>

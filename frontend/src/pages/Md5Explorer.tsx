@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { md5 } from 'hash-wasm'
 
 function Md5Explorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [hash, setHash] = useState('')
 
   useEffect(() => {

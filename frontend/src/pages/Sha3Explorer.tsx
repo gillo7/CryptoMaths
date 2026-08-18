@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { keccak, sha3 } from 'hash-wasm'
 
 function Sha3Explorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [sha3_256, setSha3_256] = useState('')
   const [sha3_512, setSha3_512] = useState('')
   const [keccak256, setKeccak256] = useState('')

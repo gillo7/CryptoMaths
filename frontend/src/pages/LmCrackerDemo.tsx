@@ -12,6 +12,7 @@ function LmCrackerDemo() {
   const [password, setPassword] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [cracked, setCracked] = useState<string | null>(null)
+  const [elapsedMs, setElapsedMs] = useState<number | null>(null)
 
   const hash = password ? lmHash(password) : ''
 
@@ -19,6 +20,7 @@ function LmCrackerDemo() {
     if (!password) return
     setStatus('loading')
     setCracked(null)
+    setElapsedMs(null)
     try {
       const response = await fetch('/api/hashing/lm-crack', {
         method: 'POST',
@@ -28,6 +30,7 @@ function LmCrackerDemo() {
       if (!response.ok) throw new Error('request failed')
       const data = await response.json()
       setCracked(data.cracked ? data.password : '')
+      setElapsedMs(data.elapsedMs ?? null)
       setStatus('idle')
     } catch {
       setStatus('error')
@@ -71,6 +74,8 @@ function LmCrackerDemo() {
           {cracked
             ? `Server recovered: "${cracked}"${cracked === password ? ' - matches!' : ''}`
             : "Not cracked within this demo's limits."}
+          {elapsedMs !== null &&
+            ` (John the Ripper took ${(elapsedMs / 1000).toFixed(2)}s on the server)`}
         </p>
       )}
     </div>

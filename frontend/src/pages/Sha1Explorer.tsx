@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { sha1 } from 'hash-wasm'
 
 function Sha1Explorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [hash, setHash] = useState('')
 
   useEffect(() => {

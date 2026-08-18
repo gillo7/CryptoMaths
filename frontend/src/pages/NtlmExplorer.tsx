@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ntlmHash } from '../lib/hashDemo'
 
 function NtlmExplorer() {
-  const [text, setText] = useState('Cipher')
+  const [text, setText] = useState('')
   const [hash, setHash] = useState('')
 
   useEffect(() => {

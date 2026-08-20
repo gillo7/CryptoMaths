@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import SymmetricPlaceholder from './SymmetricPlaceholder'
+import CmsPaddingExplorer from './CmsPaddingExplorer'
 import { blockCipherAlgorithms } from './blockCipherAlgorithms'
 import './SymmetricEncryption.css'
 
@@ -37,6 +37,21 @@ function BlockCiphers() {
       </section>
 
       <section>
+        <h2>Initialisation Vectors (IV)</h2>
+        <p>
+          Most modes of operation (covered later in this section) also need
+          an IV, an initialisation vector: a random, non-secret value mixed
+          in alongside the key so that encrypting the same plaintext twice,
+          even under the same key, produces different ciphertext each time.
+          It doesn't need to stay hidden, only be unique per encryption, and
+          it's typically sent alongside the ciphertext itself rather than
+          kept secret like the key. If that sounds familiar, it's playing
+          almost the same role a salt plays for hashes: stopping identical
+          inputs from producing identical, pattern-leaking outputs.
+        </p>
+      </section>
+
+      <section>
         <h2>Padding</h2>
         <p>
           Why does this matter? If blocks of smaller size appear in a
@@ -51,16 +66,84 @@ function BlockCiphers() {
           technique. It pads the block with the same value as the number
           of padding bytes needed:
         </p>
-        <SymmetricPlaceholder label="CMS padding example" />
+        <CmsPaddingExplorer />
 
-        <p>There are other, less commonly used methods:</p>
-        <ul>
-          <li>Bits</li>
-          <li>ZeroLength</li>
-          <li>Null</li>
-          <li>Space</li>
-          <li>Random</li>
-        </ul>
+        <p>
+          There are other, less commonly used methods. Here's what each one
+          produces for the same case, 3 bytes of padding needed:
+        </p>
+        <div className="table-scroll">
+          <table className="ref-table">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>How it pads</th>
+                <th>Example</th>
+                <th>Trade-off</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>CMS / PKCS#7</td>
+                <td>Every padding byte equals the padding length</td>
+                <td>
+                  <code>03 03 03</code>
+                </td>
+                <td>Unambiguous, binary-safe - the default almost everywhere today</td>
+              </tr>
+              <tr>
+                <td>Bits (ISO/IEC 7816-4)</td>
+                <td>
+                  Append <code>0x80</code>, then zero-fill the rest
+                </td>
+                <td>
+                  <code>80 00 00</code>
+                </td>
+                <td>Unambiguous, binary-safe</td>
+              </tr>
+              <tr>
+                <td>ZeroLength (ANSI X9.23)</td>
+                <td>Zero-fill, but the last byte holds the padding length</td>
+                <td>
+                  <code>00 00 03</code>
+                </td>
+                <td>Unambiguous, binary-safe</td>
+              </tr>
+              <tr>
+                <td>Null (zero padding)</td>
+                <td>Zero-fill, with no length marker at all</td>
+                <td>
+                  <code>00 00 00</code>
+                </td>
+                <td>
+                  Ambiguous if the real data itself ends in zero bytes
+                </td>
+              </tr>
+              <tr>
+                <td>Space</td>
+                <td>
+                  Fill with ASCII space (<code>0x20</code>)
+                </td>
+                <td>
+                  <code>20 20 20</code>
+                </td>
+                <td>Only sensible for text data, not general binary</td>
+              </tr>
+              <tr>
+                <td>Random (ISO 10126)</td>
+                <td>Random filler bytes, last byte holds the padding length</td>
+                <td>
+                  <code>a4 f1 03</code> (random each time, only the last
+                  byte is fixed)
+                </td>
+                <td>
+                  Unambiguous, though the randomness adds no real security
+                  benefit over ANSI X9.23
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section>
@@ -100,7 +183,16 @@ function BlockCiphers() {
           all of applied cryptography for why encryption alone does not
           guarantee confidentiality if it is used carelessly.
         </p>
-        <SymmetricPlaceholder label="The ECB-encrypted Linux penguin image" />
+        <figure className="figure">
+          <img
+            src="/images/ecb-penguin.jpg"
+            alt="The Linux Tux penguin logo, next to the same image encrypted
+              with AES in ECB mode (the outline is still clearly visible),
+              next to the same image encrypted with a proper mode (pure
+              noise)"
+          />
+          <figcaption>source: Wikipedia</figcaption>
+        </figure>
         <p>
           <strong>CBC, CFB, and OFB</strong> were the historical fixes.
           Each one chains blocks together, feeding information from one

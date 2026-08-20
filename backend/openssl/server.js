@@ -27,8 +27,10 @@ const ALLOWED_CIPHERS = new Set([
   'des-ede3-cbc', 'des-ede3-cfb', 'des-ede3-ofb', 'des-ede3',
   // Blowfish
   'bf-cbc', 'bf-ecb', 'bf-cfb', 'bf-ofb',
-  // RC2
-  'rc2-cbc', 'rc2-ecb', 'rc2-cfb', 'rc2-ofb',
+  // RC2 (rc2-64-cbc and rc2-40-cbc are the reduced effective-key-strength
+  // variants - the latter matches the deliberately weakened 40-bit export
+  // cipher covered in the lesson)
+  'rc2-cbc', 'rc2-ecb', 'rc2-cfb', 'rc2-ofb', 'rc2-64-cbc', 'rc2-40-cbc',
   // Stream ciphers
   'rc4', 'chacha20',
 ])
@@ -88,6 +90,66 @@ async function runOpenssl({ cipher, decrypt, keyHex, ivHex, noPad, dataHex }) {
   }
 }
 
+// Fixed set of block ciphers benchmarked together, matching exactly what
+// the Block Ciphers section covers (Twofish excluded deliberately - it has
+// no OpenSSL implementation, so it can't be measured the same way).
+const BENCHMARK_CIPHERS = [
+  { cipher: 'des-cbc', label: 'DES' },
+  { cipher: 'des-ede3-cbc', label: '3DES' },
+  { cipher: 'rc2-cbc', label: 'RC2' },
+  { cipher: 'bf-cbc', label: 'Blowfish' },
+  { cipher: 'aes-128-cbc', label: 'AES-128' },
+  { cipher: 'aes-192-cbc', label: 'AES-192' },
+  { cipher: 'aes-256-cbc', label: 'AES-256' },
+]
+const BENCHMARK_SECONDS = 1
+const BENCHMARK_BUFFER_BYTES = 8192
+// Real per-cipher openssl speed runs are ~1s (BENCHMARK_SECONDS) each, so
+// the full sweep of 7 ciphers takes ~7s - this just needs comfortable
+// margin per invocation, not a tuned constraint.
+const BENCHMARK_TIMEOUT_MS = 10_000
+
+// Runs `openssl speed`, OpenSSL's own built-in benchmarking tool, rather
+// than timing repeated `enc` invocations ourselves - each `enc` call's
+// process-spawn overhead would dwarf the actual encryption time for a
+// small amount of data, making every cipher look artificially similar.
+// `speed` measures raw library throughput with no such distortion.
+async function benchmarkCipher(cipher) {
+  const args = [
+    'speed',
+    '-seconds', String(BENCHMARK_SECONDS),
+    '-bytes', String(BENCHMARK_BUFFER_BYTES),
+    '-evp', cipher,
+    '-provider', 'legacy',
+    '-provider', 'default',
+    '-mr',
+  ]
+  const { stdout } = await execFile(OPENSSL_BIN, args, {
+    timeout: BENCHMARK_TIMEOUT_MS,
+  })
+  // Machine-readable summary line: +F:<count>:<algo>:<bytes-per-second>
+  const line = stdout.split('\n').find((l) => l.startsWith('+F:'))
+  if (!line) throw new Error('no result line from openssl speed')
+  const bytesPerSecond = parseFloat(line.split(':').pop())
+  if (!Number.isFinite(bytesPerSecond)) throw new Error('could not parse result')
+  return bytesPerSecond
+}
+
+async function runBenchmarks() {
+  const results = []
+  // Sequential, not parallel - concurrent runs would compete for CPU and
+  // distort every result.
+  for (const { cipher, label } of BENCHMARK_CIPHERS) {
+    try {
+      const bytesPerSecond = await benchmarkCipher(cipher)
+      results.push({ label, bytesPerSecond })
+    } catch {
+      results.push({ label, bytesPerSecond: null })
+    }
+  }
+  return results
+}
+
 async function readJsonBody(req) {
   const chunks = []
   let size = 0
@@ -133,8 +195,28 @@ async function handleRequest(req, decrypt) {
   return { status: 200, body: result }
 }
 
+// The benchmark takes several seconds of real CPU time - only one runs at
+// a time so concurrent visitors don't skew each other's results.
+let benchmarkQueue = Promise.resolve()
+
+function enqueueBenchmark() {
+  const job = benchmarkQueue.then(runBenchmarks, runBenchmarks)
+  benchmarkQueue = job.then(
+    () => {},
+    () => {},
+  )
+  return job
+}
+
 const server = http.createServer(async (req, res) => {
   const route = req.method === 'POST' ? req.url : null
+
+  if (route === '/benchmark') {
+    const results = await enqueueBenchmark()
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ results }))
+    return
+  }
 
   if (route !== '/enc' && route !== '/dec') {
     res.writeHead(404, { 'Content-Type': 'application/json' })

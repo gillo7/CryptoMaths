@@ -1,5 +1,15 @@
 import type { ReactNode } from 'react'
-import SymmetricPlaceholder from './SymmetricPlaceholder'
+import DesKeyExample from './DesKeyExample'
+import DesCipherLab from './DesCipherLab'
+import Rc2KeyExample from './Rc2KeyExample'
+import Rc2CipherLab from './Rc2CipherLab'
+import BlowfishKeyExample from './BlowfishKeyExample'
+import BlowfishCipherLab from './BlowfishCipherLab'
+import TwofishKeyExample from './TwofishKeyExample'
+import TwofishCipherLab from './TwofishCipherLab'
+import AesKeyExample from './AesKeyExample'
+import BlockCipherBenchmark from './BlockCipherBenchmark'
+import AesCipherLab from './AesCipherLab'
 
 export interface BlockCipherAlgorithm {
   slug: string
@@ -13,7 +23,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
     name: 'DES',
     content: (
       <>
-        <SymmetricPlaceholder label="Example of a DES key, and an example cipher" />
+        <DesKeyExample />
         <p>
           Developed by IBM in the early 1970s, building on Horst Feistel's
           earlier Lucifer cipher, and published as a US federal standard
@@ -37,7 +47,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
           remained in limited use for years afterward before it, too, was
           deprecated.
         </p>
-        <SymmetricPlaceholder label="DES/3DES interactive example via OpenSSL backend" />
+        <DesCipherLab />
       </>
     ),
   },
@@ -46,7 +56,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
     name: 'RC2',
     content: (
       <>
-        <SymmetricPlaceholder label="RC2 example" />
+        <Rc2KeyExample />
         <p>
           Designed by Ron Rivest (the R in RSA! And later the father of
           MD5.) in 1987 (RC standing for "Ron's Code"), RC2 was
@@ -88,7 +98,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
           formats (some legacy PDF and Microsoft Office encryption, for
           instance) were built around it.
         </p>
-        <SymmetricPlaceholder label="RC2 interactive example via OpenSSL backend" />
+        <Rc2CipherLab />
       </>
     ),
   },
@@ -97,7 +107,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
     name: 'Blowfish',
     content: (
       <>
-        <SymmetricPlaceholder label="Blowfish example" />
+        <BlowfishKeyExample />
         <p>
           Designed by Bruce Schneier in 1993, Blowfish was built as a
           free, unpatented alternative to DES at a time when most
@@ -139,7 +149,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
           successor, Twofish, which fixes the block size limitation
           directly.
         </p>
-        <SymmetricPlaceholder label="Blowfish in action" />
+        <BlowfishCipherLab />
       </>
     ),
   },
@@ -148,7 +158,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
     name: 'Twofish',
     content: (
       <>
-        <SymmetricPlaceholder label="Twofish example" />
+        <TwofishKeyExample />
         <p>
           Designed in 1998 by Bruce Schneier and a team including John
           Kelsey, Doug Whiting, David Wagner, Chris Hall, and Niels
@@ -177,7 +187,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
           weakness in the maths. It still sees limited use today, notably
           in the OpenPGP standard, but never matched Blowfish's spread.
         </p>
-        <SymmetricPlaceholder label="Twofish interactive example" />
+        <TwofishCipherLab />
       </>
     ),
   },
@@ -186,7 +196,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
     name: 'AES',
     content: (
       <>
-        <SymmetricPlaceholder label="AES examples" />
+        <AesKeyExample />
         <p>
           Selected by NIST in 2001 after a five year, fifteen candidate
           public competition, the same process that Twofish lost. The
@@ -253,7 +263,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
             as AES's real world alternative rather than a purely
             academic curiosity.
           </p>
-          <SymmetricPlaceholder label="Interactive speed test of all the block cipher algorithms tested, noting our server is NOT AES-accelerated" />
+          <BlockCipherBenchmark />
         </div>
 
         <p>
@@ -278,7 +288,7 @@ export const blockCipherAlgorithms: BlockCipherAlgorithm[] = [
           why AES-256 specifically, not the smaller key sizes, is the
           recommended standard going forward.
         </p>
-        <SymmetricPlaceholder label="Interactive AES examples" />
+        <AesCipherLab />
       </>
     ),
   },

@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import SymmetricPlaceholder from './SymmetricPlaceholder'
 import BlockCipherBenchmark from './BlockCipherBenchmark'
 import BrowserCipherBenchmark from './BrowserCipherBenchmark'
 import './SymmetricEncryption.css'
@@ -81,7 +80,14 @@ function SymmetricEncryption() {
 
       <section>
         <h2>Quiz!</h2>
-        <SymmetricPlaceholder label="Link to a Wikiclass open quiz" />
+        <a
+          href="https://www.wikiclass.org/exercise/skr950fhgo8jeuj"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-link"
+        >
+          Take the Symmetric Encryption quiz on Wikiclass →
+        </a>
       </section>
     </main>
   )

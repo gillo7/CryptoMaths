@@ -37,6 +37,10 @@ function BlockCipherBenchmark() {
   return (
     <div className="explorer">
       <span className="exercise-badge">Explore</span>
+      <p>
+        How many megabytes per second this server can encrypt with each of
+        the following ciphers.
+      </p>
       <button
         type="button"
         onClick={handleRun}

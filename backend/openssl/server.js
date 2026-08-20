@@ -90,9 +90,13 @@ async function runOpenssl({ cipher, decrypt, keyHex, ivHex, noPad, dataHex }) {
   }
 }
 
-// Fixed set of block ciphers benchmarked together, matching exactly what
-// the Block Ciphers section covers (Twofish excluded deliberately - it has
-// no OpenSSL implementation, so it can't be measured the same way).
+// Fixed set of ciphers benchmarked together, matching exactly what the
+// Block Ciphers section covers (Twofish excluded deliberately - it has no
+// OpenSSL implementation, so it can't be measured the same way). ChaCha20
+// is a stream cipher, not a block cipher, but it's included here too since
+// the AES-NI text right above this benchmark names it as AES's real-world
+// alternative on unaccelerated hardware - the comparison is the whole
+// point of that paragraph.
 const BENCHMARK_CIPHERS = [
   { cipher: 'des-cbc', label: 'DES' },
   { cipher: 'des-ede3-cbc', label: '3DES' },
@@ -101,6 +105,7 @@ const BENCHMARK_CIPHERS = [
   { cipher: 'aes-128-cbc', label: 'AES-128' },
   { cipher: 'aes-192-cbc', label: 'AES-192' },
   { cipher: 'aes-256-cbc', label: 'AES-256' },
+  { cipher: 'chacha20', label: 'ChaCha20' },
 ]
 const BENCHMARK_SECONDS = 1
 const BENCHMARK_BUFFER_BYTES = 8192

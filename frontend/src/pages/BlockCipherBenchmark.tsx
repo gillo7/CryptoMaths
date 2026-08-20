@@ -5,8 +5,10 @@ interface BenchResult {
   bytesPerSecond: number | null
 }
 
+// Decimal MB, not binary MiB - matches OpenSSL's own speed tool, which
+// reports "in 1000s of bytes per second".
 function formatThroughput(bytesPerSecond: number): string {
-  const mbPerSecond = bytesPerSecond / (1024 * 1024)
+  const mbPerSecond = bytesPerSecond / 1_000_000
   return `${mbPerSecond.toFixed(1)} MB/s`
 }
 

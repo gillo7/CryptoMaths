@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import SymmetricPlaceholder from './SymmetricPlaceholder'
 import BlockCipherBenchmark from './BlockCipherBenchmark'
+import BrowserCipherBenchmark from './BrowserCipherBenchmark'
 import './SymmetricEncryption.css'
 
 function SymmetricEncryption() {
@@ -71,11 +72,11 @@ function SymmetricEncryption() {
           }
         />
         <p>
-          Note that we are using a non-AES-NI hardware, if you would like
-          to test on your own hardware, it is very simple! Follow these
-          instructions:
+          Note that we are using non-AES-NI hardware. If you would like to
+          test your own hardware instead, no installation needed, just run
+          it right here in your browser:
         </p>
-        <SymmetricPlaceholder label="Symmetric encryption benchmarking instructions" />
+        <BrowserCipherBenchmark />
       </section>
 
       <section>

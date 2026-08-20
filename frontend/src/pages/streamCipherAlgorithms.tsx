@@ -3,9 +3,9 @@ import Rc4KeyExample from './Rc4KeyExample'
 import Rc4CipherLab from './Rc4CipherLab'
 import Salsa20KeyExample from './Salsa20KeyExample'
 import Salsa20CipherLab from './Salsa20CipherLab'
-import { Link } from 'react-router-dom'
 import ChaCha20KeyExample from './ChaCha20KeyExample'
 import ChaCha20CipherLab from './ChaCha20CipherLab'
+import BlockCipherBenchmark from './BlockCipherBenchmark'
 
 export interface StreamCipherAlgorithm {
   slug: string
@@ -137,12 +137,7 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
           AES hardware acceleration, mobile devices, ARM chips, anything
           lacking AES-NI, where it usually outperforms AES outright.
         </p>
-        <p>
-          You've already seen this proven live: the speed test in the{' '}
-          <Link to="/symmetric-encryption/block-ciphers/aes">AES section</Link>{' '}
-          runs on this same unaccelerated ARM server, and ChaCha20 comes out
-          well ahead of every block cipher tested there, AES included.
-        </p>
+        <BlockCipherBenchmark />
         <p>
           On its own, ChaCha20 only provides confidentiality, the same
           integrity gap every stream or CBC-style cipher in this chapter

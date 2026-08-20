@@ -4,10 +4,19 @@ import TopicPage from './pages/TopicPage'
 import Encoding from './pages/Encoding'
 import Hashing from './pages/Hashing'
 import HashingAlgorithm from './pages/HashingAlgorithm'
+import SymmetricEncryption from './pages/SymmetricEncryption'
+import BlockCiphers from './pages/BlockCiphers'
+import BlockCipherAlgorithm from './pages/BlockCipherAlgorithm'
+import StreamCiphers from './pages/StreamCiphers'
+import StreamCipherAlgorithm from './pages/StreamCipherAlgorithm'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
-const CUSTOM_TOPIC_SLUGS = new Set(['encoding', 'hashing'])
+const CUSTOM_TOPIC_SLUGS = new Set([
+  'encoding',
+  'hashing',
+  'symmetric-encryption',
+])
 
 function App() {
   return (
@@ -18,6 +27,23 @@ function App() {
         <Route path="/encoding" element={<Encoding />} />
         <Route path="/hashing" element={<Hashing />} />
         <Route path="/hashing/:algo" element={<HashingAlgorithm />} />
+        <Route path="/symmetric-encryption" element={<SymmetricEncryption />} />
+        <Route
+          path="/symmetric-encryption/block-ciphers"
+          element={<BlockCiphers />}
+        />
+        <Route
+          path="/symmetric-encryption/block-ciphers/:algo"
+          element={<BlockCipherAlgorithm />}
+        />
+        <Route
+          path="/symmetric-encryption/stream-ciphers"
+          element={<StreamCiphers />}
+        />
+        <Route
+          path="/symmetric-encryption/stream-ciphers/:algo"
+          element={<StreamCipherAlgorithm />}
+        />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

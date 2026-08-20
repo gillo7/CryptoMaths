@@ -31,8 +31,9 @@ const ALLOWED_CIPHERS = new Set([
   // variants - the latter matches the deliberately weakened 40-bit export
   // cipher covered in the lesson)
   'rc2-cbc', 'rc2-ecb', 'rc2-cfb', 'rc2-ofb', 'rc2-64-cbc', 'rc2-40-cbc',
-  // Stream ciphers
-  'rc4', 'chacha20',
+  // Stream ciphers (rc4-40 is the same deliberately weakened 40-bit export
+  // variant story as rc2-40-cbc, from the same 1989 export approval)
+  'rc4', 'rc4-40', 'chacha20',
 ])
 
 const HEX_PATTERN = /^[0-9a-f]*$/i

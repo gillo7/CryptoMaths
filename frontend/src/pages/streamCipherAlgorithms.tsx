@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 import SymmetricPlaceholder from './SymmetricPlaceholder'
+import Rc4KeyExample from './Rc4KeyExample'
+import Rc4CipherLab from './Rc4CipherLab'
 
 export interface StreamCipherAlgorithm {
   slug: string
@@ -13,7 +15,7 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
     name: 'RC4',
     content: (
       <>
-        <SymmetricPlaceholder label="RC4 example" />
+        <Rc4KeyExample />
         <p>
           Designed by Ron Rivest in 1987, RC4 was kept as a trade secret
           at RSA Security until 1994, when someone anonymously leaked its
@@ -50,7 +52,7 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
           Salsa20's successor, ChaCha20, covered in the next two
           sections.
         </p>
-        <SymmetricPlaceholder label="RC4 interactive example" />
+        <Rc4CipherLab />
       </>
     ),
   },

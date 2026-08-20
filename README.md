@@ -18,7 +18,7 @@ time) rather than just static text, and wraps up with a short quiz provided on W
 | --- | --- |
 | Encoding | Live - ASCII, hex, Base64 (+ octal/Base32/Base58), all four with interactive explorers and a quiz |
 | Hashing | Live - intro/salting/attacks, a live multi-algorithm hash explorer, and all 9 algorithm pages (MD5, LM, NTLM, SHA-1, SHA-2, Bcrypt, SHA-3, Scrypt, Argon2) built out with live demos, including a real MD5 collision generator and a real John the Ripper cracking demo |
-| Symmetric Encryption | Not started |
+| Symmetric Encryption | Live - IV/padding/modes explainers, all 8 algorithm pages (DES, RC2, Blowfish, Twofish, AES, RC4, Salsa20, ChaCha20) with live encrypt/decrypt demos, a live server-side speed comparison, an in-browser WebCrypto-vs-JS benchmark showing AES-NI's effect on your own hardware, and a quiz |
 | Asymmetric Encryption | Not started |
 | Signatures and Certificates | Not started |
 | Post-Quantum Cryptography | Not started |

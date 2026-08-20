@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react'
-import SymmetricPlaceholder from './SymmetricPlaceholder'
 import Rc4KeyExample from './Rc4KeyExample'
 import Rc4CipherLab from './Rc4CipherLab'
 import Salsa20KeyExample from './Salsa20KeyExample'
 import Salsa20CipherLab from './Salsa20CipherLab'
+import { Link } from 'react-router-dom'
+import ChaCha20KeyExample from './ChaCha20KeyExample'
+import ChaCha20CipherLab from './ChaCha20CipherLab'
 
 export interface StreamCipherAlgorithm {
   slug: string
@@ -114,7 +116,7 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
     name: 'ChaCha20',
     content: (
       <>
-        <SymmetricPlaceholder label="ChaCha20 example" />
+        <ChaCha20KeyExample />
         <p>
           Bernstein's 2008 revision of Salsa20 keeps the same operations,
           round count, and state size, but mixes across diagonals instead
@@ -135,7 +137,12 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
           AES hardware acceleration, mobile devices, ARM chips, anything
           lacking AES-NI, where it usually outperforms AES outright.
         </p>
-        <SymmetricPlaceholder label="Speed test on our ARM set without AES-NI to prove the point" />
+        <p>
+          You've already seen this proven live: the speed test in the{' '}
+          <Link to="/symmetric-encryption/block-ciphers/aes">AES section</Link>{' '}
+          runs on this same unaccelerated ARM server, and ChaCha20 comes out
+          well ahead of every block cipher tested there, AES included.
+        </p>
         <p>
           On its own, ChaCha20 only provides confidentiality, the same
           integrity gap every stream or CBC-style cipher in this chapter
@@ -153,7 +160,7 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
           is not available, the direct answer to the AES-NI story running
           through this whole chapter.
         </p>
-        <SymmetricPlaceholder label="ChaCha20 interactive examples" />
+        <ChaCha20CipherLab />
       </>
     ),
   },

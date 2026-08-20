@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import SymmetricPlaceholder from './SymmetricPlaceholder'
 import Rc4KeyExample from './Rc4KeyExample'
 import Rc4CipherLab from './Rc4CipherLab'
+import Salsa20KeyExample from './Salsa20KeyExample'
+import Salsa20CipherLab from './Salsa20CipherLab'
 
 export interface StreamCipherAlgorithm {
   slug: string
@@ -61,7 +63,7 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
     name: 'Salsa20',
     content: (
       <>
-        <SymmetricPlaceholder label="Salsa20 example" />
+        <Salsa20KeyExample />
         <p>
           Designed by Daniel J. Bernstein in 2005 and submitted to the
           eSTREAM European cryptographic validation process, Salsa20 was
@@ -103,7 +105,7 @@ export const streamCipherAlgorithms: StreamCipherAlgorithm[] = [
           quickly a single changed input bit spreads its influence across
           the whole output, while keeping performance the same or better.
         </p>
-        <SymmetricPlaceholder label="Salsa20 interactive example" />
+        <Salsa20CipherLab />
       </>
     ),
   },

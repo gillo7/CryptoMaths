@@ -108,6 +108,17 @@ const BENCHMARK_CIPHERS = [
   { cipher: 'aes-256-cbc', label: 'AES-256' },
   { cipher: 'chacha20', label: 'ChaCha20' },
 ]
+
+// Every cipher covered anywhere in the Symmetric Encryption lesson that
+// OpenSSL can actually measure - the above set plus RC4. Twofish and
+// Salsa20 still can't appear here: OpenSSL has never implemented either,
+// and their demos run as pure client-side JS, not on this server's
+// hardware, so timing them wouldn't be the same measurement as everything
+// else in this list.
+const BENCHMARK_CIPHERS_ALL = [
+  ...BENCHMARK_CIPHERS,
+  { cipher: 'rc4', label: 'RC4' },
+]
 const BENCHMARK_SECONDS = 1
 const BENCHMARK_BUFFER_BYTES = 8192
 // Real per-cipher openssl speed runs are ~1s (BENCHMARK_SECONDS) each, so
@@ -141,11 +152,11 @@ async function benchmarkCipher(cipher) {
   return bytesPerSecond
 }
 
-async function runBenchmarks() {
+async function runBenchmarks(cipherList) {
   const results = []
   // Sequential, not parallel - concurrent runs would compete for CPU and
   // distort every result.
-  for (const { cipher, label } of BENCHMARK_CIPHERS) {
+  for (const { cipher, label } of cipherList) {
     try {
       const bytesPerSecond = await benchmarkCipher(cipher)
       results.push({ label, bytesPerSecond })
@@ -202,11 +213,13 @@ async function handleRequest(req, decrypt) {
 }
 
 // The benchmark takes several seconds of real CPU time - only one runs at
-// a time so concurrent visitors don't skew each other's results.
+// a time, across both endpoints, so concurrent visitors don't skew each
+// other's results.
 let benchmarkQueue = Promise.resolve()
 
-function enqueueBenchmark() {
-  const job = benchmarkQueue.then(runBenchmarks, runBenchmarks)
+function enqueueBenchmark(cipherList) {
+  const run = () => runBenchmarks(cipherList)
+  const job = benchmarkQueue.then(run, run)
   benchmarkQueue = job.then(
     () => {},
     () => {},
@@ -217,8 +230,10 @@ function enqueueBenchmark() {
 const server = http.createServer(async (req, res) => {
   const route = req.method === 'POST' ? req.url : null
 
-  if (route === '/benchmark') {
-    const results = await enqueueBenchmark()
+  if (route === '/benchmark' || route === '/benchmark-all') {
+    const cipherList =
+      route === '/benchmark-all' ? BENCHMARK_CIPHERS_ALL : BENCHMARK_CIPHERS
+    const results = await enqueueBenchmark(cipherList)
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify({ results }))
     return

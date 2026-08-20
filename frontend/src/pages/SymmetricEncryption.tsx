@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import SymmetricPlaceholder from './SymmetricPlaceholder'
+import BlockCipherBenchmark from './BlockCipherBenchmark'
 import './SymmetricEncryption.css'
 
 function SymmetricEncryption() {
@@ -58,7 +59,17 @@ function SymmetricEncryption() {
           Here is a comparison, created live on our server's hardware, of
           the efficiency of every reviewed algorithm, ranked by speed:
         </p>
-        <SymmetricPlaceholder label="Speed test comparing every reviewed algorithm" />
+        <BlockCipherBenchmark
+          endpoint="/api/openssl/benchmark-all"
+          excludedNote={
+            <>
+              Twofish and Salsa20 aren't included: OpenSSL has never
+              implemented either, so their demos run as client-side JS
+              instead - not a measurement of this server's hardware, so not
+              a fair comparison against everything else in this list.
+            </>
+          }
+        />
         <p>
           Note that we are using a non-AES-NI hardware, if you would like
           to test on your own hardware, it is very simple! Follow these

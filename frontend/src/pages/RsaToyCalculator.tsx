@@ -139,6 +139,13 @@ function RsaToyCalculator() {
           </button>
         ))}
       </div>
+      <p className="demo-note">
+        Greyed-out values are unavailable: p and q can't be the same
+        prime, and a few specific pairs are disabled because their maths
+        makes e and d come out identical, which would make the public and
+        private key the same number - a confusing accident, not a real
+        RSA property.
+      </p>
 
       <div className="multibox">
         <div className="multibox-row">

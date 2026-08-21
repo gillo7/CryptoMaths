@@ -9,6 +9,7 @@ import BlockCiphers from './pages/BlockCiphers'
 import BlockCipherAlgorithm from './pages/BlockCipherAlgorithm'
 import StreamCiphers from './pages/StreamCiphers'
 import StreamCipherAlgorithm from './pages/StreamCipherAlgorithm'
+import PublicKeyEncryption from './pages/PublicKeyEncryption'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -16,6 +17,7 @@ const CUSTOM_TOPIC_SLUGS = new Set([
   'encoding',
   'hashing',
   'symmetric-encryption',
+  'public-key-encryption',
 ])
 
 function App() {
@@ -44,6 +46,7 @@ function App() {
           path="/symmetric-encryption/stream-ciphers/:algo"
           element={<StreamCipherAlgorithm />}
         />
+        <Route path="/public-key-encryption" element={<PublicKeyEncryption />} />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

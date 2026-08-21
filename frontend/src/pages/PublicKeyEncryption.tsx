@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import PublicKeyPlaceholder from './PublicKeyPlaceholder'
 import RsaKeygenSteps from './RsaKeygenSteps'
 import RsaToyCalculator from './RsaToyCalculator'
 import RsaModpowTiming from './RsaModpowTiming'
 import RsaPemOutput from './RsaPemOutput'
 import RsaBreaker from './RsaBreaker'
+import RsaEccSpeed from './RsaEccSpeed'
 import './PublicKeyEncryption.css'
 // Shared widget classes (.explorer, .compute-button, .multibox, etc.) and
 // the article-preview link classes live in these two lessons' stylesheets
@@ -276,7 +276,7 @@ function PublicKeyEncryption() {
           This is why RSA's security is directly dependent on its
           key-size, with the downside that it makes it very slow.
         </p>
-        <PublicKeyPlaceholder label="RSA's speed test vs ECC" />
+        <RsaEccSpeed />
 
         <p>
           So what is a more efficient way to achieve 2048-bit RSA security

@@ -273,6 +273,64 @@ function breakKey(nHex, eHex) {
   }
 }
 
+const SPEED_TEST_SECONDS = 2
+const SPEED_TIMEOUT_MS = 15_000
+
+// Runs OpenSSL's own `speed` tool rather than timing repeated sign/verify
+// calls ourselves - same reasoning as the Symmetric Encryption cipher
+// benchmarks: process-spawn overhead would dwarf a single operation's real
+// cost. RSA-2048 and ECDSA P-256 are roughly the same real-world security
+// level (the "2048-bit RSA security in a 256-bit key" comparison the
+// surrounding text makes), so this is a direct apples-to-apples measure of
+// what that efficiency gain actually costs or buys in practice.
+async function measureAsymmetricSpeed() {
+  const args = [
+    'speed',
+    '-seconds',
+    String(SPEED_TEST_SECONDS),
+    '-mr',
+    'rsa2048',
+    'ecdsap256',
+  ]
+  const { stdout } = await execFile(OPENSSL_BIN, args, {
+    timeout: SPEED_TIMEOUT_MS,
+  })
+  const lines = stdout.split('\n')
+
+  // +F2:<index>:<bits>:<sign/s>:<verify/s> for RSA, +F4 for ECDSA - same
+  // trailing shape, different algorithm-family prefix.
+  function parseResultLine(prefix, label) {
+    const line = lines.find((l) => l.startsWith(prefix))
+    if (!line) return null
+    const parts = line.split(':')
+    return {
+      label,
+      bits: Number(parts[2]),
+      signPerSec: parseFloat(parts[3]),
+      verifyPerSec: parseFloat(parts[4]),
+    }
+  }
+
+  return {
+    rsa: parseResultLine('+F2:', 'RSA-2048'),
+    ecdsa: parseResultLine('+F4:', 'ECDSA P-256'),
+  }
+}
+
+// Same single-flight reasoning as the Symmetric Encryption benchmarks -
+// this pins the CPU for several seconds, so concurrent visitors shouldn't
+// run it at the same time and skew each other's results.
+let speedQueue = Promise.resolve()
+
+function enqueueSpeedTest() {
+  const job = speedQueue.then(measureAsymmetricSpeed, measureAsymmetricSpeed)
+  speedQueue = job.then(
+    () => {},
+    () => {},
+  )
+  return job
+}
+
 async function readJsonBody(req) {
   const chunks = []
   let size = 0
@@ -287,6 +345,18 @@ async function readJsonBody(req) {
 
 const server = http.createServer(async (req, res) => {
   const route = req.method === 'POST' ? req.url : null
+
+  if (route === '/speed') {
+    try {
+      const result = await enqueueSpeedTest()
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(result))
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: err.message }))
+    }
+    return
+  }
 
   if (route === '/weak-keygen') {
     try {

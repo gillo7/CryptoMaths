@@ -33,7 +33,7 @@ function PublicKeyEncryption() {
         </p>
 
         <a
-          href="/articles/new-directions-in-cryptography.pdf"
+          href="https://caislab.kaist.ac.kr/lecture/2010/spring/cs548/basic/B08.pdf"
           target="_blank"
           rel="noopener noreferrer"
           className="article-preview"
@@ -49,7 +49,7 @@ function PublicKeyEncryption() {
           </p>
         </a>
         <a
-          href="/articles/rsa-paper.pdf"
+          href="https://dl.acm.org/doi/pdf/10.1145/359340.359342"
           target="_blank"
           rel="noopener noreferrer"
           className="article-preview"

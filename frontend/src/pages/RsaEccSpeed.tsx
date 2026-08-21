@@ -3,18 +3,12 @@ import { useState } from 'react'
 interface AlgoResult {
   label: string
   bits: number
-  signPerSec: number
-  verifyPerSec: number
   keygenMs: number
 }
 
 interface SpeedResult {
   rsa: AlgoResult | null
   ecdsa: AlgoResult | null
-}
-
-function formatOpsPerSec(n: number): string {
-  return `${n.toLocaleString(undefined, { maximumFractionDigits: 0 })} ops/s`
 }
 
 function formatMs(ms: number): string {
@@ -46,7 +40,7 @@ function RsaEccSpeed() {
       <span className="exercise-badge">Explore</span>
       <p>
         RSA-2048 and ECDSA P-256 are roughly the same real-world security
-        level - this measures what that trade actually costs.
+        level - how long does each actually take to generate a key?
       </p>
       <button
         type="button"
@@ -55,7 +49,7 @@ function RsaEccSpeed() {
         className="compute-button"
       >
         {status === 'loading'
-          ? 'Benchmarking (takes 10-15 seconds - RSA key generation is the slow part)…'
+          ? 'Generating keys…'
           : 'Run a live speed test on the server'}
       </button>
 
@@ -77,51 +71,7 @@ function RsaEccSpeed() {
               {formatMs(result.ecdsa.keygenMs)}
             </code>
           </div>
-          <div className="multibox-row">
-            <span className="multibox-label">RSA-2048 sign</span>
-            <code className="multibox-value">
-              {formatOpsPerSec(result.rsa.signPerSec)}
-            </code>
-          </div>
-          <div className="multibox-row">
-            <span className="multibox-label">RSA-2048 verify</span>
-            <code className="multibox-value">
-              {formatOpsPerSec(result.rsa.verifyPerSec)}
-            </code>
-          </div>
-          <div className="multibox-row">
-            <span className="multibox-label">ECDSA P-256 sign</span>
-            <code className="multibox-value">
-              {formatOpsPerSec(result.ecdsa.signPerSec)}
-            </code>
-          </div>
-          <div className="multibox-row">
-            <span className="multibox-label">ECDSA P-256 verify</span>
-            <code className="multibox-value">
-              {formatOpsPerSec(result.ecdsa.verifyPerSec)}
-            </code>
-          </div>
         </div>
-      )}
-
-      {result?.rsa && result.ecdsa && (
-        <p className="demo-note">
-          Key generation is where the gap is starkest:{' '}
-          {Math.round(
-            result.rsa.keygenMs / result.ecdsa.keygenMs,
-          ).toLocaleString()}
-          x slower for RSA-2048, because it has to search for two large
-          random primes, real, variable-cost work, exactly what the RSA
-          key generation section above walked through. ECDSA just picks a
-          random scalar against an already-defined curve. ECDSA also
-          signs about{' '}
-          {Math.round(
-            result.ecdsa.signPerSec / result.rsa.signPerSec,
-          ).toLocaleString()}
-          x faster, with a key 8x smaller - though RSA still wins at
-          verification, the operation that only needs the small public
-          exponent e.
-        </p>
       )}
     </div>
   )

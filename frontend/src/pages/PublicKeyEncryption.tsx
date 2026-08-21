@@ -167,17 +167,41 @@ function PublicKeyEncryption() {
           maths stays checkable by hand, real RSA keys use primes hundreds
           of digits long, never anything this small:
         </p>
-        <div className="code-block">
-          <code>
-            p = 3, q = 11{'\n'}
-            N = p × q = 33{'\n'}
-            PHI = (p-1)(q-1) = 2 × 10 = 20{'\n'}
-            e = 3 (shares no common factor with 20){'\n'}
-            Public key: [e, N] = [3, 33]{'\n'}
-            d = 7, found by solving (d × 3) mod 20 = 1,{'\n'}
-            {'  '}since (7 × 3) mod 20 = 21 mod 20 = 1{'\n'}
-            Private key: [d, N] = [7, 33]
-          </code>
+        <div className="multibox">
+          <div className="multibox-row">
+            <span className="multibox-label">p, q</span>
+            <code className="multibox-value">3, 11</code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">N = p × q</span>
+            <code className="multibox-value">3 × 11 = 33</code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">PHI</span>
+            <code className="multibox-value">
+              (p-1)(q-1) = 2 × 10 = 20
+            </code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">e</span>
+            <code className="multibox-value">
+              3 (shares no common factor with 20)
+            </code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">d</span>
+            <code className="multibox-value">
+              7, since (7 × 3) mod 20 = 21 mod 20 = 1
+            </code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">Public key</span>
+            <code className="multibox-value">[e, N] = [3, 33]</code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">Private key</span>
+            <code className="multibox-value">[d, N] = [7, 33]</code>
+          </div>
         </div>
         <p>
           To encrypt a message M, C = Mᵉ mod N. To decrypt, M = C^d mod N.

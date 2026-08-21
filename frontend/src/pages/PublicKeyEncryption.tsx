@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import PublicKeyPlaceholder from './PublicKeyPlaceholder'
+import RsaKeygenSteps from './RsaKeygenSteps'
 import './PublicKeyEncryption.css'
 // Shared widget classes (.explorer, .compute-button, .multibox, etc.) and
 // the article-preview link classes live in these two lessons' stylesheets
@@ -139,7 +140,7 @@ function PublicKeyEncryption() {
         <h2>RSA in practice</h2>
 
         <p>The key generation process, in full:</p>
-        <PublicKeyPlaceholder label="Step-by-step RSA key generation demo via the OpenSSL backend" />
+        <RsaKeygenSteps />
 
         <p>
           Two prime numbers, p and q, are chosen and multiplied to produce

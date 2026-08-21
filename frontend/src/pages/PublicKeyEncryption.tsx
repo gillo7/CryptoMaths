@@ -211,7 +211,6 @@ function PublicKeyEncryption() {
             <code className="multibox-value">M = C^d mod N</code>
           </div>
         </div>
-        <PublicKeyPlaceholder label="Interactive encrypt/decrypt calculator using this worked example, with selectable values, live" />
         <div className="multibox">
           <div className="multibox-row">
             <span className="multibox-label">M</span>
@@ -239,6 +238,7 @@ function PublicKeyEncryption() {
           gives enormous room to encrypt genuinely large values, while this
           toy N of 33 can only ever handle single-digit messages.
         </p>
+        <PublicKeyPlaceholder label="Interactive encrypt/decrypt calculator using this worked example, with selectable values, live" />
         <p>
           In practice, e is almost always 65537 (0x10001 in hexadecimal), a
           specific, deliberate choice, not a random pick. In binary it has

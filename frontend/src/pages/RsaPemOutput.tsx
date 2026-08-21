@@ -79,17 +79,6 @@ function RsaPemOutput() {
           </div>
         </>
       )}
-
-      {pems && (
-        <p className="demo-note">
-          Same p, q, N, e, and d from above, real OpenSSL output this
-          time - just Base64-encoded and wrapped in BEGIN/END markers
-          instead of broken out field by field. Notice the public key is
-          far shorter: it only needs to hold e and N, while the private
-          key also carries d, p, q, and a few precomputed values OpenSSL
-          uses to speed up decryption.
-        </p>
-      )}
     </div>
   )
 }

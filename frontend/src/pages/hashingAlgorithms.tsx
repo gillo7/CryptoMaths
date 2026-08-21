@@ -227,7 +227,7 @@ export const hashingAlgorithms: HashingAlgorithm[] = [
           follow-up, SHA-2.
         </p>
         <a
-          href="/articles/shattered.pdf"
+          href="https://elie.net/static/files/the-first-collision-for-full-sha-1/the-first-collision-for-full-sha-1-paper.pdf"
           target="_blank"
           rel="noopener noreferrer"
           className="article-preview"

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import PublicKeyPlaceholder from './PublicKeyPlaceholder'
 import RsaKeygenSteps from './RsaKeygenSteps'
+import RsaToyCalculator from './RsaToyCalculator'
 import './PublicKeyEncryption.css'
 // Shared widget classes (.explorer, .compute-button, .multibox, etc.) and
 // the article-preview link classes live in these two lessons' stylesheets
@@ -239,7 +240,7 @@ function PublicKeyEncryption() {
           gives enormous room to encrypt genuinely large values, while this
           toy N of 33 can only ever handle single-digit messages.
         </p>
-        <PublicKeyPlaceholder label="Interactive encrypt/decrypt calculator using this worked example, with selectable values, live" />
+        <RsaToyCalculator />
         <p>
           In practice, e is almost always 65537 (0x10001 in hexadecimal), a
           specific, deliberate choice, not a random pick. In binary it has

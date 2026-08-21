@@ -286,6 +286,18 @@ function PublicKeyEncryption() {
           their real-world heavy lifting.
         </p>
       </section>
+
+      <section>
+        <h2>Quiz!</h2>
+        <a
+          href="https://www.wikiclass.org/exercise/dfuq72lve9cwd8h"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-link"
+        >
+          Take the Public Key Encryption quiz on Wikiclass →
+        </a>
+      </section>
     </main>
   )
 }

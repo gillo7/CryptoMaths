@@ -3,6 +3,7 @@ import PublicKeyPlaceholder from './PublicKeyPlaceholder'
 import RsaKeygenSteps from './RsaKeygenSteps'
 import RsaToyCalculator from './RsaToyCalculator'
 import RsaModpowTiming from './RsaModpowTiming'
+import RsaPemOutput from './RsaPemOutput'
 import './PublicKeyEncryption.css'
 // Shared widget classes (.explorer, .compute-button, .multibox, etc.) and
 // the article-preview link classes live in these two lessons' stylesheets
@@ -261,7 +262,7 @@ function PublicKeyEncryption() {
           underlying binary key data, the same Base64 encoding covered in
           this app's own <Link to="/encoding">Encoding</Link> chapter.
         </p>
-        <PublicKeyPlaceholder label="Live OpenSSL RSA key generation, showing the actual .pem output" />
+        <RsaPemOutput />
 
         <p>
           RSA with small key values is trivial to break, even my small

@@ -4,6 +4,7 @@ import RsaKeygenSteps from './RsaKeygenSteps'
 import RsaToyCalculator from './RsaToyCalculator'
 import RsaModpowTiming from './RsaModpowTiming'
 import RsaPemOutput from './RsaPemOutput'
+import RsaBreaker from './RsaBreaker'
 import './PublicKeyEncryption.css'
 // Shared widget classes (.explorer, .compute-button, .multibox, etc.) and
 // the article-preview link classes live in these two lessons' stylesheets
@@ -266,9 +267,10 @@ function PublicKeyEncryption() {
 
         <p>
           RSA with small key values is trivial to break, even my small
-          Raspberry Pi server can make short work of a 56-bit key:
+          Raspberry Pi server can make short work of an 80-bit public key,
+          given a few seconds:
         </p>
-        <PublicKeyPlaceholder label="RSA breaker for a 56-bit key" />
+        <RsaBreaker />
 
         <p>
           This is why RSA's security is directly dependent on its

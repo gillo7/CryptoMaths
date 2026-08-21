@@ -212,10 +212,27 @@ function PublicKeyEncryption() {
           </div>
         </div>
         <PublicKeyPlaceholder label="Interactive encrypt/decrypt calculator using this worked example, with selectable values, live" />
+        <div className="multibox">
+          <div className="multibox-row">
+            <span className="multibox-label">M</span>
+            <code className="multibox-value">5</code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">Encrypting</span>
+            <code className="multibox-value">
+              C = 5³ mod 33 = 125 mod 33 = 26
+            </code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">Decrypting</span>
+            <code className="multibox-value">
+              M = 26⁷ mod 33 = 5
+            </code>
+          </div>
+        </div>
         <p>
-          Taking M = 5: C = 5³ mod 33 = 125 mod 33 = 26. Decrypting: M =
-          26⁷ mod 33 = 5, the original message recovered. One crucial rule
-          makes this work at all: M must be smaller than N. Above that
+          The original message recovered. One crucial rule makes this work
+          at all: M must be smaller than N. Above that
           ceiling, RSA's modular arithmetic loses information, M and M+N
           would encrypt identically, so the message becomes unrecoverable.
           This is exactly why real key sizes matter so much, a 2048-bit N

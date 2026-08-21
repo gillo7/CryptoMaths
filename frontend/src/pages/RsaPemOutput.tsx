@@ -3,17 +3,25 @@ import { generateRsaKey } from '../lib/rsaDemo'
 
 const BIT_SIZES = [512, 1024, 2048] as const
 
+interface PemPair {
+  privatePem: string
+  publicPem: string
+}
+
 function RsaPemOutput() {
   const [bits, setBits] = useState<(typeof BIT_SIZES)[number]>(2048)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
-  const [pem, setPem] = useState('')
+  const [pems, setPems] = useState<PemPair | null>(null)
 
   async function handleGenerate() {
     setStatus('loading')
-    setPem('')
+    setPems(null)
     try {
       const key = await generateRsaKey(bits)
-      setPem(key.pem.trim())
+      setPems({
+        privatePem: key.privatePem.trim(),
+        publicPem: key.publicPem.trim(),
+      })
       setStatus('idle')
     } catch {
       setStatus('error')
@@ -53,17 +61,33 @@ function RsaPemOutput() {
         <p className="hash-result">Something went wrong - try again.</p>
       )}
 
-      {pem && (
-        <div className="code-block">
-          <code>{pem}</code>
-        </div>
+      {pems && (
+        <>
+          <p className="demo-note">
+            <strong>Public key</strong> - this is the one Bob shares
+            freely:
+          </p>
+          <div className="code-block">
+            <code>{pems.publicPem}</code>
+          </div>
+          <p className="demo-note">
+            <strong>Private key</strong> - this one never leaves his
+            hands:
+          </p>
+          <div className="code-block">
+            <code>{pems.privatePem}</code>
+          </div>
+        </>
       )}
 
-      {pem && (
+      {pems && (
         <p className="demo-note">
-          That's the same p, q, N, e, and d from above, real OpenSSL
-          output this time - just Base64-encoded and wrapped in
-          BEGIN/END markers rather than broken out field by field.
+          Same p, q, N, e, and d from above, real OpenSSL output this
+          time - just Base64-encoded and wrapped in BEGIN/END markers
+          instead of broken out field by field. Notice the public key is
+          far shorter: it only needs to hold e and N, while the private
+          key also carries d, p, q, and a few precomputed values OpenSSL
+          uses to speed up decryption.
         </p>
       )}
     </div>

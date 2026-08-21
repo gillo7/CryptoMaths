@@ -45,16 +45,22 @@ async function generateKey(bits) {
     await execFile(OPENSSL_BIN, ['genrsa', '-out', keyFile, String(bits)], {
       timeout: TIMEOUT_MS,
     })
-    const pem = await readFile(keyFile, 'utf8')
+    const privatePem = await readFile(keyFile, 'utf8')
     const { stdout: text } = await execFile(
       OPENSSL_BIN,
       ['rsa', '-in', keyFile, '-text', '-noout'],
       { timeout: TIMEOUT_MS },
     )
+    const { stdout: publicPem } = await execFile(
+      OPENSSL_BIN,
+      ['rsa', '-in', keyFile, '-pubout'],
+      { timeout: TIMEOUT_MS },
+    )
     const exponentMatch = text.match(/publicExponent: (\d+)/)
     return {
       bits,
-      pem,
+      privatePem,
+      publicPem,
       n: extractField(text, 'modulus'),
       e: exponentMatch ? exponentMatch[1] : null,
       d: extractField(text, 'privateExponent'),

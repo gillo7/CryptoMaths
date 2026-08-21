@@ -1,6 +1,7 @@
 export interface RsaKey {
   bits: number
-  pem: string
+  privatePem: string
+  publicPem: string
   n: string
   e: string
   d: string

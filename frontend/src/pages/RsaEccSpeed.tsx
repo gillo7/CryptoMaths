@@ -5,6 +5,7 @@ interface AlgoResult {
   bits: number
   signPerSec: number
   verifyPerSec: number
+  keygenMs: number
 }
 
 interface SpeedResult {
@@ -14,6 +15,12 @@ interface SpeedResult {
 
 function formatOpsPerSec(n: number): string {
   return `${n.toLocaleString(undefined, { maximumFractionDigits: 0 })} ops/s`
+}
+
+function formatMs(ms: number): string {
+  if (ms < 1) return `${(ms * 1000).toFixed(0)} µs`
+  if (ms < 1000) return `${ms.toFixed(1)} ms`
+  return `${(ms / 1000).toFixed(2)} s`
 }
 
 function RsaEccSpeed() {
@@ -48,7 +55,7 @@ function RsaEccSpeed() {
         className="compute-button"
       >
         {status === 'loading'
-          ? 'Benchmarking (takes a few seconds)…'
+          ? 'Benchmarking (takes 10-15 seconds - RSA key generation is the slow part)…'
           : 'Run a live speed test on the server'}
       </button>
 
@@ -58,6 +65,18 @@ function RsaEccSpeed() {
 
       {result?.rsa && result.ecdsa && (
         <div className="multibox">
+          <div className="multibox-row">
+            <span className="multibox-label">RSA-2048 keygen</span>
+            <code className="multibox-value">
+              {formatMs(result.rsa.keygenMs)}
+            </code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">ECDSA P-256 keygen</span>
+            <code className="multibox-value">
+              {formatMs(result.ecdsa.keygenMs)}
+            </code>
+          </div>
           <div className="multibox-row">
             <span className="multibox-label">RSA-2048 sign</span>
             <code className="multibox-value">
@@ -87,14 +106,21 @@ function RsaEccSpeed() {
 
       {result?.rsa && result.ecdsa && (
         <p className="demo-note">
-          ECDSA signs about{' '}
+          Key generation is where the gap is starkest:{' '}
+          {Math.round(
+            result.rsa.keygenMs / result.ecdsa.keygenMs,
+          ).toLocaleString()}
+          x slower for RSA-2048, because it has to search for two large
+          random primes, real, variable-cost work, exactly what the RSA
+          key generation section above walked through. ECDSA just picks a
+          random scalar against an already-defined curve. ECDSA also
+          signs about{' '}
           {Math.round(
             result.ecdsa.signPerSec / result.rsa.signPerSec,
           ).toLocaleString()}
-          x faster than RSA-2048 here, with a key 8x smaller. RSA still
-          wins at verification, the operation that only needs the small
-          public exponent e - it's specifically the private-key operation
-          (sign, or decrypt) that a 2048-bit modulus makes expensive.
+          x faster, with a key 8x smaller - though RSA still wins at
+          verification, the operation that only needs the small public
+          exponent e.
         </p>
       )}
     </div>

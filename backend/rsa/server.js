@@ -311,10 +311,40 @@ async function measureAsymmetricSpeed() {
     }
   }
 
-  return {
-    rsa: parseResultLine('+F2:', 'RSA-2048'),
-    ecdsa: parseResultLine('+F4:', 'ECDSA P-256'),
+  const rsa = parseResultLine('+F2:', 'RSA-2048')
+  const ecdsa = parseResultLine('+F4:', 'ECDSA P-256')
+
+  // RSA keygen is slow enough that 2 reps already gives a stable-ish
+  // average without adding much wait; ECDSA keygen is fast enough that a
+  // few more reps costs almost nothing and smooths out noise.
+  if (rsa) {
+    rsa.keygenMs = await measureKeygenMs(['genrsa', '2048'], 2)
   }
+  if (ecdsa) {
+    ecdsa.keygenMs = await measureKeygenMs(
+      ['genpkey', '-algorithm', 'EC', '-pkeyopt', 'ec_paramgen_curve:P-256'],
+      5,
+    )
+  }
+
+  return { rsa, ecdsa }
+}
+
+// `openssl speed` deliberately reuses one pre-generated key for its whole
+// sign/verify run - it's benchmarking the sign/verify operations
+// themselves, not key generation, so this measures that separately by
+// timing real `genrsa`/`genpkey` invocations directly. This is the number
+// that actually matches the "RSA in practice" section above: finding two
+// large random primes is real, variable-cost work, unlike ECDSA, which
+// just picks a random scalar against an already-defined curve.
+async function measureKeygenMs(args, repetitions) {
+  const timings = []
+  for (let i = 0; i < repetitions; i++) {
+    const t0 = performance.now()
+    await execFile(OPENSSL_BIN, args, { timeout: SPEED_TIMEOUT_MS })
+    timings.push(performance.now() - t0)
+  }
+  return timings.reduce((a, b) => a + b, 0) / timings.length
 }
 
 // Same single-flight reasoning as the Symmetric Encryption benchmarks -

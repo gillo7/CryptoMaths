@@ -202,10 +202,15 @@ function PublicKeyEncryption() {
             <span className="multibox-label">Private key</span>
             <code className="multibox-value">[d, N] = [7, 33]</code>
           </div>
+          <div className="multibox-row">
+            <span className="multibox-label">Encrypt</span>
+            <code className="multibox-value">C = Mᵉ mod N</code>
+          </div>
+          <div className="multibox-row">
+            <span className="multibox-label">Decrypt</span>
+            <code className="multibox-value">M = C^d mod N</code>
+          </div>
         </div>
-        <p>
-          To encrypt a message M, C = Mᵉ mod N. To decrypt, M = C^d mod N.
-        </p>
         <PublicKeyPlaceholder label="Interactive encrypt/decrypt calculator using this worked example, with selectable values, live" />
         <p>
           Taking M = 5: C = 5³ mod 33 = 125 mod 33 = 26. Decrypting: M =

@@ -43,6 +43,76 @@ async function generateKey(curveName) {
   }
 }
 
+// RFC 7919's standard groups - the ones real DH implementations actually
+// reuse (see measureKeyExchangeSpeed below for why generating a fresh one
+// isn't practical). Named for their prime's bit length, same convention
+// as the curves above.
+const DH_GROUPS = ['ffdhe2048', 'ffdhe3072', 'ffdhe4096']
+
+async function generateDhKey(group) {
+  const dir = await mkdtemp(path.join(tmpdir(), 'dh-'))
+  const keyFile = path.join(dir, 'key.pem')
+  try {
+    await execFile(
+      OPENSSL_BIN,
+      ['genpkey', '-algorithm', 'DH', '-pkeyopt', `group:${group}`, '-out', keyFile],
+      { timeout: TIMEOUT_MS },
+    )
+    const privatePem = await readFile(keyFile, 'utf8')
+    const { stdout: publicPem } = await execFile(
+      OPENSSL_BIN,
+      ['pkey', '-in', keyFile, '-pubout'],
+      { timeout: TIMEOUT_MS },
+    )
+    return { group, privatePem, publicPem }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
+// Classic Diffie-Hellman keygen, two ways. Real TLS almost always reuses
+// a standard, pre-shared group (RFC 7919's ffdhe2048 here) rather than
+// generating its own - that's fast, since it skips the actual expensive
+// part: finding a safe prime. Rolling your own parameters (recommended
+// practice after 2015's Logjam attack, since a small number of widely-
+// shared groups are a juicier attack target) means paying that safe-
+// prime search cost directly, which is where classic DH's real slowness
+// comes from - not the exchange itself. 512-bit here purely to keep a
+// live demo's wait time bounded (benchmarked empirically: consistently
+// well under a second at this size, versus multi-second and highly
+// variable already at 1024-bit) - never a size anyone would actually use.
+async function measureMs(args) {
+  const t0 = performance.now()
+  await execFile(OPENSSL_BIN, args, { timeout: TIMEOUT_MS })
+  return performance.now() - t0
+}
+
+async function measureKeyExchangeSpeed() {
+  const dhSharedGroupMs = await measureMs([
+    'genpkey',
+    '-algorithm',
+    'DH',
+    '-pkeyopt',
+    'group:ffdhe2048',
+  ])
+  const dhFreshParamsMs = await measureMs(['dhparam', '512'])
+  const ecdhMs = await measureMs([
+    'ecparam',
+    '-name',
+    'prime256v1',
+    '-genkey',
+    '-noout',
+  ])
+  return {
+    dhSharedGroup: { label: 'DH, shared group (ffdhe2048)', ms: dhSharedGroupMs },
+    dhFreshParams: {
+      label: 'DH, generating its own 512-bit parameters',
+      ms: dhFreshParamsMs,
+    },
+    ecdh: { label: 'ECDH (P-256)', ms: ecdhMs },
+  }
+}
+
 async function readJsonBody(req) {
   const chunks = []
   let size = 0
@@ -57,6 +127,38 @@ async function readJsonBody(req) {
 
 const server = http.createServer(async (req, res) => {
   const route = req.method === 'POST' ? req.url : null
+
+  if (route === '/dh-keygen') {
+    try {
+      const body = await readJsonBody(req)
+      if (!DH_GROUPS.includes(body.group)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        res.end(
+          JSON.stringify({ error: `group must be one of ${DH_GROUPS.join(', ')}` }),
+        )
+        return
+      }
+      const result = await generateDhKey(body.group)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(result))
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: err.message }))
+    }
+    return
+  }
+
+  if (route === '/dh-speed') {
+    try {
+      const result = await measureKeyExchangeSpeed()
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(result))
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: err.message }))
+    }
+    return
+  }
 
   if (route !== '/keygen') {
     res.writeHead(404, { 'Content-Type': 'application/json' })

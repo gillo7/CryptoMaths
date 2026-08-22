@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import KeyExchangePlaceholder from './KeyExchangePlaceholder'
 import EcdhToyCalculator from './EcdhToyCalculator'
 import EcdhPemOutput from './EcdhPemOutput'
 import './KeyExchange.css'
@@ -149,10 +148,12 @@ function Ecdh() {
           inputs, not just that the underlying maths is sound.
         </p>
         <p>
-          ECDH is also dramatically faster than classic Diffie-Hellman,
-          as you can see for yourself in the next demonstration:
+          ECDH is also dramatically faster than classic Diffie-Hellman
+          when Diffie-Hellman has to generate its own parameters rather
+          than reuse a standard group, as you already saw on the{' '}
+          <Link to="/key-exchange/diffie-hellman">Diffie-Hellman</Link>{' '}
+          page.
         </p>
-        <KeyExchangePlaceholder label="Speed test ECDH vs RSA" />
         <p>
           And it's everywhere in practice, it's the mechanism behind
           Tor's ntor handshake, in continuous use since 2013, it

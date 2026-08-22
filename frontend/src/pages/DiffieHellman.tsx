@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import DhToyCalculator from './DhToyCalculator'
+import DhPemOutput from './DhPemOutput'
+import DhEcdhSpeed from './DhEcdhSpeed'
 import './KeyExchange.css'
 
 function DiffieHellman() {
@@ -87,6 +89,28 @@ function DiffieHellman() {
           </div>
         </div>
         <DhToyCalculator />
+
+        <p>
+          Real Diffie-Hellman keys are named for their prime's size in
+          bits. RFC 7919 defines a small set of standard groups,
+          ffdhe2048, ffdhe3072, and ffdhe4096, that real implementations
+          reuse rather than generate fresh. Unlike ECDH, classic DH
+          doesn't shrink the key for equivalent security, a 2048-bit DH
+          key is roughly as strong as a 2048-bit RSA key, not
+          dramatically smaller the way an elliptic curve key is. It's the
+          curve version specifically that buys the size reduction, not
+          Diffie-Hellman's core idea on its own.
+        </p>
+        <DhPemOutput />
+
+        <p>
+          Real Diffie-Hellman almost always reuses a standard, pre-shared
+          group of public values rather than generating its own - doing
+          that yourself means finding a large safe prime, genuinely slow,
+          costly work. The next section, ECDH, achieves the same result a
+          different way, one that sidesteps that cost entirely:
+        </p>
+        <DhEcdhSpeed />
       </section>
     </main>
   )

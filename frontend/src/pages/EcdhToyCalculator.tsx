@@ -11,7 +11,15 @@ import {
   scalarMult,
 } from '../lib/ecdhDemo'
 
-const MAX_SECRET = 9999
+// Valid, non-degenerate secrets: 1 through order-1. 0 would make a public
+// key the point at infinity outright, and since the group has prime
+// order, any product of two values in this range is itself never a
+// multiple of the order - so the shared secret can never land on
+// infinity either. Every selectable value here always produces a
+// sensible result, rather than technically-correct-but-confusing edge
+// cases the reader has to have explained to them.
+const SECRET_OPTIONS = Array.from({ length: Number(CURVE_ORDER) - 1 }, (_, i) => i + 1)
+
 const PLOT_SIZE = 240
 const MARGIN = 20
 const MAX_COORD = Number(CURVE_P) - 1
@@ -33,7 +41,7 @@ interface HighlightedPoint {
   color: string
 }
 
-function CurvePlot({ highlights }: { highlights: HighlightedPoint[] }) {
+function FieldCurvePlot({ highlights }: { highlights: HighlightedPoint[] }) {
   return (
     <svg
       viewBox={`0 0 ${PLOT_SIZE} ${PLOT_SIZE}`}
@@ -69,23 +77,17 @@ function CurvePlot({ highlights }: { highlights: HighlightedPoint[] }) {
 }
 
 function EcdhToyCalculator() {
-  const [secretInputA, setSecretInputA] = useState('6')
-  const [secretInputB, setSecretInputB] = useState('9')
+  const [secretA, setSecretA] = useState(6)
+  const [secretB, setSecretB] = useState(9)
 
-  const a = Math.max(0, Math.min(MAX_SECRET, Math.trunc(Number(secretInputA)) || 0))
-  const b = Math.max(0, Math.min(MAX_SECRET, Math.trunc(Number(secretInputB)) || 0))
-
-  const A = scalarMult(BigInt(a), GENERATOR)
-  const B = scalarMult(BigInt(b), GENERATOR)
-  const aliceShared = scalarMult(BigInt(a), B)
-  const bobShared = scalarMult(BigInt(b), A)
+  const A = scalarMult(BigInt(secretA), GENERATOR)
+  const B = scalarMult(BigInt(secretB), GENERATOR)
+  const aliceShared = scalarMult(BigInt(secretA), B)
+  const bobShared = scalarMult(BigInt(secretB), A)
   const match =
     aliceShared === null || bobShared === null
       ? aliceShared === bobShared
       : aliceShared.x === bobShared.x && aliceShared.y === bobShared.y
-
-  const aIsMultipleOfOrder = BigInt(a) % CURVE_ORDER === 0n
-  const bIsMultipleOfOrder = BigInt(b) % CURVE_ORDER === 0n
 
   return (
     <div className="explorer">
@@ -95,32 +97,40 @@ function EcdhToyCalculator() {
         A small real curve, y² = x³ + {CURVE_A.toString()}x +{' '}
         {CURVE_B.toString()} mod {CURVE_P.toString()}, generator G ={' '}
         {formatPoint(GENERATOR)} - every dot below is a genuine point on
-        it, plotted directly from the equation. Pick your own secrets for
-        a and b:
+        it, computed directly from the equation. Pick your own secrets
+        for a and b:
       </p>
 
-      <div className="hash-input-row">
-        <input
-          type="number"
-          min={0}
-          max={MAX_SECRET}
-          value={secretInputA}
-          onChange={(event) => setSecretInputA(event.target.value)}
-          placeholder="Alice's secret (a)…"
-          className="explorer-input"
-        />
-        <input
-          type="number"
-          min={0}
-          max={MAX_SECRET}
-          value={secretInputB}
-          onChange={(event) => setSecretInputB(event.target.value)}
-          placeholder="Bob's secret (b)…"
-          className="explorer-input"
-        />
+      <div className="cost-selector">
+        {SECRET_OPTIONS.map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setSecretA(value)}
+            className={
+              value === secretA ? 'cost-button cost-button-active' : 'cost-button'
+            }
+          >
+            a={value}
+          </button>
+        ))}
+      </div>
+      <div className="cost-selector">
+        {SECRET_OPTIONS.map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setSecretB(value)}
+            className={
+              value === secretB ? 'cost-button cost-button-active' : 'cost-button'
+            }
+          >
+            b={value}
+          </button>
+        ))}
       </div>
 
-      <CurvePlot
+      <FieldCurvePlot
         highlights={[
           { point: GENERATOR, label: 'G', color: 'var(--text-h)' },
           { point: A, label: 'A', color: '#2f7de1' },
@@ -132,11 +142,15 @@ function EcdhToyCalculator() {
       <div className="multibox">
         <div className="multibox-row">
           <span className="multibox-label">Alice's public key</span>
-          <code className="multibox-value">A = {a} × G = {formatPoint(A)}</code>
+          <code className="multibox-value">
+            A = {secretA} × G = {formatPoint(A)}
+          </code>
         </div>
         <div className="multibox-row">
           <span className="multibox-label">Bob's public key</span>
-          <code className="multibox-value">B = {b} × G = {formatPoint(B)}</code>
+          <code className="multibox-value">
+            B = {secretB} × G = {formatPoint(B)}
+          </code>
         </div>
         <div className="multibox-row">
           <span className="multibox-label">Alice computes</span>
@@ -156,10 +170,6 @@ function EcdhToyCalculator() {
         {match
           ? `Both arrive at the same shared point, ${formatPoint(aliceShared)}, independently - exactly what ECDH guarantees.`
           : "These don't match, which would mean a bug - try different values."}
-        {(aIsMultipleOfOrder || bIsMultipleOfOrder) &&
-          ` This curve's group has order ${CURVE_ORDER.toString()}, and ${
-            aIsMultipleOfOrder && bIsMultipleOfOrder ? 'both a and b are' : aIsMultipleOfOrder ? 'a is' : 'b is'
-          } a multiple of it, landing on the point at infinity, the group's identity element, not an error.`}
       </p>
     </div>
   )

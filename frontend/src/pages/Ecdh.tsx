@@ -107,6 +107,17 @@ function Ecdh() {
           infeasible.
         </p>
         <EcdhToyCalculator />
+
+        <p>
+          Real ECDH uses one of a small set of standard curves, not a toy
+          example like the one above. P-256, P-384, and P-521 are the
+          NIST curves you'll meet most often, named for their key size in
+          bits, 256, 384, and 521. That's dramatically smaller than an
+          equivalent-strength RSA key: 256-bit ECC is roughly as hard to
+          break as 3072-bit RSA, 384-bit ECC roughly matches 7680-bit RSA,
+          the same efficiency gain covered earlier in this chapter, now
+          with real curves instead of a hand-worked toy.
+        </p>
         <EcdhPemOutput />
       </section>
 

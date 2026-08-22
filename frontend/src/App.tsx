@@ -10,6 +10,10 @@ import BlockCipherAlgorithm from './pages/BlockCipherAlgorithm'
 import StreamCiphers from './pages/StreamCiphers'
 import StreamCipherAlgorithm from './pages/StreamCipherAlgorithm'
 import PublicKeyEncryption from './pages/PublicKeyEncryption'
+import KeyExchange from './pages/KeyExchange'
+import DiffieHellman from './pages/DiffieHellman'
+import Ecdh from './pages/Ecdh'
+import CurvesInPractice from './pages/CurvesInPractice'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -18,6 +22,7 @@ const CUSTOM_TOPIC_SLUGS = new Set([
   'hashing',
   'symmetric-encryption',
   'public-key-encryption',
+  'key-exchange',
 ])
 
 function App() {
@@ -47,6 +52,10 @@ function App() {
           element={<StreamCipherAlgorithm />}
         />
         <Route path="/public-key-encryption" element={<PublicKeyEncryption />} />
+        <Route path="/key-exchange" element={<KeyExchange />} />
+        <Route path="/key-exchange/diffie-hellman" element={<DiffieHellman />} />
+        <Route path="/key-exchange/ecdh" element={<Ecdh />} />
+        <Route path="/key-exchange/curves" element={<CurvesInPractice />} />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

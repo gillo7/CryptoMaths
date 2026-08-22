@@ -1,0 +1,33 @@
+.key-exchange-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 48px 24px 80px;
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.key-exchange-page section {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.key-exchange-page p {
+  line-height: 155%;
+}
+
+.key-exchange-page ul {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  line-height: 155%;
+}

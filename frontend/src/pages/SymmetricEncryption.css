@@ -192,10 +192,12 @@
   gap: 8px;
 }
 
-.figure img {
+.figure img,
+.figure svg {
   max-width: 100%;
   border: 1px solid var(--border);
   border-radius: 8px;
+  background: var(--code-bg);
 }
 
 .figure figcaption {

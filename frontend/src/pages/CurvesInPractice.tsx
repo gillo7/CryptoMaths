@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import KeyExchangePlaceholder from './KeyExchangePlaceholder'
+import EcPointAdditionDiagram from './EcPointAdditionDiagram'
 import './KeyExchange.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
@@ -99,7 +99,24 @@ function CurvesInPractice() {
           </table>
         </div>
 
-        <KeyExchangePlaceholder label="Examples of all the different curves and their efficiency" />
+        <p>
+          Every one of the curves above works the same way underneath:
+          two points on the curve, added together, always land on a
+          third point that's also on the curve. That's the operation
+          every scalar multiplication on the ECDH page is actually built
+          from, one addition at a time. Geometrically, it's a straight
+          line: draw one through P and Q, it crosses the curve exactly
+          one more time, reflect that crossing over the x-axis, and
+          that's P + Q.
+        </p>
+        <figure className="figure">
+          <EcPointAdditionDiagram />
+          <figcaption>
+            y² = x³ - 4x, chosen for this diagram specifically because it
+            produces two separate pieces rather than one - not a curve
+            used anywhere else on this site.
+          </figcaption>
+        </figure>
       </section>
     </main>
   )

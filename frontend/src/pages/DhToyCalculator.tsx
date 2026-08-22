@@ -1,11 +1,15 @@
 import { useState } from 'react'
 
-// Matches the worked example above exactly - g and p stay fixed here since
-// arbitrary values wouldn't necessarily make g a suitable generator for p
-// (unlike RSA's toy calculator, where any two distinct primes work by
-// construction). a and b, the two private secrets, are the free inputs.
-const G = 2n
-const P = 9929n
+// g just needs 1 < g < p for the exchange to work correctly - unlike
+// RSA's e, there's no coprimality requirement to satisfy. Restricted to
+// the three values the text above calls "typically" used in real DH,
+// rather than opened up to any number, so trying each one directly
+// reinforces that claim instead of just being an arbitrary free input.
+const G_OPTIONS = [2, 3, 5]
+// A handful of primes at roughly the worked example's own scale - kept
+// modest so the numbers stay approachable, not because larger ones would
+// be incorrect.
+const P_OPTIONS = [1009, 2039, 4999, 9929]
 const MAX_SECRET = 9999
 
 const SUPERSCRIPT_DIGITS = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']
@@ -32,25 +36,53 @@ function modPow(base: bigint, exponent: bigint, modulus: bigint): bigint {
 }
 
 function DhToyCalculator() {
+  const [g, setG] = useState(2)
+  const [p, setP] = useState(9929)
   const [secretInputA, setSecretInputA] = useState('9')
   const [secretInputB, setSecretInputB] = useState('6')
 
   const a = Math.max(0, Math.min(MAX_SECRET, Math.trunc(Number(secretInputA)) || 0))
   const b = Math.max(0, Math.min(MAX_SECRET, Math.trunc(Number(secretInputB)) || 0))
 
-  const A = modPow(G, BigInt(a), P)
-  const B = modPow(G, BigInt(b), P)
-  const aliceShared = modPow(B, BigInt(a), P)
-  const bobShared = modPow(A, BigInt(b), P)
+  const A = modPow(BigInt(g), BigInt(a), BigInt(p))
+  const B = modPow(BigInt(g), BigInt(b), BigInt(p))
+  const aliceShared = modPow(B, BigInt(a), BigInt(p))
+  const bobShared = modPow(A, BigInt(b), BigInt(p))
 
   return (
     <div className="explorer">
       <span className="exercise-badge">Explore</span>
 
-      <p className="demo-note">
-        g = 2, p = 9929, same as the worked example above - pick your own
-        secrets for a and b:
-      </p>
+      <p className="demo-note">Pick g and p, then your own secrets for a and b:</p>
+
+      <div className="cost-selector">
+        {G_OPTIONS.map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => setG(option)}
+            className={
+              option === g ? 'cost-button cost-button-active' : 'cost-button'
+            }
+          >
+            g={option}
+          </button>
+        ))}
+      </div>
+      <div className="cost-selector">
+        {P_OPTIONS.map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => setP(option)}
+            className={
+              option === p ? 'cost-button cost-button-active' : 'cost-button'
+            }
+          >
+            p={option}
+          </button>
+        ))}
+      </div>
 
       <div className="hash-input-row">
         <input
@@ -77,25 +109,27 @@ function DhToyCalculator() {
         <div className="multibox-row">
           <span className="multibox-label">Alice's public value</span>
           <code className="multibox-value">
-            A = 2{toSuperscript(a)} mod 9929 = {A.toString()}
+            A = {g}
+            {toSuperscript(a)} mod {p} = {A.toString()}
           </code>
         </div>
         <div className="multibox-row">
           <span className="multibox-label">Bob's public value</span>
           <code className="multibox-value">
-            B = 2{toSuperscript(b)} mod 9929 = {B.toString()}
+            B = {g}
+            {toSuperscript(b)} mod {p} = {B.toString()}
           </code>
         </div>
         <div className="multibox-row">
           <span className="multibox-label">Alice computes</span>
           <code className="multibox-value">
-            B{toSuperscript(a)} mod 9929 = {aliceShared.toString()}
+            B{toSuperscript(a)} mod {p} = {aliceShared.toString()}
           </code>
         </div>
         <div className="multibox-row">
           <span className="multibox-label">Bob computes</span>
           <code className="multibox-value">
-            A{toSuperscript(b)} mod 9929 = {bobShared.toString()}
+            A{toSuperscript(b)} mod {p} = {bobShared.toString()}
           </code>
         </div>
       </div>

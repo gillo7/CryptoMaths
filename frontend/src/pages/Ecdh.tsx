@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import KeyExchangePlaceholder from './KeyExchangePlaceholder'
+import EcdhToyCalculator from './EcdhToyCalculator'
 import './KeyExchange.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
@@ -104,8 +105,7 @@ function Ecdh() {
           solving A = a × G for a is the ECDLP, computationally
           infeasible.
         </p>
-        <KeyExchangePlaceholder label="Live calculation, same interactive spirit as RSA's calculator" />
-        <KeyExchangePlaceholder label="Dynamic curve generation, plotting y² = x³ + ax + b live" />
+        <EcdhToyCalculator />
         <KeyExchangePlaceholder label="Full .pem ECDH key example, via OpenSSL" />
       </section>
 

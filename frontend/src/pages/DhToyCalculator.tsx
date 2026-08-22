@@ -4,7 +4,7 @@ import { useState } from 'react'
 // arbitrary values wouldn't necessarily make g a suitable generator for p
 // (unlike RSA's toy calculator, where any two distinct primes work by
 // construction). a and b, the two private secrets, are the free inputs.
-const G = 2879n
+const G = 2n
 const P = 9929n
 const MAX_SECRET = 9999
 
@@ -48,8 +48,8 @@ function DhToyCalculator() {
       <span className="exercise-badge">Explore</span>
 
       <p className="demo-note">
-        g = 2879, p = 9929, same as the worked example above - pick your
-        own secrets for a and b:
+        g = 2, p = 9929, same as the worked example above - pick your own
+        secrets for a and b:
       </p>
 
       <div className="hash-input-row">
@@ -77,13 +77,13 @@ function DhToyCalculator() {
         <div className="multibox-row">
           <span className="multibox-label">Alice's public value</span>
           <code className="multibox-value">
-            A = 2879{toSuperscript(a)} mod 9929 = {A.toString()}
+            A = 2{toSuperscript(a)} mod 9929 = {A.toString()}
           </code>
         </div>
         <div className="multibox-row">
           <span className="multibox-label">Bob's public value</span>
           <code className="multibox-value">
-            B = 2879{toSuperscript(b)} mod 9929 = {B.toString()}
+            B = 2{toSuperscript(b)} mod 9929 = {B.toString()}
           </code>
         </div>
         <div className="multibox-row">

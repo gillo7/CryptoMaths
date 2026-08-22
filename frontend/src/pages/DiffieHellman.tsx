@@ -57,7 +57,7 @@ function DiffieHellman() {
         <div className="multibox">
           <div className="multibox-row">
             <span className="multibox-label">g, p</span>
-            <code className="multibox-value">2879, 9929 (agreed publicly)</code>
+            <code className="multibox-value">2, 9929 (agreed publicly)</code>
           </div>
           <div className="multibox-row">
             <span className="multibox-label">Bob's secret</span>
@@ -70,19 +70,19 @@ function DiffieHellman() {
           <div className="multibox-row">
             <span className="multibox-label">Bob's public value</span>
             <code className="multibox-value">
-              B = 2879⁶ mod 9929 = 4850
+              B = 2⁶ mod 9929 = 64
             </code>
           </div>
           <div className="multibox-row">
             <span className="multibox-label">Alice's public value</span>
             <code className="multibox-value">
-              A = 2879⁹ mod 9929 = 3614
+              A = 2⁹ mod 9929 = 512
             </code>
           </div>
           <div className="multibox-row">
             <span className="multibox-label">Shared secret</span>
             <code className="multibox-value">
-              Alice: 4850⁹ mod 9929 = 4868 - Bob: 3614⁶ mod 9929 = 4868
+              Alice: 64⁹ mod 9929 = 4482 - Bob: 512⁶ mod 9929 = 4482
             </code>
           </div>
         </div>

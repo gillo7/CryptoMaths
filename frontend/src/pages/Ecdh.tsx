@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import EcdhToyCalculator from './EcdhToyCalculator'
 import EcdhPemOutput from './EcdhPemOutput'
+import RsaEccSpeed from './RsaEccSpeed'
 import './KeyExchange.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
@@ -154,6 +155,15 @@ function Ecdh() {
           <Link to="/key-exchange/diffie-hellman">Diffie-Hellman</Link>{' '}
           page.
         </p>
+        <p>
+          And against RSA, the comparison from the{' '}
+          <Link to="/public-key-encryption">Public Key Encryption</Link>{' '}
+          section, live again here: generating a key for ECDH is exactly
+          the same operation as generating one for ECDSA, same curve,
+          same maths, just used differently afterward, so those numbers
+          apply here unchanged.
+        </p>
+        <RsaEccSpeed />
         <p>
           And it's everywhere in practice, it's the mechanism behind
           Tor's ntor handshake, in continuous use since 2013, it

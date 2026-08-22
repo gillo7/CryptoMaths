@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
   CURVE_A,
   CURVE_B,
-  CURVE_ORDER,
   CURVE_P,
   curvePoints,
   formatPoint,
@@ -11,14 +10,15 @@ import {
   scalarMult,
 } from '../lib/ecdhDemo'
 
-// Valid, non-degenerate secrets: 1 through order-1. 0 would make a public
-// key the point at infinity outright, and since the group has prime
-// order, any product of two values in this range is itself never a
-// multiple of the order - so the shared secret can never land on
-// infinity either. Every selectable value here always produces a
-// sensible result, rather than technically-correct-but-confusing edge
-// cases the reader has to have explained to them.
-const SECRET_OPTIONS = Array.from({ length: Number(CURVE_ORDER) - 1 }, (_, i) => i + 1)
+// A curated handful of the 18 valid secrets (1 through order-1), rather
+// than every single one - 36 buttons was too many. All of these are
+// mathematically "good" (0 would make a public key the point at infinity
+// outright, and since the group has prime order, no product of two
+// values in 1..order-1 is ever itself a multiple of the order, so the
+// shared secret can't land on infinity either) - a and b matching is the
+// one thing still worth steering away from, since it's a degenerate,
+// uninteresting example, not because it's wrong.
+const SECRET_OPTIONS = [2, 5, 8, 11, 14, 17]
 
 const PLOT_SIZE = 240
 const MARGIN = 20
@@ -77,8 +77,8 @@ function FieldCurvePlot({ highlights }: { highlights: HighlightedPoint[] }) {
 }
 
 function EcdhToyCalculator() {
-  const [secretA, setSecretA] = useState(6)
-  const [secretB, setSecretB] = useState(9)
+  const [secretA, setSecretA] = useState(5)
+  const [secretB, setSecretB] = useState(14)
 
   const A = scalarMult(BigInt(secretA), GENERATOR)
   const B = scalarMult(BigInt(secretB), GENERATOR)
@@ -107,6 +107,7 @@ function EcdhToyCalculator() {
             key={value}
             type="button"
             onClick={() => setSecretA(value)}
+            disabled={value === secretB}
             className={
               value === secretA ? 'cost-button cost-button-active' : 'cost-button'
             }
@@ -121,6 +122,7 @@ function EcdhToyCalculator() {
             key={value}
             type="button"
             onClick={() => setSecretB(value)}
+            disabled={value === secretA}
             className={
               value === secretB ? 'cost-button cost-button-active' : 'cost-button'
             }

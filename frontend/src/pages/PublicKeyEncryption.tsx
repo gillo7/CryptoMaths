@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import RsaKeygenSteps from './RsaKeygenSteps'
 import RsaToyCalculator from './RsaToyCalculator'
-import RsaModpowTiming from './RsaModpowTiming'
 import RsaPemOutput from './RsaPemOutput'
 import RsaBreaker from './RsaBreaker'
 import RsaEccSpeed from './RsaEccSpeed'
@@ -249,13 +248,8 @@ function PublicKeyEncryption() {
           specific, deliberate choice, not a random pick. In binary it has
           only two bits set, which makes the repeated squaring used during
           encryption fast, while still being large enough to avoid attacks
-          that exploit very small exponents. RSA implementations compute
-          the modular exponentiation itself using Python's{' '}
-          <code>pow(m, e, n)</code> or equivalent, calculating{' '}
-          <code>m^e mod n</code> directly without ever building the full,
-          astronomically large intermediate value <code>m^e</code> first.
+          that exploit very small exponents.
         </p>
-        <RsaModpowTiming />
 
         <p>
           RSA keys generated in the real world, via OpenSSL, are stored and

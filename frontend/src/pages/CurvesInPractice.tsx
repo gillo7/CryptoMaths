@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import KeyExchangePlaceholder from './KeyExchangePlaceholder'
 import './KeyExchange.css'
 import './SymmetricEncryption.css'
+import './Hashing.css'
 
 function CurvesInPractice() {
   return (
@@ -28,7 +29,16 @@ function CurvesInPractice() {
           no backdoor in P-256 or its siblings has ever actually been
           proven, suspicion, not confirmed compromise.
         </p>
-        <KeyExchangePlaceholder label="Article link (NYT / Snowden Dual_EC_DRBG report)" />
+        <a
+          href="https://www.bbc.co.uk/news/technology-24048343"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">News article</span>
+          <p className="article-title">NSA 'altered random-number generator'</p>
+          <p className="article-byline">BBC News, 2013</p>
+        </a>
 
         <p>
           That controversy is exactly why Curve25519 exists. Daniel

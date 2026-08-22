@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import KeyExchangePlaceholder from './KeyExchangePlaceholder'
 import './KeyExchange.css'
 import './SymmetricEncryption.css'
+import './Hashing.css'
 
 function Ecdh() {
   return (
@@ -20,7 +21,19 @@ function Ecdh() {
           original breakthrough. Miller's foundational paper, "Use of
           Elliptic Curves in Cryptography," was presented at CRYPTO '85.
         </p>
-        <KeyExchangePlaceholder label="Link to Miller's paper" />
+        <a
+          href="https://link.springer.com/chapter/10.1007/3-540-39799-X_31"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Research paper</span>
+          <p className="article-title">Use of Elliptic Curves in Cryptography</p>
+          <p className="article-byline">
+            Victor S. Miller - CRYPTO '85, Lecture Notes in Computer
+            Science vol. 218, Springer, 1985
+          </p>
+        </a>
 
         <p>
           ECDH takes their idea and applies it to the same key exchange

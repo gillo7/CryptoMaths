@@ -35,6 +35,10 @@ function DiffieHellman() {
           exchange A and B openly, Eve can see both.
         </p>
         <p>
+          In Python: <code>B = pow(g, b, p)</code> for Bob,{' '}
+          <code>A = pow(g, a, p)</code> for Alice.
+        </p>
+        <p>
           Each side then combines the other's public value with their own
           secret. Alice computes her shared key as Bᵃ mod p. Bob computes
           his as Aᵇ mod p. Both arrive at the identical result, gᵃᵇ mod p,

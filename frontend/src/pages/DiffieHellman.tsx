@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import KeyExchangePlaceholder from './KeyExchangePlaceholder'
+import DhToyCalculator from './DhToyCalculator'
 import './KeyExchange.css'
 
 function DiffieHellman() {
@@ -82,7 +82,7 @@ function DiffieHellman() {
             </code>
           </div>
         </div>
-        <KeyExchangePlaceholder label="Live calculation similar to what we did in RSA, verified against your own implementation" />
+        <DhToyCalculator />
       </section>
     </main>
   )

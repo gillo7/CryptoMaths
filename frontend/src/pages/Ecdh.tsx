@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import KeyExchangePlaceholder from './KeyExchangePlaceholder'
 import EcdhToyCalculator from './EcdhToyCalculator'
+import EcdhPemOutput from './EcdhPemOutput'
 import './KeyExchange.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
@@ -106,7 +107,7 @@ function Ecdh() {
           infeasible.
         </p>
         <EcdhToyCalculator />
-        <KeyExchangePlaceholder label="Full .pem ECDH key example, via OpenSSL" />
+        <EcdhPemOutput />
       </section>
 
       <section>

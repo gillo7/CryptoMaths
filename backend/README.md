@@ -20,6 +20,7 @@ with different parameters, not a distinct tool.
 | [lm-cracker/](lm-cracker/) | `/api/hashing/lm-crack` | 8096 | Cracks a submitted LM hash via John the Ripper |
 | [openssl/](openssl/) | `/api/openssl/{enc,dec,benchmark,benchmark-all}` | 8097 | Cipher/decipher demos for Symmetric Encryption (and later PQC) via real `openssl` |
 | [rsa/](rsa/) | `/api/rsa/keygen` | 8098 | RSA demos for Public Key Encryption via real `openssl` |
+| [ecdh/](ecdh/) | `/api/ecdh/keygen` | 8099 | ECDH key generation for Key Exchange via real `openssl` |
 
 When adding a new service: pick the next free port in the 809x range,
 add a row above, give it its own `location /api/<name>/` block in the

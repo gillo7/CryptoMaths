@@ -15,6 +15,7 @@ import DiffieHellman from './pages/DiffieHellman'
 import Ecdh from './pages/Ecdh'
 import CurvesInPractice from './pages/CurvesInPractice'
 import Certificates from './pages/Certificates'
+import PostQuantumCryptography from './pages/PostQuantumCryptography'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -25,6 +26,7 @@ const CUSTOM_TOPIC_SLUGS = new Set([
   'public-key-encryption',
   'key-exchange',
   'certificates',
+  'post-quantum-cryptography',
 ])
 
 function App() {
@@ -59,6 +61,10 @@ function App() {
         <Route path="/key-exchange/ecdh" element={<Ecdh />} />
         <Route path="/key-exchange/curves" element={<CurvesInPractice />} />
         <Route path="/certificates" element={<Certificates />} />
+        <Route
+          path="/post-quantum-cryptography"
+          element={<PostQuantumCryptography />}
+        />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

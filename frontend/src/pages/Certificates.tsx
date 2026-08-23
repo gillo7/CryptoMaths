@@ -159,6 +159,37 @@ function Certificates() {
         </p>
         <CertificatesPlaceholder label="Article links: VeriSign 2001, DigiNotar 2011, MCS Holdings 2015" />
         <p>
+          Certificates don't always make it to their expiry date. A
+          private key can leak, a domain can change hands, or a CA can
+          discover it issued a certificate it shouldn't have, and any of
+          those need the certificate killed off immediately, not
+          whenever it happens to expire. There are two mechanisms for
+          that: a CRL (Certificate Revocation List), a list of revoked
+          serial numbers a CA publishes and clients are meant to check
+          against, and OCSP (Online Certificate Status Protocol), a live
+          query straight to the CA asking whether one specific
+          certificate is still good. Neither is quite as airtight as it
+          sounds in practice, OCSP requests can be slow, or fail to
+          reach the CA at all, and most browsers "soft-fail" when that
+          happens, proceeding as if the certificate were fine rather
+          than blocking the connection, which defeats a good part of
+          the point.
+        </p>
+        <p>
+          OCSP stapling improves on this: rather than the visitor's own
+          browser contacting the CA directly, slow, and it tells the CA
+          exactly who's visiting which site, the web server itself
+          periodically fetches a signed, timestamped "still valid"
+          response and staples it straight onto the TLS handshake. The
+          more decisive fix, though, and the one Let's Encrypt leans on,
+          is not trusting revocation to work reliably at all: keep
+          certificates short-lived instead. Every certificate on
+          cryptomaths.org and wikiclass.org runs for 90 days, so a
+          compromised one is only ever a live problem for a matter of
+          weeks, whether or not anyone actually gets around to revoking
+          it.
+        </p>
+        <p>
           That's the sharp edge of what "trust" actually means in this
           system: if a single Root CA is ever compromised or misbehaves,
           everyone who trusted it, which, given how few root CAs exist,

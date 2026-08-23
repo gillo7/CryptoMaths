@@ -93,7 +93,7 @@ function PostQuantumCryptography() {
       </section>
 
       <section>
-        <h2>Algorithms at a Glance</h2>
+        <h2>Algorithm Details</h2>
         <p>Jump straight to any algorithm below.</p>
 
         <h3>NIST Standards</h3>
@@ -126,55 +126,11 @@ function PostQuantumCryptography() {
         <div className="spec-link-row">
           <a href="#frodokem" className="spec-link">FrodoKEM</a>
         </div>
-      </section>
 
-      <section>
-        <h2>Algorithm Details</h2>
-
-        <h3 id="ml-kem">ML-KEM (Kyber)</h3>
-        <PostQuantumPlaceholder label="How ML-KEM works: Module-LWE, key/ciphertext sizes, why it was chosen as the standard KEM" />
-
-        <h3 id="ml-dsa">ML-DSA (Dilithium)</h3>
-        <PostQuantumPlaceholder label="How ML-DSA works: Fiat-Shamir with aborts over Module-LWE/Module-SIS, signature/key sizes" />
-
-        <h3 id="slh-dsa">SLH-DSA (SPHINCS+)</h3>
-        <PostQuantumPlaceholder label="How SLH-DSA works: stateless hash-based signatures, why it's the conservative fallback, its size/speed tradeoffs" />
-
-        <h3 id="fn-dsa">FN-DSA (Falcon)</h3>
-        <PostQuantumPlaceholder label="How FN-DSA works: NTRU lattices, smallest signatures of the standards, why constant-time floating-point sampling makes it hard to implement" />
-
-        <h3 id="hqc">HQC</h3>
-        <PostQuantumPlaceholder label="How HQC works: code-based KEM built on Hamming Quasi-Cyclic codes, why NIST wanted a structurally different backup to ML-KEM" />
-
-        <h3 id="faest">FAEST</h3>
-        <PostQuantumPlaceholder label="How FAEST works: MPC-in-the-head over AES, security resting on AES itself rather than a new hard problem" />
-
-        <h3 id="hawk">HAWK</h3>
-        <PostQuantumPlaceholder label="How HAWK works: lattice isomorphism problem over NTRU lattices, aiming for Falcon-like sizes without the floating-point sampling" />
-
-        <h3 id="mayo">MAYO</h3>
-        <PostQuantumPlaceholder label="How MAYO works: a multivariate Oil and Vinegar variant designed to shrink UOV's large public keys" />
-
-        <h3 id="mqom">MQOM</h3>
-        <PostQuantumPlaceholder label="How MQOM works: MPC-in-the-head over the multivariate quadratic problem" />
-
-        <h3 id="qr-uov">QR-UOV</h3>
-        <PostQuantumPlaceholder label="How QR-UOV works: Quotient Ring Unbalanced Oil and Vinegar, shrinking classic UOV's key sizes via structured rings" />
-
-        <h3 id="sdith">SDitH</h3>
-        <PostQuantumPlaceholder label="How SDitH works: MPC-in-the-head over the syndrome decoding problem, a code-based signature" />
-
-        <h3 id="snova">SNOVA</h3>
-        <PostQuantumPlaceholder label="How SNOVA works: an Oil and Vinegar variant over noncommutative rings, aiming for smaller keys than classic UOV" />
-
-        <h3 id="sqisign">SQIsign</h3>
-        <PostQuantumPlaceholder label="How SQIsign works: isogeny-based signatures on supersingular elliptic curves, by far the smallest keys and signatures of any candidate, at the cost of speed" />
-
-        <h3 id="uov">UOV</h3>
-        <PostQuantumPlaceholder label="How UOV works: the original Unbalanced Oil and Vinegar multivariate scheme most of the newer candidates above build on" />
-
-        <h3 id="frodokem">FrodoKEM</h3>
-        <PostQuantumPlaceholder label="How FrodoKEM works: unstructured LWE, deliberately avoiding the algebraic structure ML-KEM relies on, why Germany's BSI and ENISA recommend it" />
+        <h3>Hybrid</h3>
+        <div className="spec-link-row">
+          <a href="#hybrid" className="spec-link">X25519/ML-KEM-768</a>
+        </div>
       </section>
 
       <section>

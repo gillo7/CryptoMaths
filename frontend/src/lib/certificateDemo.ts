@@ -23,6 +23,8 @@ export async function generateCertificate(
 export interface LiveCertificateResult {
   host: string
   certPem: string
+  pkcs7Pem: string
+  derHex: string
   decodedText: string
 }
 

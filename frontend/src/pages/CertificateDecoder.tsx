@@ -1,19 +1,37 @@
 import { useState } from 'react'
-import { fetchLiveCertificate } from '../lib/certificateDemo'
+import { fetchLiveCertificate, type LiveCertificateResult } from '../lib/certificateDemo'
 
 const HOSTS = ['cryptomaths.org', 'wikiclass.org'] as const
 
+const FORMATS = ['Decoded', 'PEM', 'PKCS7', 'DER', 'CER'] as const
+type Format = (typeof FORMATS)[number]
+
+function displayFor(result: LiveCertificateResult, format: Format): string {
+  switch (format) {
+    case 'Decoded':
+      return result.decodedText.trim()
+    case 'PEM':
+      return result.certPem.trim()
+    case 'PKCS7':
+      return result.pkcs7Pem.trim()
+    case 'DER':
+    case 'CER':
+      return result.derHex
+  }
+}
+
 function CertificateDecoder() {
   const [host, setHost] = useState<(typeof HOSTS)[number]>('cryptomaths.org')
+  const [format, setFormat] = useState<Format>('Decoded')
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
-  const [decodedText, setDecodedText] = useState<string | null>(null)
+  const [result, setResult] = useState<LiveCertificateResult | null>(null)
 
   async function handleFetch() {
     setStatus('loading')
-    setDecodedText(null)
+    setResult(null)
     try {
-      const result = await fetchLiveCertificate(host)
-      setDecodedText(result.decodedText.trim())
+      const fetched = await fetchLiveCertificate(host)
+      setResult(fetched)
       setStatus('idle')
     } catch {
       setStatus('error')
@@ -55,7 +73,7 @@ function CertificateDecoder() {
         <p className="hash-result">Something went wrong - try again.</p>
       )}
 
-      {decodedText && (
+      {result && (
         <>
           <p className="demo-note">
             A real TLS handshake against the live site, just now, decoded
@@ -64,8 +82,34 @@ function CertificateDecoder() {
             subject, issuer, validity, public key, signature algorithm,
             all of it.
           </p>
+
+          <div className="cost-selector">
+            {FORMATS.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setFormat(option)}
+                className={
+                  option === format
+                    ? 'cost-button cost-button-active'
+                    : 'cost-button'
+                }
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+
+          {format === 'CER' && (
+            <p className="demo-note">
+              .cer is just a common file extension for this same DER
+              encoding, not a different one, the bytes below are
+              identical to DER.
+            </p>
+          )}
+
           <div className="code-block">
-            <code>{decodedText}</code>
+            <code>{displayFor(result, format)}</code>
           </div>
         </>
       )}

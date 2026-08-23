@@ -23,7 +23,7 @@ function Hashing() {
           technique to get the same hash. Changing a single character
           changes the hash completely. This is why passwords are kept in
           hashes form, no mathematical way to reverse find it. Hashes are
-          also fundamental to Signatures and Certificates.
+          also fundamental to Certificates.
         </p>
 
         <HashExplorer />

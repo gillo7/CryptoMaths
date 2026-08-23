@@ -76,6 +76,17 @@ function Certificates() {
           signature over the whole bundle, all defined by a standard
           called X.509.
         </p>
+        <CertificateExample />
+        <figure className="figure">
+          <img
+            src="/images/wikiclass.png"
+            alt="A certificate viewer showing wikiclass.org's real certificate:
+              Issued To wikiclass.org, Issued By R12 / Let's Encrypt, a
+              Validity Period, and SHA-256 fingerprints for both the
+              certificate and its public key"
+          />
+          <figcaption>wikiclass.org's actual certificate, viewed in a browser</figcaption>
+        </figure>
         <p>
           Crucially, a certificate you'd receive from someone else only
           ever contains their public key, never their private one. Some
@@ -90,17 +101,6 @@ function Certificates() {
           app's own <Link to="/encoding">Encoding</Link> chapter. DER and
           CER are the equivalent data in raw binary form.
         </p>
-        <CertificateExample />
-        <figure className="figure">
-          <img
-            src="/images/wikiclass.png"
-            alt="A certificate viewer showing wikiclass.org's real certificate:
-              Issued To wikiclass.org, Issued By R12 / Let's Encrypt, a
-              Validity Period, and SHA-256 fingerprints for both the
-              certificate and its public key"
-          />
-          <figcaption>wikiclass.org's actual certificate, viewed in a browser</figcaption>
-        </figure>
         <CertificateDecoder />
       </section>
 

@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { generateCertificate } from '../lib/certificateDemo'
 
 function CertificateExample() {
-  const [commonName, setCommonName] = useState('Alice')
-  const [organisation, setOrganisation] = useState('CryptoMaths Demo')
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [certPem, setCertPem] = useState<string | null>(null)
 
@@ -11,7 +9,7 @@ function CertificateExample() {
     setStatus('loading')
     setCertPem(null)
     try {
-      const result = await generateCertificate(commonName, organisation)
+      const result = await generateCertificate('Alice', 'CryptoMaths Demo')
       setCertPem(result.certPem.trim())
       setStatus('idle')
     } catch {
@@ -22,21 +20,6 @@ function CertificateExample() {
   return (
     <div className="explorer">
       <span className="exercise-badge">Explore</span>
-
-      <input
-        type="text"
-        value={commonName}
-        onChange={(event) => setCommonName(event.target.value)}
-        placeholder="Common Name (CN)…"
-        className="explorer-input"
-      />
-      <input
-        type="text"
-        value={organisation}
-        onChange={(event) => setOrganisation(event.target.value)}
-        placeholder="Organisation (O)…"
-        className="explorer-input"
-      />
 
       <button
         type="button"

@@ -31,7 +31,18 @@ async function generateKey(curveName) {
     await execFile(OPENSSL_BIN, [...config.keygenArgs, '-out', keyFile], {
       timeout: TIMEOUT_MS,
     })
-    const privatePem = await readFile(keyFile, 'utf8')
+    // `ecparam -genkey` writes the older, EC-specific "SEC1" format
+    // (BEGIN EC PRIVATE KEY) by default, while `genpkey` (the only option
+    // for X25519) always writes the newer, algorithm-agnostic PKCS#8
+    // format (BEGIN PRIVATE KEY) - reading back through `pkey` normalises
+    // every curve to the same PKCS#8 output, so the comparison page shows
+    // a real difference in key content, not just a difference in which
+    // OpenSSL subcommand happened to generate it.
+    const { stdout: privatePem } = await execFile(
+      OPENSSL_BIN,
+      ['pkey', '-in', keyFile],
+      { timeout: TIMEOUT_MS },
+    )
     const { stdout: publicPem } = await execFile(
       OPENSSL_BIN,
       ['pkey', '-in', keyFile, '-pubout'],

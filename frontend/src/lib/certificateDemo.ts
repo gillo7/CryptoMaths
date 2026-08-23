@@ -38,3 +38,26 @@ export async function fetchLiveCertificate(host: string): Promise<LiveCertificat
   if (!response.ok) throw new Error(data.error ?? 'request failed')
   return data
 }
+
+export interface RootCertificate {
+  subject: string
+  issuer: string
+  validTo: string
+  fingerprint256: string
+}
+
+export interface RootCertificatesResult {
+  count: number
+  certs: RootCertificate[]
+}
+
+export async function fetchRootCertificates(): Promise<RootCertificatesResult> {
+  const response = await fetch('/api/certificates/root-certs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({}),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}

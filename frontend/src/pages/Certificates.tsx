@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import CertificateDecoder from './CertificateDecoder'
 import CertificateExample from './CertificateExample'
 import CertificatesPlaceholder from './CertificatesPlaceholder'
+import RootCertificates from './RootCertificates'
 import './Certificates.css'
 import './SymmetricEncryption.css'
 
@@ -121,7 +122,7 @@ function Certificates() {
           trusted because a Root CA vouches for them, not because they're
           trusted directly.
         </p>
-        <CertificatesPlaceholder label="Screenshots of actual root certificates on real machines, Ubuntu, MacOS, Windows" />
+        <RootCertificates />
         <p>
           Self-signed certificates, where an entity signs its own
           certificate, can never be genuinely trusted by anyone else,

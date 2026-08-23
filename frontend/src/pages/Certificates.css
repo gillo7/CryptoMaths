@@ -31,3 +31,8 @@
   gap: 10px;
   line-height: 155%;
 }
+
+.certificates-page .code-block-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+}

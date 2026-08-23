@@ -12,6 +12,8 @@ const execFile = promisify(execFileCb)
 const PORT = process.env.PORT || 8100
 const OPENSSL_BIN = process.env.OPENSSL_BIN || '/usr/bin/openssl'
 const TIMEOUT_MS = 10_000
+const CA_BUNDLE_PATH =
+  process.env.CA_BUNDLE_PATH || '/etc/ssl/certs/ca-certificates.crt'
 
 // Both sites this app is actually deployed on - not an open proxy for
 // fetching arbitrary hosts' certificates.
@@ -127,6 +129,29 @@ async function fetchAndDecodeCertificate(host) {
   }
 }
 
+// The real, current set of root/intermediate CAs this server trusts by
+// default - the same bundle every TLS connection it makes gets checked
+// against, read straight off disk rather than a static screenshot of
+// someone else's certificate manager.
+async function readTrustedRootCerts() {
+  const bundle = await readFile(CA_BUNDLE_PATH, 'utf8')
+  const blocks = bundle.match(
+    /-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----/g,
+  )
+  if (!blocks) throw new Error('no certificates found in CA bundle')
+  const certs = blocks.map((pem) => {
+    const x509 = new crypto.X509Certificate(pem)
+    return {
+      subject: x509.subject.replaceAll('\n', ', '),
+      issuer: x509.issuer.replaceAll('\n', ', '),
+      validTo: x509.validTo,
+      fingerprint256: x509.fingerprint256,
+    }
+  })
+  certs.sort((a, b) => a.subject.localeCompare(b.subject))
+  return { count: certs.length, certs }
+}
+
 async function readJsonBody(req) {
   const chunks = []
   let size = 0
@@ -141,6 +166,18 @@ async function readJsonBody(req) {
 
 const server = http.createServer(async (req, res) => {
   const route = req.method === 'POST' ? req.url : null
+
+  if (route === '/root-certs') {
+    try {
+      const result = await readTrustedRootCerts()
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(result))
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: err.message }))
+    }
+    return
+  }
 
   if (route === '/fetch-live') {
     try {

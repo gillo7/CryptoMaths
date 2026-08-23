@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import KeyExchangePlaceholder from './KeyExchangePlaceholder'
 import './KeyExchange.css'
 import './SymmetricEncryption.css'
 
@@ -74,7 +73,14 @@ function KeyExchange() {
 
       <section>
         <h2>Quiz!</h2>
-        <KeyExchangePlaceholder label="Link to a Wikiclass open quiz" />
+        <a
+          href="https://www.wikiclass.org/exercise/5wrz8c60d36c86j"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-link"
+        >
+          Take the Key Exchange quiz on Wikiclass →
+        </a>
       </section>
     </main>
   )

@@ -43,6 +43,29 @@ async function generateKey(curveName) {
   }
 }
 
+// Generates a real key on every curve, for side-by-side size comparison.
+async function generateAllKeys() {
+  const results = []
+  for (const curveName of Object.keys(CURVES)) {
+    const { publicPem, privatePem } = await generateKey(curveName)
+    results.push({ curve: curveName, publicPem, privatePem })
+  }
+  return results
+}
+
+// Keygen timing across all five curves. Real, consistent differences
+// (benchmarked on the production Pi: P-256 ~13ms, secp256k1 ~16ms,
+// P-384 ~20ms, P-521 ~31ms, X25519 ~13ms) that scale with curve size -
+// small next to RSA's ~1-1.5s elsewhere on this site, but not just noise.
+async function measureCurveSpeed() {
+  const results = []
+  for (const [curveName, config] of Object.entries(CURVES)) {
+    const ms = await measureMs(config.keygenArgs)
+    results.push({ curve: curveName, ms })
+  }
+  return results
+}
+
 // RFC 7919's standard groups - the ones real DH implementations actually
 // reuse (see measureKeyExchangeSpeed below for why generating a fresh one
 // isn't practical). Named for their prime's bit length, same convention
@@ -127,6 +150,30 @@ async function readJsonBody(req) {
 
 const server = http.createServer(async (req, res) => {
   const route = req.method === 'POST' ? req.url : null
+
+  if (route === '/keygen-all') {
+    try {
+      const result = await generateAllKeys()
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ results: result }))
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: err.message }))
+    }
+    return
+  }
+
+  if (route === '/curve-speed') {
+    try {
+      const result = await measureCurveSpeed()
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ results: result }))
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: err.message }))
+    }
+    return
+  }
 
   if (route === '/dh-keygen') {
     try {

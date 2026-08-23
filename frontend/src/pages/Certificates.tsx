@@ -98,7 +98,7 @@ function Certificates() {
               Validity Period, and SHA-256 fingerprints for both the
               certificate and its public key"
           />
-          <figcaption>wikiclass.org's actual certificate, viewed live</figcaption>
+          <figcaption>wikiclass.org's actual certificate, viewed in a browser</figcaption>
         </figure>
         <CertificatesPlaceholder label="Paste in a real certificate, or generate one above, and see it decoded field by field, subject, issuer, validity dates, public key, signature algorithm, exactly what your browser checks every time you visit an HTTPS site" />
       </section>

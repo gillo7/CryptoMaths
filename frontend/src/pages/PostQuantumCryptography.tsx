@@ -94,7 +94,6 @@ function PostQuantumCryptography() {
 
       <section>
         <h2>Algorithm Details</h2>
-        <p>Jump straight to any algorithm below.</p>
 
         <h3>NIST Standards</h3>
         <div className="spec-link-row">

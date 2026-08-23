@@ -39,3 +39,31 @@
   font-size: 16px;
   color: var(--text-h);
 }
+
+.spec-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.spec-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.spec-link:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}

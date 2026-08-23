@@ -41,16 +41,14 @@ function CurvePemCompare() {
       {results?.map((r) => (
         <Fragment key={r.curve}>
           <p className="demo-note">
-            <strong>{r.curve}</strong> - public key
+            <strong>{r.curve}</strong>
           </p>
           <div className="code-block">
-            <code>{r.publicPem.trim()}</code>
-          </div>
-          <p className="demo-note">
-            <strong>{r.curve}</strong> - private key
-          </p>
-          <div className="code-block">
-            <code>{r.privatePem.trim()}</code>
+            <code>
+              {r.publicPem.trim()}
+              {'\n\n'}
+              {r.privatePem.trim()}
+            </code>
           </div>
         </Fragment>
       ))}

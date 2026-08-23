@@ -76,8 +76,7 @@ async function generateCertificate(commonName, organisation) {
       { timeout: TIMEOUT_MS },
     )
     const certPem = await readFile(certFile, 'utf8')
-    const { pkcs7Pem, derHex } = await convertCertFormats(dir, certFile)
-    return { certPem, pkcs7Pem, derHex, commonName: cn, organisation: o }
+    return { certPem, commonName: cn, organisation: o }
   } finally {
     await rm(dir, { recursive: true, force: true })
   }

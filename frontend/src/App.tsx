@@ -14,6 +14,7 @@ import KeyExchange from './pages/KeyExchange'
 import DiffieHellman from './pages/DiffieHellman'
 import Ecdh from './pages/Ecdh'
 import CurvesInPractice from './pages/CurvesInPractice'
+import Certificates from './pages/Certificates'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -23,6 +24,7 @@ const CUSTOM_TOPIC_SLUGS = new Set([
   'symmetric-encryption',
   'public-key-encryption',
   'key-exchange',
+  'certificates',
 ])
 
 function App() {
@@ -56,6 +58,7 @@ function App() {
         <Route path="/key-exchange/diffie-hellman" element={<DiffieHellman />} />
         <Route path="/key-exchange/ecdh" element={<Ecdh />} />
         <Route path="/key-exchange/curves" element={<CurvesInPractice />} />
+        <Route path="/certificates" element={<Certificates />} />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

@@ -101,6 +101,7 @@ function Certificates() {
           />
           <figcaption>wikiclass.org's actual certificate, viewed in a browser</figcaption>
         </figure>
+        <CertificateDecoder />
       </section>
 
       <section>
@@ -140,7 +141,6 @@ function Certificates() {
           access to. Every certificate on cryptomaths.org and
           wikiclass.org runs on Let's Encrypt.
         </p>
-        <CertificateDecoder />
         <p>
           This whole system only works if CAs are actually trustworthy,
           and history shows that trust has genuinely broken, more than

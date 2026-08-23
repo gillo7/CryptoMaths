@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import CertificateExample from './CertificateExample'
 import CertificatesPlaceholder from './CertificatesPlaceholder'
 import './Certificates.css'
 import './SymmetricEncryption.css'
@@ -88,9 +89,8 @@ function Certificates() {
           app's own <Link to="/encoding">Encoding</Link> chapter. DER and
           CER are the equivalent data in raw binary form.
         </p>
-        <CertificatesPlaceholder label="Real .pem certificate example, generated live" />
+        <CertificateExample />
         <CertificatesPlaceholder label="Screenshot: a Windows certificate viewer, showing Issued To, Issued By, Validity, Public Key, Thumbprint" />
-        <CertificatesPlaceholder label="Generate a certificate live, right here, see exactly what goes into one" />
         <CertificatesPlaceholder label="Paste in a real certificate, or generate one above, and see it decoded field by field, subject, issuer, validity dates, public key, signature algorithm, exactly what your browser checks every time you visit an HTTPS site" />
       </section>
 

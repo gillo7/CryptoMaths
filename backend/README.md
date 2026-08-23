@@ -21,6 +21,7 @@ operation with different parameters, not a distinct tool.
 | [openssl/](openssl/) | `/api/openssl/{enc,dec,benchmark,benchmark-all}` | 8097 | Cipher/decipher demos for Symmetric Encryption (and later PQC) via real `openssl` |
 | [rsa/](rsa/) | `/api/rsa/{keygen,weak-keygen,break,speed}` | 8098 | RSA demos for Public Key Encryption via real `openssl` - keygen, the live RSA breaker, and the RSA-vs-ECDSA speed comparison |
 | [ecdh/](ecdh/) | `/api/ecdh/{keygen,dh-keygen,dh-speed}` | 8099 | ECDH and classic DH demos for Key Exchange via real `openssl` |
+| [certificates/](certificates/) | `/api/certificates/generate` | 8100 | Live self-signed X.509 certificate generator for Certificates via real `openssl` |
 
 When adding a new service: pick the next free port in the 809x range,
 add a row above, give it its own `location /api/<name>/` block in the

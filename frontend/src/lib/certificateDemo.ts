@@ -1,0 +1,19 @@
+export interface CertificateResult {
+  certPem: string
+  commonName: string
+  organisation: string
+}
+
+export async function generateCertificate(
+  commonName: string,
+  organisation: string,
+): Promise<CertificateResult> {
+  const response = await fetch('/api/certificates/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ commonName, organisation }),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}

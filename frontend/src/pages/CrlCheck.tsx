@@ -40,6 +40,16 @@ function CrlCheck() {
         ))}
       </div>
 
+      {host === 'revoked.badssl.com' && (
+        <p className="demo-note">
+          revoked.badssl.com is a public test site run by badssl.com,
+          maintained specifically with a certificate that's already been
+          revoked, useful here since neither of this site's own
+          certificates ever will be, there'd be nothing to show a
+          genuine "revoked" result against otherwise.
+        </p>
+      )}
+
       <button
         type="button"
         onClick={handleCheck}

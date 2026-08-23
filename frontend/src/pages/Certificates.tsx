@@ -90,7 +90,16 @@ function Certificates() {
           CER are the equivalent data in raw binary form.
         </p>
         <CertificateExample />
-        <CertificatesPlaceholder label="Screenshot: a Windows certificate viewer, showing Issued To, Issued By, Validity, Public Key, Thumbprint" />
+        <figure className="figure">
+          <img
+            src="/images/wikiclass.png"
+            alt="A certificate viewer showing wikiclass.org's real certificate:
+              Issued To wikiclass.org, Issued By R12 / Let's Encrypt, a
+              Validity Period, and SHA-256 fingerprints for both the
+              certificate and its public key"
+          />
+          <figcaption>wikiclass.org's actual certificate, viewed live</figcaption>
+        </figure>
         <CertificatesPlaceholder label="Paste in a real certificate, or generate one above, and see it decoded field by field, subject, issuer, validity dates, public key, signature algorithm, exactly what your browser checks every time you visit an HTTPS site" />
       </section>
 

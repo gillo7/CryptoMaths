@@ -12,7 +12,6 @@ function KeyExchange() {
       <h1>Key Exchange</h1>
 
       <section>
-        <h2>Overview</h2>
         <p>
           Public-key encryption, RSA, lets Alice encrypt something directly
           using Bob's public key. Key exchange solves a related but

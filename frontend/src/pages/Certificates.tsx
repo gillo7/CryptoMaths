@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 import CertificateDecoder from './CertificateDecoder'
 import CertificateExample from './CertificateExample'
-import CertificatesPlaceholder from './CertificatesPlaceholder'
 import RootCertificates from './RootCertificates'
 import './Certificates.css'
 import './SymmetricEncryption.css'
+import './Hashing.css'
 
 function Certificates() {
   return (
@@ -152,12 +152,91 @@ function Certificates() {
           attackers, reportedly Iranian, compromised the CA DigiNotar and
           issued fraudulent certificates later confirmed to have been
           used in real man-in-the-middle attacks against Iranian internet
-          users. And in 2015, a Chinese CA called MCS Holdings issued
-          unauthorised certificates for Google's own domains, Google
-          responded by removing MCS's entire root of trust from Chrome
-          outright.
+          users. And in 2015, MCS Holdings, an intermediate CA operating
+          under the Chinese root CA CNNIC, issued unauthorised
+          certificates for Google's own domains after installing its
+          signing key inside a man-in-the-middle proxy, Google responded
+          by removing CNNIC's entire root of trust from Chrome outright.
         </p>
-        <CertificatesPlaceholder label="Article links: VeriSign 2001, DigiNotar 2011, MCS Holdings 2015" />
+
+        <a
+          href="http://web.archive.org/web/20131102170603/http://www.cert.org/advisories/CA-2001-04.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Security advisory - via Wayback Machine</span>
+          <p className="article-title">
+            CERT Advisory CA-2001-04: Unauthentic "Microsoft Corporation"
+            Certificates
+          </p>
+          <p className="article-byline">CERT Coordination Center, 22 March 2001</p>
+          <p className="article-excerpt">
+            "On January 29 and 30, 2001, VeriSign, Inc. issued two
+            certificates to an individual fraudulently claiming to be an
+            employee of Microsoft."
+          </p>
+        </a>
+        <a
+          href="http://web.archive.org/web/20140520154754/http://support.microsoft.com:80/kb/293818"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Security bulletin - via Wayback Machine</span>
+          <p className="article-title">
+            MS01-017: Erroneous VeriSign-Issued Digital Certificates Pose
+            Spoofing Hazard
+          </p>
+          <p className="article-byline">Microsoft, 2001</p>
+          <p className="article-excerpt">
+            "VeriSign has revoked the certificates, and they are listed
+            in the VeriSign current Certificate Revocation list (CRL).
+            However, because the VeriSign code-signing certificates do
+            not specify a CRL Distribution Point (CDP), it is not
+            possible for any browser's CRL-checking mechanism to
+            download the VeriSign CRL and use it."
+          </p>
+        </a>
+        <a
+          href="https://www.theregister.com/security/2011/09/06/inside-operation-black-tulip-diginotar-hack-analysed/1487991"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">News - The Register</span>
+          <p className="article-title">
+            Inside 'Operation Black Tulip': DigiNotar hack analysed
+          </p>
+          <p className="article-byline">John Leyden, 6 September 2011</p>
+        </a>
+        <a
+          href="https://security.googleblog.com/2015/03/maintaining-digital-certificate-security.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Official statement - Google Security Blog</span>
+          <p className="article-title">Maintaining Digital Certificate Security</p>
+          <p className="article-byline">Google Security Team, 23 March 2015</p>
+          <p className="article-excerpt">
+            "On Friday, March 20th, we became aware of unauthorized
+            digital certificates for several Google domains."
+          </p>
+        </a>
+        <a
+          href="https://threatpost.com/ca-linked-to-chinese-registrar-issued-unauthorized-google-certificates/111774/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">News - Threatpost</span>
+          <p className="article-title">
+            CA Tied to Chinese Registrar Issued Unauthorized Google
+            Certificates
+          </p>
+          <p className="article-byline">Threatpost, 2015</p>
+        </a>
         <p>
           Certificates don't always make it to their expiry date. A
           private key can leak, a domain can change hands, or a CA can

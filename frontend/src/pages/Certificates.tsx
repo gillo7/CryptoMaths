@@ -242,6 +242,18 @@ function Certificates() {
           browsers and operating systems actively revoke that trust.
         </p>
       </section>
+
+      <section>
+        <h2>Quiz!</h2>
+        <a
+          href="https://www.wikiclass.org/exercise/c0i5y8t2tufrpym"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-link"
+        >
+          Take the Certificates quiz on Wikiclass →
+        </a>
+      </section>
     </main>
   )
 }

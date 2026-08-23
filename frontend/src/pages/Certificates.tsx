@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import CertificateDecoder from './CertificateDecoder'
 import CertificateExample from './CertificateExample'
+import CrlCheck from './CrlCheck'
 import RootCertificates from './RootCertificates'
 import './Certificates.css'
 import './SymmetricEncryption.css'
@@ -220,6 +221,7 @@ function Certificates() {
           than blocking the connection, which defeats a good part of
           the point.
         </p>
+        <CrlCheck />
         <p>
           OCSP stapling improves on this: rather than the visitor's own
           browser contacting the CA directly, slow, and it tells the CA
@@ -228,8 +230,10 @@ function Certificates() {
           response and staples it straight onto the TLS handshake. The
           more decisive fix, though, and the one Let's Encrypt leans on,
           is not trusting revocation to work reliably at all: keep
-          certificates short-lived instead. Every certificate on
-          cryptomaths.org and wikiclass.org runs for 90 days, so a
+          certificates short-lived instead, so much so that Let's
+          Encrypt has now dropped OCSP entirely from its certificates,
+          leaning on CRLs and short lifetimes alone. Every certificate
+          on cryptomaths.org and wikiclass.org runs for 90 days, so a
           compromised one is only ever a live problem for a matter of
           weeks, whether or not anyone actually gets around to revoking
           it.

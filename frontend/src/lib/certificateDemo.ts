@@ -59,3 +59,25 @@ export async function fetchRootCertificates(): Promise<RootCertificatesResult> {
   if (!response.ok) throw new Error(data.error ?? 'request failed')
   return data
 }
+
+export interface CrlCheckResult {
+  host: string
+  serial: string
+  crlUrl: string
+  lastUpdate: string
+  nextUpdate: string
+  totalRevoked: number
+  revoked: boolean
+  revokedDate: string | null
+}
+
+export async function checkCrlRevocation(host: string): Promise<CrlCheckResult> {
+  const response = await fetch('/api/certificates/crl-check', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ host }),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}

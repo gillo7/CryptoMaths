@@ -19,6 +19,11 @@ const CA_BUNDLE_PATH =
 // fetching arbitrary hosts' certificates.
 const ALLOWED_HOSTS = ['cryptomaths.org', 'wikiclass.org']
 
+// Same two, plus badssl.com's dedicated test host for a deliberately
+// revoked certificate - the only way to show the "revoked" branch of a
+// real CRL check without either of our own certs actually being revoked.
+const CRL_CHECK_HOSTS = ['cryptomaths.org', 'wikiclass.org', 'revoked.badssl.com']
+
 // openssl's -subj format uses "/" to separate RDNs and "=" within each one,
 // so both need stripping from user input rather than just shell-escaping -
 // execFile already passes args as an array, never through a shell.
@@ -151,6 +156,68 @@ async function readTrustedRootCerts() {
   return { count: certs.length, certs }
 }
 
+async function extractCrlUrl(certFile) {
+  const { stdout } = await execFile(
+    OPENSSL_BIN,
+    ['x509', '-in', certFile, '-noout', '-text'],
+    { timeout: TIMEOUT_MS },
+  )
+  const match = stdout.match(/CRL Distribution Points:[\s\S]*?URI:(\S+)/)
+  if (!match) throw new Error('certificate has no CRL Distribution Point')
+  return match[1]
+}
+
+async function downloadCrl(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) })
+  if (!response.ok) throw new Error(`failed to download CRL: HTTP ${response.status}`)
+  return Buffer.from(await response.arrayBuffer())
+}
+
+// A real revocation check: fetches the live cert, follows its own CRL
+// Distribution Point to the CA's actual CRL, and looks for the cert's
+// serial number in the real, current list of revoked certificates -
+// the same CRL mechanism described in the paragraph above this demo.
+async function checkCrlRevocation(host) {
+  if (!CRL_CHECK_HOSTS.includes(host)) {
+    throw new Error(`host must be one of ${CRL_CHECK_HOSTS.join(', ')}`)
+  }
+  const der = await fetchPeerCertificateDer(host)
+  const x509 = new crypto.X509Certificate(der)
+  const serial = x509.serialNumber
+  const dir = await mkdtemp(path.join(tmpdir(), 'crl-'))
+  const certFile = path.join(dir, 'cert.pem')
+  const crlFile = path.join(dir, 'crl.der')
+  try {
+    await writeFile(certFile, x509.toString())
+    const crlUrl = await extractCrlUrl(certFile)
+    const crlBuffer = await downloadCrl(crlUrl)
+    await writeFile(crlFile, crlBuffer)
+    const { stdout: crlText } = await execFile(
+      OPENSSL_BIN,
+      ['crl', '-inform', 'DER', '-in', crlFile, '-noout', '-text'],
+      { timeout: TIMEOUT_MS },
+    )
+    const lastUpdate = crlText.match(/Last Update:\s*(.+)/)?.[1]?.trim()
+    const nextUpdate = crlText.match(/Next Update:\s*(.+)/)?.[1]?.trim()
+    const totalRevoked = (crlText.match(/Serial Number:/g) || []).length
+    const revokedMatch = crlText.match(
+      new RegExp(`Serial Number:\\s*${serial}\\s*\\n\\s*Revocation Date:\\s*(.+)`),
+    )
+    return {
+      host,
+      serial,
+      crlUrl,
+      lastUpdate,
+      nextUpdate,
+      totalRevoked,
+      revoked: Boolean(revokedMatch),
+      revokedDate: revokedMatch?.[1]?.trim() ?? null,
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
 async function readJsonBody(req) {
   const chunks = []
   let size = 0
@@ -169,6 +236,19 @@ const server = http.createServer(async (req, res) => {
   if (route === '/root-certs') {
     try {
       const result = await readTrustedRootCerts()
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(result))
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: err.message }))
+    }
+    return
+  }
+
+  if (route === '/crl-check') {
+    try {
+      const body = await readJsonBody(req)
+      const result = await checkCrlRevocation(body.host)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify(result))
     } catch (err) {

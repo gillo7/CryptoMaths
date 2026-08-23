@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import CertificateDecoder from './CertificateDecoder'
 import CertificateExample from './CertificateExample'
 import CertificatesPlaceholder from './CertificatesPlaceholder'
 import './Certificates.css'
@@ -100,7 +101,6 @@ function Certificates() {
           />
           <figcaption>wikiclass.org's actual certificate, viewed in a browser</figcaption>
         </figure>
-        <CertificatesPlaceholder label="Paste in a real certificate, or generate one above, and see it decoded field by field, subject, issuer, validity dates, public key, signature algorithm, exactly what your browser checks every time you visit an HTTPS site" />
       </section>
 
       <section>
@@ -140,7 +140,7 @@ function Certificates() {
           access to. Every certificate on cryptomaths.org and
           wikiclass.org runs on Let's Encrypt.
         </p>
-        <CertificatesPlaceholder label="Screenshot: Let's Encrypt certificate details for cryptomaths.org or wikiclass.org" />
+        <CertificateDecoder />
         <p>
           This whole system only works if CAs are actually trustworthy,
           and history shows that trust has genuinely broken, more than

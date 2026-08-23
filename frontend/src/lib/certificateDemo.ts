@@ -17,3 +17,20 @@ export async function generateCertificate(
   if (!response.ok) throw new Error(data.error ?? 'request failed')
   return data
 }
+
+export interface LiveCertificateResult {
+  host: string
+  certPem: string
+  decodedText: string
+}
+
+export async function fetchLiveCertificate(host: string): Promise<LiveCertificateResult> {
+  const response = await fetch('/api/certificates/fetch-live', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ host }),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}

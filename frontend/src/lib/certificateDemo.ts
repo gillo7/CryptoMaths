@@ -1,5 +1,7 @@
 export interface CertificateResult {
   certPem: string
+  pkcs7Pem: string
+  derHex: string
   commonName: string
   organisation: string
 }

@@ -26,12 +26,18 @@ function sanitizeSubjectField(value, fallback) {
   return cleaned || fallback
 }
 
+// Generates one real certificate, then re-encodes that same certificate
+// into each of the formats named on the lesson page - PEM and PKCS7 are
+// both text, DER is the equivalent raw binary (CER is the same DER bytes
+// under a different common file extension, shown as an alias rather than
+// a separate conversion since the two are genuinely identical data).
 async function generateCertificate(commonName, organisation) {
   const cn = sanitizeSubjectField(commonName, 'Alice')
   const o = sanitizeSubjectField(organisation, 'CryptoMaths Demo')
   const dir = await mkdtemp(path.join(tmpdir(), 'cert-'))
   const keyFile = path.join(dir, 'key.pem')
   const certFile = path.join(dir, 'cert.pem')
+  const derFile = path.join(dir, 'cert.der')
   try {
     await execFile(
       OPENSSL_BIN,
@@ -53,7 +59,18 @@ async function generateCertificate(commonName, organisation) {
       { timeout: TIMEOUT_MS },
     )
     const certPem = await readFile(certFile, 'utf8')
-    return { certPem, commonName: cn, organisation: o }
+    const { stdout: pkcs7Pem } = await execFile(
+      OPENSSL_BIN,
+      ['crl2pkcs7', '-nocrl', '-certfile', certFile],
+      { timeout: TIMEOUT_MS },
+    )
+    await execFile(
+      OPENSSL_BIN,
+      ['x509', '-in', certFile, '-outform', 'DER', '-out', derFile],
+      { timeout: TIMEOUT_MS },
+    )
+    const derHex = (await readFile(derFile)).toString('hex')
+    return { certPem, pkcs7Pem, derHex, commonName: cn, organisation: o }
   } finally {
     await rm(dir, { recursive: true, force: true })
   }

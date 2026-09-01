@@ -204,6 +204,14 @@ function MlKem() {
           description="All three ML-KEM parameter sets, the X25519/ML-KEM-768 hybrid, and the classical algorithms it competes with or combines with, keygen speed:"
           buttonLabel="Run a live speed test on the server"
           fetchSpeed={fetchKemSpeed}
+          note="Every figure below is the median of 5 real runs, not
+            just one - at these speeds, a single run is dominated by
+            process-spawn overhead rather than the actual keygen cost,
+            so ML-KEM-512/768/1024 can otherwise appear to finish in
+            the wrong order purely from noise. Six algorithms times
+            five runs each means this takes a few seconds, the server
+            hasn't stalled."
+          loadingHint="Running 30 real keygens, a few seconds…"
         />
       </section>
     </main>

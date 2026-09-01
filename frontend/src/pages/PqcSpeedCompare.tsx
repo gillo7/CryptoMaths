@@ -11,9 +11,17 @@ interface PqcSpeedCompareProps {
   description: string
   buttonLabel: string
   fetchSpeed: () => Promise<SpeedResult[]>
+  note?: string
+  loadingHint?: string
 }
 
-function PqcSpeedCompare({ description, buttonLabel, fetchSpeed }: PqcSpeedCompareProps) {
+function PqcSpeedCompare({
+  description,
+  buttonLabel,
+  fetchSpeed,
+  note,
+  loadingHint = 'Running…',
+}: PqcSpeedCompareProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [results, setResults] = useState<SpeedResult[] | null>(null)
 
@@ -33,13 +41,14 @@ function PqcSpeedCompare({ description, buttonLabel, fetchSpeed }: PqcSpeedCompa
     <div className="explorer">
       <span className="exercise-badge">Explore</span>
       <p>{description}</p>
+      {note && <p className="demo-note">{note}</p>}
       <button
         type="button"
         onClick={handleRun}
         disabled={status === 'loading'}
         className="compute-button"
       >
-        {status === 'loading' ? 'Running…' : buttonLabel}
+        {status === 'loading' ? loadingHint : buttonLabel}
       </button>
 
       {status === 'error' && (

@@ -48,6 +48,22 @@ async function measureMs(fn) {
   return performance.now() - t0
 }
 
+// At tens of milliseconds, a single run is dominated by process-spawn
+// noise (fork/exec, dynamic linking, disk I/O), not the actual crypto
+// cost - repeated, real ML-KEM-512/768/1024 keygen runs land in the
+// same ~15-25ms band with no consistent size-based ordering, and can
+// flip which one "wins" from run to run. The median of several runs
+// cancels that out without hiding a genuinely slow outlier the way a
+// mean would.
+async function measureMedianMs(fn, repeats = 5) {
+  const durations = []
+  for (let i = 0; i < repeats; i++) {
+    durations.push(await measureMs(fn))
+  }
+  durations.sort((a, b) => a - b)
+  return durations[Math.floor(durations.length / 2)]
+}
+
 // A KEM keypair, PEM in and out - same shape as the classical DH/ECDH
 // keygen demos elsewhere on the site, just backed by a lattice algorithm
 // instead of a curve or a prime.
@@ -163,9 +179,10 @@ async function signAndVerify(variants, variant, message) {
 async function measureKemSpeed() {
   const dir = await mkdtemp(path.join(tmpdir(), 'mlkem-speed-'))
   try {
-    const run = (args) => measureMs(() => opensslExec(args))
     const genpkey = (algorithm, file, extraOpts = []) =>
-      run(['genpkey', '-algorithm', algorithm, ...extraOpts, '-out', path.join(dir, file)])
+      measureMedianMs(() =>
+        opensslExec(['genpkey', '-algorithm', algorithm, ...extraOpts, '-out', path.join(dir, file)]),
+      )
 
     const mlKem512Ms = await genpkey('ML-KEM-512', 'mlkem512.pem')
     const mlKem768Ms = await genpkey('ML-KEM-768', 'mlkem768.pem')

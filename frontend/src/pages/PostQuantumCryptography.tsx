@@ -97,7 +97,9 @@ function PostQuantumCryptography() {
 
         <h3>NIST Standards</h3>
         <div className="spec-link-row">
-          <a href="#ml-kem" className="spec-link">ML-KEM</a>
+          <Link to="/post-quantum-cryptography/ml-kem" className="spec-link">
+            ML-KEM
+          </Link>
           <a href="#ml-dsa" className="spec-link">ML-DSA</a>
           <a href="#slh-dsa" className="spec-link">SLH-DSA</a>
         </div>

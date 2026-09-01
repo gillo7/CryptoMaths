@@ -15,8 +15,11 @@ POST /slh-dsa/speed                         -> { results: [{ label, ms }] }
 ```
 
 `variant` is checked against an explicit allowlist per algorithm:
-`ML-KEM-512/768/1024`, `ML-DSA-44/65/87`, and six SLH-DSA SHAKE
-parameter sets (`128s/128f/192s/192f/256s/256f`).
+`ML-KEM-512/768/1024`, `ML-DSA-44/65/87`, and the nine SLH-DSA
+parameter sets matching the dissertation's own `benchmark.py`
+selection - `SHA2-128s/128f`, `SHAKE-128s`, `SHA2-192s/192f`,
+`SHAKE-192s`, `SHA2-256s/256f`, `SHAKE-256s` (SHA2 gets both `s` and
+`f` at every level, SHAKE only `s`).
 
 ## Why this needs its own openssl
 
@@ -41,8 +44,13 @@ Intended to run behind nginx as an internal-only service, proxied at
 ## Safety notes
 
 `TIMEOUT_MS` is 20s per openssl invocation - generous next to the
-slowest real operation observed (SLH-DSA-SHAKE-256s signing, ~4s on
-the production Pi 4B), not a real constraint. `variant` and `message`
-(capped at 500 characters) are the only user input, and both are
-validated/sanitised before use. All OpenSSL invocations use `execFile`
-with an argument array, never a shell string.
+slowest single real operation observed (SLH-DSA-SHA2/SHAKE-192s
+signing, ~4-4.5s on the production Pi 4B), not a real constraint.
+`/slh-dsa/speed` runs 11 signs sequentially, six of them multi-second
+"s" variants, so the whole endpoint can take ~20-25s in total - nginx's
+`proxy_read_timeout` for `/api/pqc/` is set to 45s (see `DEPLOY.md`) to
+give that comfortable headroom, well above the usual 15s used
+elsewhere. `variant` and `message` (capped at 500 characters) are the
+only user input, and both are validated/sanitised before use. All
+OpenSSL invocations use `execFile` with an argument array, never a
+shell string.

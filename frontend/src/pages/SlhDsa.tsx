@@ -6,12 +6,15 @@ import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
 
 const SLH_DSA_VARIANTS = [
+  'SLH-DSA-SHA2-128s',
+  'SLH-DSA-SHA2-128f',
   'SLH-DSA-SHAKE-128s',
-  'SLH-DSA-SHAKE-128f',
+  'SLH-DSA-SHA2-192s',
+  'SLH-DSA-SHA2-192f',
   'SLH-DSA-SHAKE-192s',
-  'SLH-DSA-SHAKE-192f',
+  'SLH-DSA-SHA2-256s',
+  'SLH-DSA-SHA2-256f',
   'SLH-DSA-SHAKE-256s',
-  'SLH-DSA-SHAKE-256f',
 ] as const
 
 function SlhDsa() {
@@ -96,9 +99,15 @@ function SlhDsa() {
           signAndVerify={signAndVerifySlhDsa}
         />
         <PqcSpeedCompare
-          description="Ed25519, ML-DSA-65, and all four SLH-DSA-SHAKE parameter sets, signing speed:"
+          description="Ed25519, ML-DSA-65, and all nine SLH-DSA parameter sets above, signing speed:"
           buttonLabel="Run a live speed test on the server"
           fetchSpeed={fetchSlhDsaSpeed}
+          note="This one's genuinely slow, on purpose: six of the nine
+            SLH-DSA variants above are the small/slow ('s') kind this
+            page has been describing, each taking several real seconds
+            to sign. Expect this to take around 20-25 seconds in total,
+            not because anything's stuck."
+          loadingHint="Signing with all 11 algorithms, ~20-25 real seconds…"
         />
       </section>
     </main>

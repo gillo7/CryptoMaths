@@ -19,13 +19,20 @@ const MAX_MESSAGE_LENGTH = 500
 
 const ML_KEM_VARIANTS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024']
 const ML_DSA_VARIANTS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87']
+// Matches the exact selection tested in benchmark.py for the
+// dissertation this chapter draws from - SHA2 and SHAKE both covered,
+// but only the SHAKE small (s) variant per level, not its fast (f)
+// counterpart, since that's the set actually benchmarked there.
 const SLH_DSA_VARIANTS = [
+  'SLH-DSA-SHA2-128s',
+  'SLH-DSA-SHA2-128f',
   'SLH-DSA-SHAKE-128s',
-  'SLH-DSA-SHAKE-128f',
+  'SLH-DSA-SHA2-192s',
+  'SLH-DSA-SHA2-192f',
   'SLH-DSA-SHAKE-192s',
-  'SLH-DSA-SHAKE-192f',
+  'SLH-DSA-SHA2-256s',
+  'SLH-DSA-SHA2-256f',
   'SLH-DSA-SHAKE-256s',
-  'SLH-DSA-SHAKE-256f',
 ]
 
 function opensslExec(args, options = {}) {
@@ -253,10 +260,14 @@ async function measureDsaSpeed() {
   }
 }
 
-// Signing timing across SLH-DSA's small/fast tradeoff (s = smaller
-// signature, slower; f = faster, larger signature) alongside ML-DSA-65
-// and Ed25519, to show both gaps at once: hash-based vs lattice-based,
-// and the internal s/f tradeoff within SLH-DSA itself.
+// Signing timing across the full benchmark.py SLH-DSA selection (all
+// nine, SHA2 and SHAKE, s and f where each is actually tested) alongside
+// ML-DSA-65 and Ed25519 as fast baselines. Deliberately single-shot, not
+// median-of-5 like the other two speed benchmarks - the six "s" variants
+// alone already take upwards of 20s combined, so repeating everything
+// 5x would risk the nginx proxy_read_timeout; the gaps here are wide
+// enough (double-digit ms vs multi-second) that single-run noise was
+// never the concern it was for ML-KEM/ML-DSA's tightly-clustered numbers.
 async function measureSlhDsaSpeed() {
   const dir = await mkdtemp(path.join(tmpdir(), 'slhdsa-speed-'))
   try {
@@ -272,14 +283,11 @@ async function measureSlhDsaSpeed() {
         ]),
       )
     }
-    const results = [
-      { label: 'Ed25519', ms: await signWith('Ed25519') },
-      { label: 'ML-DSA-65', ms: await signWith('ML-DSA-65') },
-      { label: 'SLH-DSA-SHAKE-128f', ms: await signWith('SLH-DSA-SHAKE-128f') },
-      { label: 'SLH-DSA-SHAKE-128s', ms: await signWith('SLH-DSA-SHAKE-128s') },
-      { label: 'SLH-DSA-SHAKE-256f', ms: await signWith('SLH-DSA-SHAKE-256f') },
-      { label: 'SLH-DSA-SHAKE-256s', ms: await signWith('SLH-DSA-SHAKE-256s') },
-    ]
+    const results = [{ label: 'Ed25519', ms: await signWith('Ed25519') }]
+    results.push({ label: 'ML-DSA-65', ms: await signWith('ML-DSA-65') })
+    for (const variant of SLH_DSA_VARIANTS) {
+      results.push({ label: variant, ms: await signWith(variant) })
+    }
     return { results }
   } finally {
     await rm(dir, { recursive: true, force: true })

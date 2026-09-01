@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import PostQuantumPlaceholder from './PostQuantumPlaceholder'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
+import './Hashing.css'
 
 function Hqc() {
   return (
@@ -35,6 +36,22 @@ function Hqc() {
           different math approach than ML-KEM, so that if ML-KEM ever
           proves vulnerable, there is still something standing.
         </p>
+        <a
+          href="https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Official statement - NIST</span>
+          <p className="article-title">
+            NIST Selects HQC as Fifth Algorithm for Post-Quantum Encryption
+          </p>
+          <p className="article-byline">NIST, 11 March 2025</p>
+          <p className="article-excerpt">
+            "Moody said that HQC is a lengthier algorithm than ML-KEM
+            and therefore demands more computing resources."
+          </p>
+        </a>
         <p>
           Where ML-KEM's security rests on Module-LWE, structured
           lattices with small noise defeating exact linear algebra,

@@ -209,7 +209,9 @@ async function measureKemSpeed() {
 // Signing timing for every ML-DSA parameter set against its two
 // classical peers - Ed25519 (fixed-shape, fast) and RSA-PSS (fixed-shape,
 // also fast) are the baseline the "signing time carries real variance"
-// point on the ML-DSA page is contrasted against.
+// point on the ML-DSA page is contrasted against. All of these land in
+// the same 15-30ms range as ML-KEM's keygen, so the same median-of-5
+// treatment applies for the same reason - see measureKemSpeed above.
 async function measureDsaSpeed() {
   const dir = await mkdtemp(path.join(tmpdir(), 'mldsa-speed-'))
   try {
@@ -219,7 +221,7 @@ async function measureDsaSpeed() {
       const keyFile = path.join(dir, `${algorithm}.pem`)
       await opensslExec(['genpkey', '-algorithm', algorithm, '-out', keyFile])
       const sigFile = path.join(dir, `${algorithm}.sig`)
-      return measureMs(() =>
+      return measureMedianMs(() =>
         opensslExec([
           'pkeyutl', '-sign', '-inkey', keyFile, '-rawin', '-in', msgFile, '-out', sigFile,
         ]),
@@ -231,7 +233,7 @@ async function measureDsaSpeed() {
         'genpkey', '-algorithm', 'RSA', '-pkeyopt', 'rsa_keygen_bits:2048', '-out', keyFile,
       ])
       const sigFile = path.join(dir, 'rsa.sig')
-      return measureMs(() =>
+      return measureMedianMs(() =>
         opensslExec([
           'pkeyutl', '-sign', '-inkey', keyFile, '-rawin', '-digest', 'sha256',
           '-pkeyopt', 'rsa_padding_mode:pss', '-in', msgFile, '-out', sigFile,

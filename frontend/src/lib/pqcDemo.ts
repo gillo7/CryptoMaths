@@ -142,3 +142,7 @@ export function fetchSlhDsaSpeed() {
 export function fetchHqcSpeed() {
   return fetchSpeed('hqc')
 }
+
+export function fetchFnDsaSpeed() {
+  return fetchSpeed('fn-dsa')
+}

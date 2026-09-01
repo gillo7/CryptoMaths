@@ -429,6 +429,47 @@ async function measureSlhDsaSpeed() {
   }
 }
 
+// Signing timing at matching NIST security levels: Falcon-512 vs
+// ML-DSA-44 (Level 1), Falcon-1024 vs ML-DSA-87 (Level 5) - Falcon has
+// no Level 3 parameter set, so there's no ML-DSA-65 pairing here,
+// unlike the ML-KEM/HQC speed benchmark's three-way pairing. Ed25519
+// stays as the classical baseline. Median-of-many for the same reason
+// as every other fast (<50ms) benchmark on this site.
+async function measureFnDsaSpeed() {
+  const dir = await mkdtemp(path.join(tmpdir(), 'fndsa-speed-'))
+  try {
+    const msgFile = path.join(dir, 'msg.txt')
+    await writeFile(msgFile, 'Hello, post-quantum world!')
+    const signWithOpenssl = async (algorithm) => {
+      const keyFile = path.join(dir, `${algorithm}.pem`)
+      await opensslExec(['genpkey', '-algorithm', algorithm, '-out', keyFile])
+      const sigFile = path.join(dir, `${algorithm}.sig`)
+      return measureMedianMs(() =>
+        opensslExec([
+          'pkeyutl', '-sign', '-inkey', keyFile, '-rawin', '-in', msgFile, '-out', sigFile,
+        ]),
+      )
+    }
+    const signWithSigTool = async (variant) => {
+      const keypair = JSON.parse((await sigToolExec(['keygen', variant])).stdout)
+      return measureMedianMs(() =>
+        sigToolExec(['sign', variant, keypair.privateKeyHex, 'Hello, post-quantum world!']),
+      )
+    }
+
+    const results = [
+      { label: 'Ed25519', ms: await signWithOpenssl('Ed25519') },
+      { label: 'Falcon-512', ms: await signWithSigTool('Falcon-512') },
+      { label: 'ML-DSA-44', ms: await signWithOpenssl('ML-DSA-44') },
+      { label: 'Falcon-1024', ms: await signWithSigTool('Falcon-1024') },
+      { label: 'ML-DSA-87', ms: await signWithOpenssl('ML-DSA-87') },
+    ]
+    return { results }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
 async function readJsonBody(req) {
   const chunks = []
   let size = 0
@@ -494,6 +535,11 @@ const server = http.createServer(async (req, res) => {
   if (route === '/fn-dsa/sign') {
     const body = await readJsonBody(req).catch(() => ({}))
     respond(res, signAndVerifyFnDsa(body.variant, body.message))
+    return
+  }
+
+  if (route === '/fn-dsa/speed') {
+    respond(res, measureFnDsaSpeed())
     return
   }
 

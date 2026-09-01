@@ -19,6 +19,7 @@ import PostQuantumCryptography from './pages/PostQuantumCryptography'
 import MlKem from './pages/MlKem'
 import MlDsa from './pages/MlDsa'
 import SlhDsa from './pages/SlhDsa'
+import Hqc from './pages/Hqc'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -71,6 +72,7 @@ function App() {
         <Route path="/post-quantum-cryptography/ml-kem" element={<MlKem />} />
         <Route path="/post-quantum-cryptography/ml-dsa" element={<MlDsa />} />
         <Route path="/post-quantum-cryptography/slh-dsa" element={<SlhDsa />} />
+        <Route path="/post-quantum-cryptography/hqc" element={<Hqc />} />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

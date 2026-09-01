@@ -111,7 +111,9 @@ function PostQuantumCryptography() {
         <h3>Advanced drafts</h3>
         <div className="spec-link-row">
           <a href="#fn-dsa" className="spec-link">FN-DSA</a>
-          <a href="#hqc" className="spec-link">HQC</a>
+          <Link to="/post-quantum-cryptography/hqc" className="spec-link">
+            HQC
+          </Link>
         </div>
 
         <h3>Additional candidates</h3>

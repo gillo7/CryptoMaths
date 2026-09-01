@@ -1,0 +1,89 @@
+import { Link } from 'react-router-dom'
+import PostQuantumPlaceholder from './PostQuantumPlaceholder'
+import './PostQuantumCryptography.css'
+import './SymmetricEncryption.css'
+
+function Hqc() {
+  return (
+    <main className="pqc-page">
+      <Link to="/post-quantum-cryptography" className="back-link">
+        ← Back to Post-Quantum Cryptography
+      </Link>
+
+      <h1>HQC</h1>
+
+      <section>
+        <p>
+          Where <Link to="/post-quantum-cryptography/ml-kem">ML-KEM</Link>,{' '}
+          <Link to="/post-quantum-cryptography/ml-dsa">ML-DSA</Link> and{' '}
+          <Link to="/post-quantum-cryptography/slh-dsa">SLH-DSA</Link> are
+          already finished, standardised FIPS documents, HQC is a step
+          earlier in the pipeline: NIST selected it as its fifth
+          post-quantum algorithm in March 2025, with a finalised
+          standard targeted for 2027.
+        </p>
+        <p>
+          HQC exists for a specific, deliberate reason, not because
+          ML-KEM is considered weak. NIST's own announcement is
+          explicit: HQC is not intended to replace ML-KEM, which
+          remains the recommended default for general encryption. It
+          is a backup built on entirely different mathematics,
+          specifically so that a future weakness discovered in
+          lattice-based cryptography would not take down every
+          standardised KEM at once. As Dustin Moody, who heads NIST's
+          PQC project, put it, the goal is a fallback that rests on a
+          different math approach than ML-KEM, so that if ML-KEM ever
+          proves vulnerable, there is still something standing.
+        </p>
+        <p>
+          Where ML-KEM's security rests on Module-LWE, structured
+          lattices with small noise defeating exact linear algebra,
+          HQC's security rests on error-correcting codes, the same
+          field of mathematics used for decades to recover corrupted
+          data from noisy transmission. A message is encoded using a
+          linear code with a specific, exploitable structure, then
+          deliberately mixed with random errors before being sent.
+          Someone who knows the private structure can efficiently
+          decode through the noise and recover the message; without
+          it, recovering the message means solving general syndrome
+          decoding, believed to be hard for both classical and quantum
+          computers.
+        </p>
+        <p>
+          That security comes at a real cost, though. Against
+          ML-KEM-512's 800-byte public key, HQC-128 needs 2,249 bytes;
+          against ML-KEM-512's 768-byte ciphertext, HQC-128 needs
+          4,497 bytes, roughly six times larger. Moody's own framing
+          is blunt about this: HQC is lengthier than ML-KEM and
+          demands more computing resources, but its clean and secure
+          operation was what convinced reviewers it was worth the
+          cost as an insurance policy.
+        </p>
+        <table className="ref-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>ML-KEM-512</th>
+              <th>HQC-128</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Public key</td>
+              <td>800 bytes</td>
+              <td>2,249 bytes</td>
+            </tr>
+            <tr>
+              <td>Ciphertext</td>
+              <td>768 bytes</td>
+              <td>4,497 bytes</td>
+            </tr>
+          </tbody>
+        </table>
+        <PostQuantumPlaceholder label="Live HQC demo: not yet possible, OpenSSL 3.5 doesn't implement HQC (still pre-standardisation, a draft is targeted for 2026 and a final standard for 2027)" />
+      </section>
+    </main>
+  )
+}
+
+export default Hqc

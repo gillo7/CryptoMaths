@@ -201,7 +201,7 @@ function MlKem() {
         <MlKemExample />
         <MlKemEncapDecap />
         <PqcSpeedCompare
-          description="ML-KEM-768 against the classical algorithms it hybridises or competes with, keygen speed:"
+          description="All three ML-KEM parameter sets, the X25519/ML-KEM-768 hybrid, and the classical algorithms it competes with or combines with, keygen speed:"
           buttonLabel="Run a live speed test on the server"
           fetchSpeed={fetchKemSpeed}
         />

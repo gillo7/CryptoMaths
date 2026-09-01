@@ -152,35 +152,36 @@ async function signAndVerify(variants, variant, message) {
   }
 }
 
-// Keygen timing for ML-KEM-768 against the classical algorithms it
-// would replace or hybridise with in TLS.
+// Keygen timing across all three ML-KEM parameter sets, the hybrid
+// IETF-recommended combination, and the classical algorithms ML-KEM
+// replaces or hybridises with in TLS. X25519MLKEM768 is a real TLS 1.3
+// group name (confirmed via `openssl list -tls-groups`), but there's
+// no single encodable key behind it - a hybrid handshake genuinely is
+// two independent key exchanges run side by side, so its cost is
+// measured honestly as X25519 keygen + ML-KEM-768 keygen added
+// together, not faked as one atomic genpkey call.
 async function measureKemSpeed() {
   const dir = await mkdtemp(path.join(tmpdir(), 'mlkem-speed-'))
   try {
     const run = (args) => measureMs(() => opensslExec(args))
+    const genpkey = (algorithm, file, extraOpts = []) =>
+      run(['genpkey', '-algorithm', algorithm, ...extraOpts, '-out', path.join(dir, file)])
+
+    const mlKem512Ms = await genpkey('ML-KEM-512', 'mlkem512.pem')
+    const mlKem768Ms = await genpkey('ML-KEM-768', 'mlkem768.pem')
+    const mlKem1024Ms = await genpkey('ML-KEM-1024', 'mlkem1024.pem')
+    const x25519Ms = await genpkey('X25519', 'x25519.pem')
+    const rsaMs = await genpkey('RSA', 'rsa.pem', ['-pkeyopt', 'rsa_keygen_bits:2048'])
+    const p256Ms = await genpkey('EC', 'p256.pem', ['-pkeyopt', 'ec_paramgen_curve:P-256'])
+
     const results = [
-      {
-        label: 'ML-KEM-768',
-        ms: await run(['genpkey', '-algorithm', 'ML-KEM-768', '-out', path.join(dir, 'a.pem')]),
-      },
-      {
-        label: 'RSA-2048',
-        ms: await run([
-          'genpkey', '-algorithm', 'RSA', '-pkeyopt', 'rsa_keygen_bits:2048',
-          '-out', path.join(dir, 'b.pem'),
-        ]),
-      },
-      {
-        label: 'P-256',
-        ms: await run([
-          'genpkey', '-algorithm', 'EC', '-pkeyopt', 'ec_paramgen_curve:P-256',
-          '-out', path.join(dir, 'c.pem'),
-        ]),
-      },
-      {
-        label: 'X25519',
-        ms: await run(['genpkey', '-algorithm', 'X25519', '-out', path.join(dir, 'd.pem')]),
-      },
+      { label: 'ML-KEM-512', ms: mlKem512Ms },
+      { label: 'ML-KEM-768', ms: mlKem768Ms },
+      { label: 'ML-KEM-1024', ms: mlKem1024Ms },
+      { label: 'X25519/ML-KEM-768 (hybrid)', ms: x25519Ms + mlKem768Ms },
+      { label: 'RSA-2048', ms: rsaMs },
+      { label: 'P-256', ms: p256Ms },
+      { label: 'X25519', ms: x25519Ms },
     ]
     return { results }
   } finally {

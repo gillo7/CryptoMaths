@@ -79,7 +79,9 @@ export async function hqcEncapAndDecap(variant: string): Promise<HqcEncapDecapRe
 
 export interface SignResult {
   variant: string
-  publicPem: string
+  // FN-DSA has no assigned OID yet, so there's no PEM to show - only
+  // ML-DSA/SLH-DSA (real OpenSSL-backed, real OIDs) populate this.
+  publicPem?: string
   message: string
   signatureHex: string
   signatureBytes: number
@@ -87,7 +89,7 @@ export interface SignResult {
 }
 
 async function signAndVerify(
-  endpoint: 'ml-dsa' | 'slh-dsa',
+  endpoint: 'ml-dsa' | 'slh-dsa' | 'fn-dsa',
   variant: string,
   message: string,
 ): Promise<SignResult> {
@@ -107,6 +109,10 @@ export function signAndVerifyMlDsa(variant: string, message: string) {
 
 export function signAndVerifySlhDsa(variant: string, message: string) {
   return signAndVerify('slh-dsa', variant, message)
+}
+
+export function signAndVerifyFnDsa(variant: string, message: string) {
+  return signAndVerify('fn-dsa', variant, message)
 }
 
 export interface SpeedResult {

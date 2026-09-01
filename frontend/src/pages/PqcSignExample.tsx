@@ -11,9 +11,15 @@ interface PqcSignExampleProps {
   variants: readonly string[]
   defaultVariant: string
   signAndVerify: (variant: string, message: string) => Promise<SignResult>
+  toolLabel?: string
 }
 
-function PqcSignExample({ variants, defaultVariant, signAndVerify }: PqcSignExampleProps) {
+function PqcSignExample({
+  variants,
+  defaultVariant,
+  signAndVerify,
+  toolLabel = 'OpenSSL',
+}: PqcSignExampleProps) {
   const [variant, setVariant] = useState(defaultVariant)
   const [message, setMessage] = useState('Hello, post-quantum world!')
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
@@ -88,7 +94,7 @@ function PqcSignExample({ variants, defaultVariant, signAndVerify }: PqcSignExam
           </div>
           <p className="demo-note">
             The full signature, generated and verified for real by this
-            server's own OpenSSL, just now:
+            server's own {toolLabel}, just now:
           </p>
           <div className="code-block code-block-scroll">
             <code>{wrapHex(result.signatureHex)}</code>

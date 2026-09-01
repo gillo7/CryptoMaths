@@ -27,6 +27,11 @@ const HQC_LIB_PATH =
   process.env.HQC_LIB_PATH || path.join(SCRIPT_DIR, 'vendor', 'liboqs-install', 'lib')
 const HQC_VARIANTS = ['HQC-128', 'HQC-192', 'HQC-256']
 
+// Same liboqs install HQC uses - Falcon is built into it too now.
+const SIG_TOOL_BIN =
+  process.env.SIG_TOOL_BIN || path.join(SCRIPT_DIR, 'vendor', 'sig-tool')
+const FN_DSA_VARIANTS = ['Falcon-512', 'Falcon-1024']
+
 const ML_KEM_VARIANTS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024']
 const ML_DSA_VARIANTS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87']
 // Matches the exact selection tested in benchmark.py for the
@@ -223,6 +228,45 @@ async function measureHqcVsKemSpeed() {
     return { results }
   } finally {
     await rm(dir, { recursive: true, force: true })
+  }
+}
+
+// FN-DSA (Falcon) isn't at Initial Public Draft yet, let alone
+// assigned an OID, so - same story as HQC - this calls liboqs's own
+// OQS_SIG API directly (via sig-tool.c) instead of OpenSSL, which has
+// no Falcon support at all (confirmed via `openssl list
+// -signature-algorithms`). Falcon signatures are variable-length, so
+// unlike ML-DSA/SLH-DSA below, the reported signatureBytes genuinely
+// varies run to run - that's real, not a bug.
+function sigToolExec(args) {
+  return execFile(SIG_TOOL_BIN, args, {
+    timeout: TIMEOUT_MS,
+    env: { ...process.env, LD_LIBRARY_PATH: HQC_LIB_PATH },
+  })
+}
+
+async function signAndVerifyFnDsa(variant, message) {
+  if (!FN_DSA_VARIANTS.includes(variant)) {
+    throw new Error(`variant must be one of ${FN_DSA_VARIANTS.join(', ')}`)
+  }
+  const cleanMessage = sanitizeMessage(message, 'Hello, post-quantum world!')
+  const keypair = JSON.parse((await sigToolExec(['keygen', variant])).stdout)
+  const signed = JSON.parse(
+    (await sigToolExec(['sign', variant, keypair.privateKeyHex, cleanMessage])).stdout,
+  )
+  const verified = JSON.parse(
+    (
+      await sigToolExec([
+        'verify', variant, keypair.publicKeyHex, cleanMessage, signed.signatureHex,
+      ])
+    ).stdout,
+  )
+  return {
+    variant,
+    message: cleanMessage,
+    signatureHex: signed.signatureHex,
+    signatureBytes: signed.signatureBytes,
+    verified: verified.verified,
   }
 }
 
@@ -444,6 +488,12 @@ const server = http.createServer(async (req, res) => {
 
   if (route === '/hqc/speed') {
     respond(res, measureHqcVsKemSpeed())
+    return
+  }
+
+  if (route === '/fn-dsa/sign') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, signAndVerifyFnDsa(body.variant, body.message))
     return
   }
 

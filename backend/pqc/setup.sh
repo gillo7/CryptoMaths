@@ -15,13 +15,14 @@ mkdir -p vendor/liboqs
   git fetch --depth 1 https://github.com/open-quantum-safe/liboqs.git "$LIBOQS_COMMIT" && \
   git checkout -q FETCH_HEAD)
 
-# Scoped to just HQC's three parameter sets - a full liboqs build
-# compiles dozens of algorithms this service never uses.
+# Scoped to just HQC's three parameter sets plus Falcon-512/1024 - a
+# full liboqs build compiles dozens of algorithms this service never
+# uses.
 cmake -S vendor/liboqs -B vendor/liboqs/build \
   -DCMAKE_INSTALL_PREFIX="$(pwd)/vendor/liboqs-install" \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_SHARED_LIBS=ON \
-  -DOQS_MINIMAL_BUILD='KEM_hqc_1;KEM_hqc_3;KEM_hqc_5' \
+  -DOQS_MINIMAL_BUILD='KEM_hqc_1;KEM_hqc_3;KEM_hqc_5;SIG_falcon_512;SIG_falcon_1024' \
   -DOQS_BUILD_ONLY_LIB=ON
 cmake --build vendor/liboqs/build --parallel "$(nproc)"
 cmake --build vendor/liboqs/build --target install
@@ -31,4 +32,9 @@ gcc -O2 -Wall -Wextra \
   -L vendor/liboqs-install/lib \
   hqc-tool.c -loqs -o vendor/hqc-tool
 
-echo "Built vendor/hqc-tool @ liboqs $LIBOQS_COMMIT"
+gcc -O2 -Wall -Wextra \
+  -I vendor/liboqs-install/include \
+  -L vendor/liboqs-install/lib \
+  sig-tool.c -loqs -o vendor/sig-tool
+
+echo "Built vendor/hqc-tool and vendor/sig-tool @ liboqs $LIBOQS_COMMIT"

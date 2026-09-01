@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
+import { signAndVerifyFnDsa } from '../lib/pqcDemo'
+import PqcSignExample from './PqcSignExample'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
+
+const FN_DSA_VARIANTS = ['Falcon-512', 'Falcon-1024'] as const
 
 function FnDsa() {
   return (
@@ -90,6 +94,12 @@ function FnDsa() {
             EUROCRYPT 2025
           </p>
         </a>
+        <PqcSignExample
+          variants={FN_DSA_VARIANTS}
+          defaultVariant="Falcon-512"
+          signAndVerify={signAndVerifyFnDsa}
+          toolLabel="liboqs"
+        />
       </section>
     </main>
   )

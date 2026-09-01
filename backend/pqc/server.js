@@ -69,6 +69,49 @@ async function generateKemKeypair(variant) {
   }
 }
 
+// Alice's keypair, then Bob encapsulating against her public key (a
+// fresh shared secret plus the ciphertext that carries it), then Alice
+// decapsulating that ciphertext with her private key - real proof the
+// two independently arrive at the identical secret, matching the u/v
+// construction described on the page itself.
+async function encapDecap(variant) {
+  if (!ML_KEM_VARIANTS.includes(variant)) {
+    throw new Error(`variant must be one of ${ML_KEM_VARIANTS.join(', ')}`)
+  }
+  const dir = await mkdtemp(path.join(tmpdir(), 'mlkem-encap-'))
+  const keyFile = path.join(dir, 'key.pem')
+  const pubFile = path.join(dir, 'pub.pem')
+  const ctFile = path.join(dir, 'ct.bin')
+  const bobSecretFile = path.join(dir, 'bob.secret')
+  const aliceSecretFile = path.join(dir, 'alice.secret')
+  try {
+    await opensslExec(['genpkey', '-algorithm', variant, '-out', keyFile])
+    await opensslExec(['pkey', '-in', keyFile, '-pubout', '-out', pubFile])
+    await opensslExec([
+      'pkeyutl', '-encap', '-inkey', pubFile, '-pubin', '-out', ctFile,
+      '-secret', bobSecretFile,
+    ])
+    await opensslExec([
+      'pkeyutl', '-decap', '-inkey', keyFile, '-in', ctFile, '-secret', aliceSecretFile,
+    ])
+    const publicPem = await readFile(pubFile, 'utf8')
+    const ciphertext = await readFile(ctFile)
+    const bobSecret = await readFile(bobSecretFile)
+    const aliceSecret = await readFile(aliceSecretFile)
+    return {
+      variant,
+      publicPem,
+      ciphertextHex: ciphertext.toString('hex'),
+      ciphertextBytes: ciphertext.length,
+      bobSecretHex: bobSecret.toString('hex'),
+      aliceSecretHex: aliceSecret.toString('hex'),
+      matched: bobSecret.equals(aliceSecret),
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
 // Real keygen -> sign -> verify for any of ML-DSA/SLH-DSA's direct
 // message-signing schemes - openssl's pkeyutl with -rawin signs the
 // message itself (these aren't hash-then-sign like RSA/ECDSA, the
@@ -254,6 +297,12 @@ const server = http.createServer(async (req, res) => {
   if (route === '/ml-kem/keygen') {
     const body = await readJsonBody(req).catch(() => ({}))
     respond(res, generateKemKeypair(body.variant))
+    return
+  }
+
+  if (route === '/ml-kem/encap-decap') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, encapDecap(body.variant))
     return
   }
 

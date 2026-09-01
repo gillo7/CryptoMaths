@@ -15,6 +15,27 @@ export async function generateKemKeypair(variant: string): Promise<KemKeypair> {
   return data
 }
 
+export interface EncapDecapResult {
+  variant: string
+  publicPem: string
+  ciphertextHex: string
+  ciphertextBytes: number
+  bobSecretHex: string
+  aliceSecretHex: string
+  matched: boolean
+}
+
+export async function encapAndDecap(variant: string): Promise<EncapDecapResult> {
+  const response = await fetch('/api/pqc/ml-kem/encap-decap', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ variant }),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}
+
 export interface SignResult {
   variant: string
   publicPem: string

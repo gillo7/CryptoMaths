@@ -5,7 +5,8 @@ algorithm pages (ML-KEM, ML-DSA, SLH-DSA). Wraps a real `openssl` CLI
 directly, same as every other service in this repo.
 
 ```
-POST /ml-kem/keygen  { variant }            -> { variant, publicPem, privatePem }
+POST /ml-kem/keygen       { variant }        -> { variant, publicPem, privatePem }
+POST /ml-kem/encap-decap  { variant }        -> { variant, publicPem, ciphertextHex, ciphertextBytes, bobSecretHex, aliceSecretHex, matched }
 POST /ml-kem/speed                          -> { results: [{ label, ms }] }
 POST /ml-dsa/sign    { variant, message }   -> { variant, publicPem, message, signatureHex, signatureBytes, verified }
 POST /ml-dsa/speed                          -> { results: [{ label, ms }] }

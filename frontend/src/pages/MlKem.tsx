@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { fetchKemSpeed } from '../lib/pqcDemo'
+import MlKemEncapDecap from './MlKemEncapDecap'
 import MlKemExample from './MlKemExample'
 import PqcSpeedCompare from './PqcSpeedCompare'
 import './PostQuantumCryptography.css'
@@ -198,6 +199,7 @@ function MlKem() {
           the table above shows.
         </p>
         <MlKemExample />
+        <MlKemEncapDecap />
         <PqcSpeedCompare
           description="ML-KEM-768 against the classical algorithms it hybridises or competes with, keygen speed:"
           buttonLabel="Run a live speed test on the server"

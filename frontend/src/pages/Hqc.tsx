@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { fetchHqcSpeed } from '../lib/pqcDemo'
 import HqcEncapDecap from './HqcEncapDecap'
 import HqcExample from './HqcExample'
+import PqcSpeedCompare from './PqcSpeedCompare'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
@@ -122,6 +124,15 @@ function Hqc() {
         </p>
         <HqcExample />
         <HqcEncapDecap />
+        <PqcSpeedCompare
+          description="ML-KEM vs HQC, keygen speed at matching NIST security levels:"
+          buttonLabel="Run a live speed test on the server"
+          fetchSpeed={fetchHqcSpeed}
+          note="Every figure below is the median of 5 real runs, not
+            just one - at these speeds, a single run is dominated by
+            process-spawn overhead rather than the actual keygen cost."
+          loadingHint="Running 30 real keygens, a few seconds…"
+        />
       </section>
     </main>
   )

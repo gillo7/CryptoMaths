@@ -195,6 +195,34 @@ async function hqcEncapDecap(variant) {
   }
 }
 
+// Keygen timing across matching NIST security levels: ML-KEM-512 vs
+// HQC-128 (Level 1), ML-KEM-768 vs HQC-192 (Level 3), ML-KEM-1024 vs
+// HQC-256 (Level 5) - both land in the same tens-of-ms range on this
+// hardware, so median-of-5 applies here for the same reason it does in
+// measureKemSpeed above.
+async function measureHqcVsKemSpeed() {
+  const dir = await mkdtemp(path.join(tmpdir(), 'hqc-speed-'))
+  try {
+    const mlKemMs = (variant) =>
+      measureMedianMs(() =>
+        opensslExec(['genpkey', '-algorithm', variant, '-out', path.join(dir, `${variant}.pem`)]),
+      )
+    const hqcMs = (variant) => measureMedianMs(() => hqcToolExec(['keygen', variant]))
+
+    const results = [
+      { label: 'ML-KEM-512', ms: await mlKemMs('ML-KEM-512') },
+      { label: 'HQC-128', ms: await hqcMs('HQC-128') },
+      { label: 'ML-KEM-768', ms: await mlKemMs('ML-KEM-768') },
+      { label: 'HQC-192', ms: await hqcMs('HQC-192') },
+      { label: 'ML-KEM-1024', ms: await mlKemMs('ML-KEM-1024') },
+      { label: 'HQC-256', ms: await hqcMs('HQC-256') },
+    ]
+    return { results }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
 // Real keygen -> sign -> verify for any of ML-DSA/SLH-DSA's direct
 // message-signing schemes - openssl's pkeyutl with -rawin signs the
 // message itself (these aren't hash-then-sign like RSA/ECDSA, the
@@ -408,6 +436,11 @@ const server = http.createServer(async (req, res) => {
   if (route === '/hqc/encap-decap') {
     const body = await readJsonBody(req).catch(() => ({}))
     respond(res, hqcEncapDecap(body.variant))
+    return
+  }
+
+  if (route === '/hqc/speed') {
+    respond(res, measureHqcVsKemSpeed())
     return
   }
 

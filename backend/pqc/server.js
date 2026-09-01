@@ -71,8 +71,11 @@ async function measureMs(fn) {
 // same ~15-25ms band with no consistent size-based ordering, and can
 // flip which one "wins" from run to run. The median of several runs
 // cancels that out without hiding a genuinely slow outlier the way a
-// mean would.
-async function measureMedianMs(fn, repeats = 5) {
+// mean would. 25 rather than a smaller number of repeats because some
+// operations have real, substantial variance of their own - 25 real
+// RSA-2048 keygens on this Pi ranged from 132ms to 850ms, so a handful
+// of samples can land a misleadingly high or low median just by luck.
+async function measureMedianMs(fn, repeats = 25) {
   const durations = []
   for (let i = 0; i < repeats; i++) {
     durations.push(await measureMs(fn))

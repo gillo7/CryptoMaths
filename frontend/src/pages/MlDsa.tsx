@@ -150,12 +150,12 @@ function MlDsa() {
           description="Ed25519, RSA-PSS, and all three ML-DSA parameter sets, signing speed:"
           buttonLabel="Run a live speed test on the server"
           fetchSpeed={fetchMlDsaSpeed}
-          note="Every figure below is the median of 5 real runs, not
+          note="Every figure below is the median of 25 real runs, not
             just one - at these speeds, a single run is dominated by
             process-spawn overhead rather than the actual signing
-            cost. Five algorithms times five runs each means this
-            takes a couple of seconds, the server hasn't stalled."
-          loadingHint="Running 25 real signs, a couple of seconds…"
+            cost. Five algorithms times 25 runs each takes a few
+            seconds, the server hasn't stalled."
+          loadingHint="Running 125 real signs, a few seconds…"
         />
       </section>
     </main>

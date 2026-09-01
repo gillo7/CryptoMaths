@@ -128,10 +128,10 @@ function Hqc() {
           description="ML-KEM vs HQC, keygen speed at matching NIST security levels:"
           buttonLabel="Run a live speed test on the server"
           fetchSpeed={fetchHqcSpeed}
-          note="Every figure below is the median of 5 real runs, not
+          note="Every figure below is the median of 25 real runs, not
             just one - at these speeds, a single run is dominated by
             process-spawn overhead rather than the actual keygen cost."
-          loadingHint="Running 30 real keygens, a few seconds…"
+          loadingHint="Running 150 real keygens, a few seconds…"
         />
       </section>
     </main>

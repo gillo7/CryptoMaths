@@ -204,14 +204,17 @@ function MlKem() {
           description="All three ML-KEM parameter sets, the X25519/ML-KEM-768 hybrid, and the classical algorithms it competes with or combines with, keygen speed:"
           buttonLabel="Run a live speed test on the server"
           fetchSpeed={fetchKemSpeed}
-          note="Every figure below is the median of 5 real runs, not
+          note="Every figure below is the median of 25 real runs, not
             just one - at these speeds, a single run is dominated by
             process-spawn overhead rather than the actual keygen cost,
             so ML-KEM-512/768/1024 can otherwise appear to finish in
-            the wrong order purely from noise. Six algorithms times
-            five runs each means this takes a few seconds, the server
-            hasn't stalled."
-          loadingHint="Running 30 real keygens, a few seconds…"
+            the wrong order purely from noise. RSA-2048 keygen alone
+            varies for genuine reasons too, real runs on this server
+            ranged from 132ms to 850ms, which is exactly why this uses
+            25 runs and the median rather than trusting any single one.
+            Six algorithms times 25 runs each takes roughly 10 seconds,
+            the server hasn't stalled."
+          loadingHint="Running 150 real keygens, roughly 10 seconds…"
         />
       </section>
     </main>

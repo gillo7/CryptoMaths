@@ -100,7 +100,9 @@ function PostQuantumCryptography() {
           <Link to="/post-quantum-cryptography/ml-kem" className="spec-link">
             ML-KEM
           </Link>
-          <a href="#ml-dsa" className="spec-link">ML-DSA</a>
+          <Link to="/post-quantum-cryptography/ml-dsa" className="spec-link">
+            ML-DSA
+          </Link>
           <a href="#slh-dsa" className="spec-link">SLH-DSA</a>
         </div>
 

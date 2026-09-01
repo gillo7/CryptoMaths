@@ -100,8 +100,8 @@ function MlKem() {
         <p>
           Every one of those steps (As, Aᵀr, tᵀr, sᵀu) is a polynomial
           multiplication in R<sub>q</sub>, and how cheaply that
-          multiplication can be done is where the architecture-agnostic
-          performance this work observes comes from. Multiplied the
+          multiplication can be done is where ML-KEM's
+          architecture-agnostic performance comes from. Multiplied the
           direct way, two polynomials with n terms each cost O(n²)
           operations: every coefficient of the first against every
           coefficient of the second, the same reason multiplying two

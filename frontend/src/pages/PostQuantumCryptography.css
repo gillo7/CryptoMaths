@@ -23,7 +23,8 @@
   line-height: 155%;
 }
 
-.pqc-page ul {
+.pqc-page ul,
+.pqc-page ol {
   margin: 0;
   padding-left: 22px;
   display: flex;

@@ -17,6 +17,7 @@ import CurvesInPractice from './pages/CurvesInPractice'
 import Certificates from './pages/Certificates'
 import PostQuantumCryptography from './pages/PostQuantumCryptography'
 import MlKem from './pages/MlKem'
+import MlDsa from './pages/MlDsa'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -67,6 +68,7 @@ function App() {
           element={<PostQuantumCryptography />}
         />
         <Route path="/post-quantum-cryptography/ml-kem" element={<MlKem />} />
+        <Route path="/post-quantum-cryptography/ml-dsa" element={<MlDsa />} />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

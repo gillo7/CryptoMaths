@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
-import PostQuantumPlaceholder from './PostQuantumPlaceholder'
+import { fetchKemSpeed } from '../lib/pqcDemo'
+import MlKemExample from './MlKemExample'
+import PqcSpeedCompare from './PqcSpeedCompare'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
 
@@ -195,8 +197,12 @@ function MlKem() {
           ciphertext, so both key and ciphertext size grow with it, as
           the table above shows.
         </p>
-        <PostQuantumPlaceholder label="Real ML-KEM keygen via OpenSSL, live .pem output" />
-        <PostQuantumPlaceholder label="Benchmark: ML-KEM vs RSA vs P-256 vs X25519 keygen speed" />
+        <MlKemExample />
+        <PqcSpeedCompare
+          description="ML-KEM-768 against the classical algorithms it hybridises or competes with, keygen speed:"
+          buttonLabel="Run a live speed test on the server"
+          fetchSpeed={fetchKemSpeed}
+        />
       </section>
     </main>
   )

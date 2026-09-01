@@ -1,7 +1,18 @@
 import { Link } from 'react-router-dom'
-import PostQuantumPlaceholder from './PostQuantumPlaceholder'
+import { fetchSlhDsaSpeed, signAndVerifySlhDsa } from '../lib/pqcDemo'
+import PqcSignExample from './PqcSignExample'
+import PqcSpeedCompare from './PqcSpeedCompare'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
+
+const SLH_DSA_VARIANTS = [
+  'SLH-DSA-SHAKE-128s',
+  'SLH-DSA-SHAKE-128f',
+  'SLH-DSA-SHAKE-192s',
+  'SLH-DSA-SHAKE-192f',
+  'SLH-DSA-SHAKE-256s',
+  'SLH-DSA-SHAKE-256f',
+] as const
 
 function SlhDsa() {
   return (
@@ -79,8 +90,16 @@ function SlhDsa() {
           the direct cause of the multi-minute signing times SLH-DSA is
           known for on constrained hardware.
         </p>
-        <PostQuantumPlaceholder label="Real SLH-DSA keygen/sign/verify via OpenSSL, live output" />
-        <PostQuantumPlaceholder label="Benchmark: SLH-DSA vs ML-DSA vs Ed25519 signing speed" />
+        <PqcSignExample
+          variants={SLH_DSA_VARIANTS}
+          defaultVariant="SLH-DSA-SHAKE-256s"
+          signAndVerify={signAndVerifySlhDsa}
+        />
+        <PqcSpeedCompare
+          description="Ed25519, ML-DSA-65, and all four SLH-DSA-SHAKE parameter sets, signing speed:"
+          buttonLabel="Run a live speed test on the server"
+          fetchSpeed={fetchSlhDsaSpeed}
+        />
       </section>
     </main>
   )

@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
-import PostQuantumPlaceholder from './PostQuantumPlaceholder'
+import { fetchMlDsaSpeed, signAndVerifyMlDsa } from '../lib/pqcDemo'
+import PqcSignExample from './PqcSignExample'
+import PqcSpeedCompare from './PqcSpeedCompare'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
+
+const ML_DSA_VARIANTS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'] as const
 
 function MlDsa() {
   return (
@@ -137,8 +141,16 @@ function MlDsa() {
             </tr>
           </tbody>
         </table>
-        <PostQuantumPlaceholder label="Real ML-DSA keygen/sign/verify via OpenSSL, live output" />
-        <PostQuantumPlaceholder label="Benchmark: Ed25519 vs RSA-PSS vs ML-DSA-44/65/87 signing speed" />
+        <PqcSignExample
+          variants={ML_DSA_VARIANTS}
+          defaultVariant="ML-DSA-65"
+          signAndVerify={signAndVerifyMlDsa}
+        />
+        <PqcSpeedCompare
+          description="Ed25519, RSA-PSS, and all three ML-DSA parameter sets, signing speed:"
+          buttonLabel="Run a live speed test on the server"
+          fetchSpeed={fetchMlDsaSpeed}
+        />
       </section>
     </main>
   )

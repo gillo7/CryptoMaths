@@ -3,9 +3,13 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import http from 'node:http'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 
 const execFile = promisify(execFileCb)
+
+// import.meta.dirname needs Node 20.11+; this server runs on Node 18.
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url))
 
 const PORT = process.env.PORT || 8101
 // Debian 12's system openssl is 3.0.20 - no ML-KEM/ML-DSA/SLH-DSA support
@@ -16,6 +20,12 @@ const OPENSSL_BIN = process.env.OPENSSL_BIN || '/usr/local/ssl/bin/openssl'
 const OPENSSL_LIB_PATH = process.env.OPENSSL_LIB_PATH || '/usr/local/ssl/lib'
 const TIMEOUT_MS = 20_000
 const MAX_MESSAGE_LENGTH = 500
+
+const HQC_TOOL_BIN =
+  process.env.HQC_TOOL_BIN || path.join(SCRIPT_DIR, 'vendor', 'hqc-tool')
+const HQC_LIB_PATH =
+  process.env.HQC_LIB_PATH || path.join(SCRIPT_DIR, 'vendor', 'liboqs-install', 'lib')
+const HQC_VARIANTS = ['HQC-128', 'HQC-192', 'HQC-256']
 
 const ML_KEM_VARIANTS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024']
 const ML_DSA_VARIANTS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87']
@@ -132,6 +142,56 @@ async function encapDecap(variant) {
     }
   } finally {
     await rm(dir, { recursive: true, force: true })
+  }
+}
+
+// HQC has no assigned OID yet (still pre-standardisation), so OpenSSL's
+// oqs-provider can't serialise HQC keys to PEM/DER at all - confirmed
+// directly, every genpkey/pkeyutl invocation fails with "No encoders
+// were found" regardless of format. This shells out to a small custom
+// tool (hqc-tool.c, built by setup.sh) that calls liboqs's own C API
+// directly instead, the same real reference implementation, just
+// without going through OpenSSL's key-encoding layer. Output is hex,
+// not PEM, since there's no standard encoding for these keys to use.
+function hqcToolExec(args) {
+  return execFile(HQC_TOOL_BIN, args, {
+    timeout: TIMEOUT_MS,
+    env: { ...process.env, LD_LIBRARY_PATH: HQC_LIB_PATH },
+  })
+}
+
+async function generateHqcKeypair(variant) {
+  if (!HQC_VARIANTS.includes(variant)) {
+    throw new Error(`variant must be one of ${HQC_VARIANTS.join(', ')}`)
+  }
+  const { stdout } = await hqcToolExec(['keygen', variant])
+  return JSON.parse(stdout)
+}
+
+async function hqcEncapDecap(variant) {
+  if (!HQC_VARIANTS.includes(variant)) {
+    throw new Error(`variant must be one of ${HQC_VARIANTS.join(', ')}`)
+  }
+  const keypair = JSON.parse((await hqcToolExec(['keygen', variant])).stdout)
+  const encapped = JSON.parse(
+    (await hqcToolExec(['encap', variant, keypair.publicKeyHex])).stdout,
+  )
+  const decapped = JSON.parse(
+    (
+      await hqcToolExec([
+        'decap', variant, keypair.privateKeyHex, encapped.ciphertextHex,
+      ])
+    ).stdout,
+  )
+  return {
+    variant,
+    publicKeyHex: keypair.publicKeyHex,
+    publicKeyBytes: keypair.publicKeyBytes,
+    ciphertextHex: encapped.ciphertextHex,
+    ciphertextBytes: encapped.ciphertextBytes,
+    bobSecretHex: encapped.secretHex,
+    aliceSecretHex: decapped.secretHex,
+    matched: encapped.secretHex === decapped.secretHex,
   }
 }
 
@@ -336,6 +396,18 @@ const server = http.createServer(async (req, res) => {
 
   if (route === '/ml-kem/speed') {
     respond(res, measureKemSpeed())
+    return
+  }
+
+  if (route === '/hqc/keygen') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, generateHqcKeypair(body.variant))
+    return
+  }
+
+  if (route === '/hqc/encap-decap') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, hqcEncapDecap(body.variant))
     return
   }
 

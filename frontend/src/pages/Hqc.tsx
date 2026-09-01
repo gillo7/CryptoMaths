@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import PostQuantumPlaceholder from './PostQuantumPlaceholder'
+import HqcEncapDecap from './HqcEncapDecap'
+import HqcExample from './HqcExample'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
@@ -67,14 +68,17 @@ function Hqc() {
           computers.
         </p>
         <p>
-          That security comes at a real cost, though. Against
-          ML-KEM-512's 800-byte public key, HQC-128 needs 2,249 bytes;
-          against ML-KEM-512's 768-byte ciphertext, HQC-128 needs
-          4,497 bytes, roughly six times larger. Moody's own framing
-          is blunt about this: HQC is lengthier than ML-KEM and
-          demands more computing resources, but its clean and secure
-          operation was what convinced reviewers it was worth the
-          cost as an insurance policy.
+          Like ML-KEM, HQC is standardised at three parameter sets
+          matching the same NIST security levels: HQC-128 (Level 1),
+          HQC-192 (Level 3), and HQC-256 (Level 5). That security comes
+          at a real cost, though. Against ML-KEM-512's 800-byte public
+          key, HQC-128 needs roughly 2,241 bytes; against ML-KEM-512's
+          768-byte ciphertext, HQC-128 needs roughly 4,433 bytes,
+          more than five times larger. Moody's own framing is blunt
+          about this: HQC is lengthier than ML-KEM and demands more
+          computing resources, but its clean and secure operation was
+          what convinced reviewers it was worth the cost as an
+          insurance policy.
         </p>
         <table className="ref-table">
           <thead>
@@ -82,22 +86,42 @@ function Hqc() {
               <th>Metric</th>
               <th>ML-KEM-512</th>
               <th>HQC-128</th>
+              <th>ML-KEM-768</th>
+              <th>HQC-192</th>
+              <th>ML-KEM-1024</th>
+              <th>HQC-256</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>Public key</td>
               <td>800 bytes</td>
-              <td>2,249 bytes</td>
+              <td>2,241 bytes</td>
+              <td>1,184 bytes</td>
+              <td>4,514 bytes</td>
+              <td>1,568 bytes</td>
+              <td>7,237 bytes</td>
             </tr>
             <tr>
               <td>Ciphertext</td>
               <td>768 bytes</td>
-              <td>4,497 bytes</td>
+              <td>4,433 bytes</td>
+              <td>1,088 bytes</td>
+              <td>8,978 bytes</td>
+              <td>1,568 bytes</td>
+              <td>14,421 bytes</td>
             </tr>
           </tbody>
         </table>
-        <PostQuantumPlaceholder label="Live HQC demo: not yet possible, OpenSSL 3.5 doesn't implement HQC (still pre-standardisation, a draft is targeted for 2026 and a final standard for 2027)" />
+        <p>
+          The HQC figures above are read straight off this server's
+          own live demo below, not copied from a spec document -
+          exact byte counts have shifted slightly across HQC's several
+          revisions, so this is the version actually running here,
+          right now.
+        </p>
+        <HqcExample />
+        <HqcEncapDecap />
       </section>
     </main>
   )

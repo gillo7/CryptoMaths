@@ -1,8 +1,9 @@
 # pqc
 
 Powers the live demos on the Post-Quantum Cryptography chapter's
-algorithm pages (ML-KEM, ML-DSA, SLH-DSA). Wraps a real `openssl` CLI
-directly, same as every other service in this repo.
+algorithm pages (ML-KEM, ML-DSA, SLH-DSA, HQC). Wraps a real `openssl`
+CLI directly for the first three, same as every other service in this
+repo; HQC needs a different approach entirely - see below.
 
 ```
 POST /ml-kem/keygen       { variant }        -> { variant, publicPem, privatePem }
@@ -12,14 +13,41 @@ POST /ml-dsa/sign    { variant, message }   -> { variant, publicPem, message, si
 POST /ml-dsa/speed                          -> { results: [{ label, ms }] }
 POST /slh-dsa/sign   { variant, message }   -> same shape as /ml-dsa/sign
 POST /slh-dsa/speed                         -> { results: [{ label, ms }] }
+POST /hqc/keygen      { variant }           -> { variant, publicKeyHex, privateKeyHex, publicKeyBytes, privateKeyBytes }
+POST /hqc/encap-decap { variant }           -> { variant, publicKeyHex, publicKeyBytes, ciphertextHex, ciphertextBytes, bobSecretHex, aliceSecretHex, matched }
 ```
 
 `variant` is checked against an explicit allowlist per algorithm:
-`ML-KEM-512/768/1024`, `ML-DSA-44/65/87`, and the nine SLH-DSA
-parameter sets matching the dissertation's own `benchmark.py`
-selection - `SHA2-128s/128f`, `SHAKE-128s`, `SHA2-192s/192f`,
-`SHAKE-192s`, `SHA2-256s/256f`, `SHAKE-256s` (SHA2 gets both `s` and
-`f` at every level, SHAKE only `s`).
+`ML-KEM-512/768/1024`, `ML-DSA-44/65/87`, the nine SLH-DSA parameter
+sets matching the dissertation's own `benchmark.py` selection -
+`SHA2-128s/128f`, `SHAKE-128s`, `SHA2-192s/192f`, `SHAKE-192s`,
+`SHA2-256s/256f`, `SHAKE-256s` (SHA2 gets both `s` and `f` at every
+level, SHAKE only `s`) - and `HQC-128/192/256`.
+
+## HQC: liboqs directly, not OpenSSL
+
+HQC has no assigned OID yet (still pre-standardisation - NIST selected
+it in March 2025, a final FIPS standard is targeted for 2027), and
+OpenSSL's `oqs-provider` (built and tested while diagnosing this)
+cannot serialise a key with no OID to PEM or DER in any form - every
+`genpkey`/`pkeyutl` invocation fails with "No encoders were found",
+confirmed directly. So `/hqc/*` shells out to `vendor/hqc-tool`
+instead (source: `hqc-tool.c`, built by `setup.sh`), a small custom
+program that calls liboqs's own C API directly - the same real
+reference implementation, just without going through OpenSSL's
+key-encoding layer. Output is hex, not PEM, since there's no standard
+encoding for these keys to use yet. `hqc-tool` takes three subcommands
+(`keygen <variant>`, `encap <variant> <pubkey-hex>`,
+`decap <variant> <privkey-hex> <ciphertext-hex>`), each printing one
+line of JSON to stdout; every hex input is length-validated against
+the exact size the requested variant expects before being parsed into
+a fixed-size buffer.
+
+`setup.sh` builds `vendor/liboqs` (pinned commit, scoped via
+`OQS_MINIMAL_BUILD` to just HQC's three parameter sets - a full liboqs
+build compiles dozens of algorithms this service never uses) and
+`vendor/hqc-tool`. Neither is committed - run `./setup.sh` after
+cloning, same as `md5-collision`'s and `lm-cracker`'s vendored tools.
 
 ## Why this needs its own openssl
 

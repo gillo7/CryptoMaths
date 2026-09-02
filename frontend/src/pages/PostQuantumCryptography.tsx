@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import PostQuantumPlaceholder from './PostQuantumPlaceholder'
+import PqcBenchmark from './PqcBenchmark'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
 
@@ -142,7 +143,7 @@ function PostQuantumCryptography() {
           algorithms reviewed above along each of the operations they
           are used for, alongside a full TLS connection test.
         </p>
-        <PostQuantumPlaceholder label="PQC benchmark: select an operation (key generation / encapsulate-decapsulate / sign-verify / full TLS connection), select algorithms to compare, launch" />
+        <PqcBenchmark />
       </section>
     </main>
   )

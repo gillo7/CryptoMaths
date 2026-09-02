@@ -1,4 +1,4 @@
-import { execFile as execFileCb } from 'node:child_process'
+import { execFile as execFileCb, spawn } from 'node:child_process'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import http from 'node:http'
 import { tmpdir } from 'node:os'
@@ -616,6 +616,267 @@ async function measureFnDsaSpeed() {
   }
 }
 
+// ---- Unified cross-algorithm benchmark tool (hub page) ----
+// Lets the reader pick an operation and any set of algorithms across
+// the whole chapter, then runs every one of them for real, back to
+// back, rather than the fixed per-page comparisons above. Reuses the
+// same execution mechanisms as those (opensslExec, hqcToolExec,
+// sigToolExec) - this is a selection layer over them, not a new way
+// of running crypto.
+const BENCHMARK_REPEATS = 10
+
+const BENCHMARK_KEYGEN_CATALOG = [
+  { id: 'x25519', label: 'X25519', category: 'Classical', algorithm: 'X25519' },
+  { id: 'p256', label: 'P-256', category: 'Classical', algorithm: 'EC', extraOpts: ['-pkeyopt', 'ec_paramgen_curve:P-256'] },
+  { id: 'ed25519', label: 'Ed25519', category: 'Classical', algorithm: 'Ed25519' },
+  { id: 'rsa2048', label: 'RSA-2048', category: 'Classical', algorithm: 'RSA', extraOpts: ['-pkeyopt', 'rsa_keygen_bits:2048'] },
+  { id: 'mlkem512', label: 'ML-KEM-512', category: 'ML-KEM', algorithm: 'ML-KEM-512' },
+  { id: 'mlkem768', label: 'ML-KEM-768', category: 'ML-KEM', algorithm: 'ML-KEM-768' },
+  { id: 'mlkem1024', label: 'ML-KEM-1024', category: 'ML-KEM', algorithm: 'ML-KEM-1024' },
+  { id: 'hqc128', label: 'HQC-128', category: 'HQC', tool: 'hqc', variant: 'HQC-128' },
+  { id: 'hqc192', label: 'HQC-192', category: 'HQC', tool: 'hqc', variant: 'HQC-192' },
+  { id: 'hqc256', label: 'HQC-256', category: 'HQC', tool: 'hqc', variant: 'HQC-256' },
+  { id: 'frodokem640', label: 'FrodoKEM-640-SHAKE', category: 'FrodoKEM', tool: 'hqc', variant: 'FrodoKEM-640-SHAKE' },
+  { id: 'frodokem976', label: 'FrodoKEM-976-SHAKE', category: 'FrodoKEM', tool: 'hqc', variant: 'FrodoKEM-976-SHAKE' },
+  { id: 'frodokem1344', label: 'FrodoKEM-1344-SHAKE', category: 'FrodoKEM', tool: 'hqc', variant: 'FrodoKEM-1344-SHAKE' },
+  { id: 'hybrid', label: 'X25519 + ML-KEM-768 (hybrid)', category: 'Hybrid', hybridKeygen: true },
+  { id: 'mldsa44', label: 'ML-DSA-44', category: 'ML-DSA', algorithm: 'ML-DSA-44' },
+  { id: 'mldsa65', label: 'ML-DSA-65', category: 'ML-DSA', algorithm: 'ML-DSA-65' },
+  { id: 'mldsa87', label: 'ML-DSA-87', category: 'ML-DSA', algorithm: 'ML-DSA-87' },
+  { id: 'falcon512', label: 'Falcon-512', category: 'FN-DSA', tool: 'sig', variant: 'Falcon-512' },
+  { id: 'falcon1024', label: 'Falcon-1024', category: 'FN-DSA', tool: 'sig', variant: 'Falcon-1024' },
+  ...SLH_DSA_VARIANTS.map((v) => ({ id: v.toLowerCase(), label: v, category: 'SLH-DSA', algorithm: v })),
+]
+
+const BENCHMARK_ENCAP_DECAP_CATALOG = [
+  { id: 'mlkem512', label: 'ML-KEM-512', category: 'ML-KEM', algorithm: 'ML-KEM-512' },
+  { id: 'mlkem768', label: 'ML-KEM-768', category: 'ML-KEM', algorithm: 'ML-KEM-768' },
+  { id: 'mlkem1024', label: 'ML-KEM-1024', category: 'ML-KEM', algorithm: 'ML-KEM-1024' },
+  { id: 'hqc128', label: 'HQC-128', category: 'HQC', tool: 'hqc', variant: 'HQC-128' },
+  { id: 'hqc192', label: 'HQC-192', category: 'HQC', tool: 'hqc', variant: 'HQC-192' },
+  { id: 'hqc256', label: 'HQC-256', category: 'HQC', tool: 'hqc', variant: 'HQC-256' },
+  { id: 'frodokem640', label: 'FrodoKEM-640-SHAKE', category: 'FrodoKEM', tool: 'hqc', variant: 'FrodoKEM-640-SHAKE' },
+  { id: 'frodokem976', label: 'FrodoKEM-976-SHAKE', category: 'FrodoKEM', tool: 'hqc', variant: 'FrodoKEM-976-SHAKE' },
+  { id: 'frodokem1344', label: 'FrodoKEM-1344-SHAKE', category: 'FrodoKEM', tool: 'hqc', variant: 'FrodoKEM-1344-SHAKE' },
+  { id: 'hybrid', label: 'X25519 + ML-KEM-768 (hybrid)', category: 'Hybrid', hybridExchange: true },
+]
+
+const BENCHMARK_SIGN_VERIFY_CATALOG = [
+  { id: 'ed25519', label: 'Ed25519', category: 'Classical', algorithm: 'Ed25519' },
+  { id: 'rsapss2048', label: 'RSA-PSS (2048-bit)', category: 'Classical', rsaPss: true },
+  { id: 'mldsa44', label: 'ML-DSA-44', category: 'ML-DSA', algorithm: 'ML-DSA-44' },
+  { id: 'mldsa65', label: 'ML-DSA-65', category: 'ML-DSA', algorithm: 'ML-DSA-65' },
+  { id: 'mldsa87', label: 'ML-DSA-87', category: 'ML-DSA', algorithm: 'ML-DSA-87' },
+  { id: 'falcon512', label: 'Falcon-512', category: 'FN-DSA', tool: 'sig', variant: 'Falcon-512' },
+  { id: 'falcon1024', label: 'Falcon-1024', category: 'FN-DSA', tool: 'sig', variant: 'Falcon-1024' },
+  // The six "s" variants take 2-4s to sign, same real cost the SLH-DSA
+  // page's own speed benchmark hits - single-shot only, not
+  // median-of-many, matching measureSlhDsaSpeed's existing precedent.
+  ...SLH_DSA_VARIANTS.map((v) => ({
+    id: v.toLowerCase(),
+    label: v,
+    category: 'SLH-DSA',
+    algorithm: v,
+    slow: v.endsWith('s'),
+  })),
+]
+
+const BENCHMARK_TLS_CATALOG = [
+  { id: 'classical-x25519-ed25519', label: 'Classical (X25519 + Ed25519)', group: 'x25519', sigAlgorithm: 'Ed25519' },
+  {
+    id: 'classical-p256-rsa', label: 'Classical (P-256 + RSA-2048)', group: 'secp256r1',
+    sigAlgorithm: 'RSA', extraKeyOpts: ['-pkeyopt', 'rsa_keygen_bits:2048'],
+  },
+  { id: 'mlkem768-mldsa65', label: 'Fully post-quantum (ML-KEM-768 + ML-DSA-65)', group: 'MLKEM768', sigAlgorithm: 'ML-DSA-65' },
+  { id: 'hybrid-mldsa65', label: 'Hybrid + ML-DSA-65 (recommended migration path)', group: 'X25519MLKEM768', sigAlgorithm: 'ML-DSA-65' },
+  {
+    id: 'hybrid-classical-sig', label: 'Hybrid key exchange, classical signature (X25519MLKEM768 + ECDSA P-256)',
+    group: 'X25519MLKEM768', sigAlgorithm: 'EC', extraKeyOpts: ['-pkeyopt', 'ec_paramgen_curve:P-256'],
+  },
+]
+
+async function measureCatalogKeygenMs(entry, dir) {
+  if (entry.hybridKeygen) {
+    const xFile = path.join(dir, 'key.pem')
+    const kFile = path.join(dir, 'key2.pem')
+    return measureMedianMs(async () => {
+      await opensslExec(['genpkey', '-algorithm', 'X25519', '-out', xFile])
+      await opensslExec(['genpkey', '-algorithm', 'ML-KEM-768', '-out', kFile])
+    }, BENCHMARK_REPEATS)
+  }
+  if (entry.tool === 'hqc') return measureMedianMs(() => hqcToolExec(['keygen', entry.variant]), BENCHMARK_REPEATS)
+  if (entry.tool === 'sig') return measureMedianMs(() => sigToolExec(['keygen', entry.variant]), BENCHMARK_REPEATS)
+  const file = path.join(dir, 'key.pem')
+  return measureMedianMs(
+    () => opensslExec(['genpkey', '-algorithm', entry.algorithm, ...(entry.extraOpts || []), '-out', file]),
+    BENCHMARK_REPEATS,
+  )
+}
+
+async function measureCatalogEncapDecapMs(entry, dir) {
+  if (entry.hybridExchange) {
+    const aliceX = path.join(dir, 'alice-x.pem')
+    const alicePub = path.join(dir, 'alice-x-pub.pem')
+    const bobX = path.join(dir, 'bob-x.pem')
+    const bobPub = path.join(dir, 'bob-x-pub.pem')
+    await opensslExec(['genpkey', '-algorithm', 'X25519', '-out', aliceX])
+    await opensslExec(['pkey', '-in', aliceX, '-pubout', '-out', alicePub])
+    await opensslExec(['genpkey', '-algorithm', 'X25519', '-out', bobX])
+    await opensslExec(['pkey', '-in', bobX, '-pubout', '-out', bobPub])
+    const mlkemKey = path.join(dir, 'mlkem.pem')
+    const mlkemPub = path.join(dir, 'mlkem-pub.pem')
+    await opensslExec(['genpkey', '-algorithm', 'ML-KEM-768', '-out', mlkemKey])
+    await opensslExec(['pkey', '-in', mlkemKey, '-pubout', '-out', mlkemPub])
+    const secretFile = path.join(dir, 'secret.bin')
+    const ctFile = path.join(dir, 'ct.bin')
+    const kemSecretFile = path.join(dir, 'kem-secret.bin')
+    return measureMedianMs(async () => {
+      await opensslExec(['pkeyutl', '-derive', '-inkey', aliceX, '-peerkey', bobPub, '-out', secretFile])
+      await opensslExec(['pkeyutl', '-encap', '-inkey', mlkemPub, '-pubin', '-out', ctFile, '-secret', kemSecretFile])
+      await opensslExec(['pkeyutl', '-decap', '-inkey', mlkemKey, '-in', ctFile, '-secret', kemSecretFile])
+    }, BENCHMARK_REPEATS)
+  }
+  if (entry.tool === 'hqc') {
+    const keypair = JSON.parse((await hqcToolExec(['keygen', entry.variant])).stdout)
+    return measureMedianMs(async () => {
+      const encapped = JSON.parse((await hqcToolExec(['encap', entry.variant, keypair.publicKeyHex])).stdout)
+      await hqcToolExec(['decap', entry.variant, keypair.privateKeyHex, encapped.ciphertextHex])
+    }, BENCHMARK_REPEATS)
+  }
+  const keyFile = path.join(dir, 'key.pem')
+  const pubFile = path.join(dir, 'pub.pem')
+  await opensslExec(['genpkey', '-algorithm', entry.algorithm, '-out', keyFile])
+  await opensslExec(['pkey', '-in', keyFile, '-pubout', '-out', pubFile])
+  const ctFile = path.join(dir, 'ct.bin')
+  const secretFile = path.join(dir, 'secret.bin')
+  return measureMedianMs(async () => {
+    await opensslExec(['pkeyutl', '-encap', '-inkey', pubFile, '-pubin', '-out', ctFile, '-secret', secretFile])
+    await opensslExec(['pkeyutl', '-decap', '-inkey', keyFile, '-in', ctFile, '-secret', secretFile])
+  }, BENCHMARK_REPEATS)
+}
+
+async function measureCatalogSignMs(entry, dir) {
+  const msgFile = path.join(dir, 'msg.txt')
+  await writeFile(msgFile, 'Hello, post-quantum world!')
+  if (entry.tool === 'sig') {
+    const keypair = JSON.parse((await sigToolExec(['keygen', entry.variant])).stdout)
+    const runner = () => sigToolExec(['sign', entry.variant, keypair.privateKeyHex, 'Hello, post-quantum world!'])
+    return entry.slow ? measureMs(runner) : measureMedianMs(runner, BENCHMARK_REPEATS)
+  }
+  const keyFile = path.join(dir, 'key.pem')
+  const sigFile = path.join(dir, 'sig.bin')
+  if (entry.rsaPss) {
+    await opensslExec(['genpkey', '-algorithm', 'RSA', '-pkeyopt', 'rsa_keygen_bits:2048', '-out', keyFile])
+    const runner = () =>
+      opensslExec([
+        'pkeyutl', '-sign', '-inkey', keyFile, '-rawin', '-digest', 'sha256',
+        '-pkeyopt', 'rsa_padding_mode:pss', '-in', msgFile, '-out', sigFile,
+      ])
+    return entry.slow ? measureMs(runner) : measureMedianMs(runner, BENCHMARK_REPEATS)
+  }
+  await opensslExec(['genpkey', '-algorithm', entry.algorithm, '-out', keyFile])
+  const runner = () =>
+    opensslExec(['pkeyutl', '-sign', '-inkey', keyFile, '-rawin', '-in', msgFile, '-out', sigFile])
+  return entry.slow ? measureMs(runner) : measureMedianMs(runner, BENCHMARK_REPEATS)
+}
+
+async function measureBenchmark(catalog, measureFn, ids) {
+  const dir = await mkdtemp(path.join(tmpdir(), 'benchmark-'))
+  try {
+    const results = []
+    for (const id of ids) {
+      const entry = catalog.find((e) => e.id === id)
+      if (!entry) continue
+      results.push({ label: entry.label, ms: await measureFn(entry, dir) })
+    }
+    return { results }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
+function measureKeygenBenchmark(ids) {
+  return measureBenchmark(BENCHMARK_KEYGEN_CATALOG, measureCatalogKeygenMs, ids)
+}
+
+function measureEncapDecapBenchmark(ids) {
+  return measureBenchmark(BENCHMARK_ENCAP_DECAP_CATALOG, measureCatalogEncapDecapMs, ids)
+}
+
+function measureSignVerifyBenchmark(ids) {
+  return measureBenchmark(BENCHMARK_SIGN_VERIFY_CATALOG, measureCatalogSignMs, ids)
+}
+
+const TLS_HANDSHAKE_REPEATS = 5
+
+// There's no single OpenSSL call for "time a full TLS connection" with
+// a chosen group and signature algorithm, so this runs a genuine
+// ephemeral TLS 1.3 server (openssl s_server) locally, then times real
+// openssl s_client handshakes against it. The server's own stdin has
+// to be explicitly ignored (`stdio: ['ignore', ...]`) - left as
+// Node's default open, never-written pipe, s_server's select() loop
+// never services the socket at all and every handshake hangs until
+// the client times out, discovered the hard way while building this.
+function timeTlsProfile(profile) {
+  return (async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), 'tls-bench-'))
+    let serverProc
+    try {
+      const keyFile = path.join(dir, 'key.pem')
+      const certFile = path.join(dir, 'cert.pem')
+      await opensslExec(['genpkey', '-algorithm', profile.sigAlgorithm, ...(profile.extraKeyOpts || []), '-out', keyFile])
+      await opensslExec(['req', '-x509', '-new', '-key', keyFile, '-out', certFile, '-days', '1', '-subj', '/CN=localhost'])
+
+      const port = 40000 + Math.floor(Math.random() * 20000)
+      serverProc = spawn(OPENSSL_BIN, [
+        's_server', '-cert', certFile, '-key', keyFile, '-groups', profile.group,
+        '-tls1_3', '-accept', String(port), '-quiet',
+      ], { env: { ...process.env, LD_LIBRARY_PATH: OPENSSL_LIB_PATH }, stdio: ['ignore', 'pipe', 'pipe'] })
+      serverProc.stdout.on('data', () => {})
+      serverProc.stderr.on('data', () => {})
+      await new Promise((resolve) => setTimeout(resolve, 600))
+
+      const oneHandshake = () =>
+        new Promise((resolve, reject) => {
+          const t0 = performance.now()
+          const client = spawn(OPENSSL_BIN, [
+            's_client', '-connect', `127.0.0.1:${port}`, '-groups', profile.group, '-tls1_3', '-quiet',
+          ], { env: { ...process.env, LD_LIBRARY_PATH: OPENSSL_LIB_PATH } })
+          client.stdout.on('data', () => {})
+          client.stderr.on('data', () => {})
+          client.stdin.end()
+          client.on('close', (code) => {
+            if (code === 0) resolve(performance.now() - t0)
+            else reject(new Error(`handshake failed (exit ${code})`))
+          })
+          client.on('error', reject)
+          setTimeout(() => {
+            client.kill()
+            reject(new Error('handshake timed out'))
+          }, 5000)
+        })
+
+      const durations = []
+      for (let i = 0; i < TLS_HANDSHAKE_REPEATS; i++) durations.push(await oneHandshake())
+      durations.sort((a, b) => a - b)
+      return durations[Math.floor(durations.length / 2)]
+    } finally {
+      if (serverProc) serverProc.kill()
+      await rm(dir, { recursive: true, force: true })
+    }
+  })()
+}
+
+async function measureTlsBenchmark(ids) {
+  const results = []
+  for (const id of ids) {
+    const profile = BENCHMARK_TLS_CATALOG.find((p) => p.id === id)
+    if (!profile) continue
+    results.push({ label: profile.label, ms: await timeTlsProfile(profile) })
+  }
+  return { results }
+}
+
 async function readJsonBody(req) {
   const chunks = []
   let size = 0
@@ -658,6 +919,30 @@ const server = http.createServer(async (req, res) => {
 
   if (route === '/ml-kem/speed') {
     respond(res, measureKemSpeed())
+    return
+  }
+
+  if (route === '/benchmark/keygen') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, measureKeygenBenchmark(Array.isArray(body.ids) ? body.ids : []))
+    return
+  }
+
+  if (route === '/benchmark/encap-decap') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, measureEncapDecapBenchmark(Array.isArray(body.ids) ? body.ids : []))
+    return
+  }
+
+  if (route === '/benchmark/sign-verify') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, measureSignVerifyBenchmark(Array.isArray(body.ids) ? body.ids : []))
+    return
+  }
+
+  if (route === '/benchmark/tls') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, measureTlsBenchmark(Array.isArray(body.ids) ? body.ids : []))
     return
   }
 

@@ -118,19 +118,6 @@ function PostQuantumCryptography() {
           </Link>
         </div>
 
-        <h3>Additional candidates</h3>
-        <div className="spec-link-row">
-          <a href="#faest" className="spec-link">FAEST</a>
-          <a href="#hawk" className="spec-link">HAWK</a>
-          <a href="#mayo" className="spec-link">MAYO</a>
-          <a href="#mqom" className="spec-link">MQOM</a>
-          <a href="#qr-uov" className="spec-link">QR-UOV</a>
-          <a href="#sdith" className="spec-link">SDitH</a>
-          <a href="#snova" className="spec-link">SNOVA</a>
-          <a href="#sqisign" className="spec-link">SQIsign</a>
-          <a href="#uov" className="spec-link">UOV</a>
-        </div>
-
         <h3>European candidate</h3>
         <div className="spec-link-row">
           <a href="#frodokem" className="spec-link">FrodoKEM</a>

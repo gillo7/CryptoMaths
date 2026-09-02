@@ -36,6 +36,26 @@ export async function encapAndDecap(variant: string): Promise<EncapDecapResult> 
   return data
 }
 
+export interface HybridExchangeResult {
+  x25519SecretHex: string
+  x25519SecretBytes: number
+  x25519Matched: boolean
+  mlkemCiphertextBytes: number
+  mlkemSecretHex: string
+  mlkemSecretBytes: number
+  mlkemMatched: boolean
+  combinedSecretHex: string
+  combinedSecretBytes: number
+  combinedMatched: boolean
+}
+
+export async function runHybridExchange(): Promise<HybridExchangeResult> {
+  const response = await fetch('/api/pqc/hybrid/exchange', { method: 'POST' })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}
+
 export interface HqcKeypair {
   variant: string
   publicKeyHex: string

@@ -129,7 +129,9 @@ function PostQuantumCryptography() {
 
         <h3>Hybrid</h3>
         <div className="spec-link-row">
-          <a href="#hybrid" className="spec-link">X25519/ML-KEM-768</a>
+          <Link to="/post-quantum-cryptography/hybrid" className="spec-link">
+            X25519/ML-KEM-768
+          </Link>
         </div>
       </section>
 

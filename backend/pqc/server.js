@@ -161,6 +161,78 @@ async function encapDecap(variant) {
   }
 }
 
+// The IETF-recommended X25519+ML-KEM-768 hybrid, run as two real,
+// independent key exchanges rather than one fabricated call -
+// X25519MLKEM768 is a TLS 1.3 group name, not a standalone encodable
+// key (confirmed via `openssl list -tls-groups`; genpkey fails outright
+// with "No encoders were found"), so there is no single OpenSSL command
+// that performs the combined operation directly. Alice and Bob each run
+// a full X25519 ECDH derivation, then Alice publishes an ML-KEM-768
+// encapsulation key that Bob encapsulates against, and the two secrets
+// are concatenated exactly as the page's own text describes - not any
+// operation that could cancel information between the two halves.
+async function hybridExchange() {
+  const dir = await mkdtemp(path.join(tmpdir(), 'hybrid-'))
+  try {
+    const aliceX25519Key = path.join(dir, 'alice-x25519.pem')
+    const aliceX25519Pub = path.join(dir, 'alice-x25519-pub.pem')
+    const bobX25519Key = path.join(dir, 'bob-x25519.pem')
+    const bobX25519Pub = path.join(dir, 'bob-x25519-pub.pem')
+    await opensslExec(['genpkey', '-algorithm', 'X25519', '-out', aliceX25519Key])
+    await opensslExec(['pkey', '-in', aliceX25519Key, '-pubout', '-out', aliceX25519Pub])
+    await opensslExec(['genpkey', '-algorithm', 'X25519', '-out', bobX25519Key])
+    await opensslExec(['pkey', '-in', bobX25519Key, '-pubout', '-out', bobX25519Pub])
+    const aliceX25519SecretFile = path.join(dir, 'alice-x25519.secret')
+    const bobX25519SecretFile = path.join(dir, 'bob-x25519.secret')
+    await opensslExec([
+      'pkeyutl', '-derive', '-inkey', aliceX25519Key, '-peerkey', bobX25519Pub,
+      '-out', aliceX25519SecretFile,
+    ])
+    await opensslExec([
+      'pkeyutl', '-derive', '-inkey', bobX25519Key, '-peerkey', aliceX25519Pub,
+      '-out', bobX25519SecretFile,
+    ])
+    const aliceX25519Secret = await readFile(aliceX25519SecretFile)
+    const bobX25519Secret = await readFile(bobX25519SecretFile)
+
+    const mlkemKey = path.join(dir, 'mlkem.pem')
+    const mlkemPub = path.join(dir, 'mlkem-pub.pem')
+    await opensslExec(['genpkey', '-algorithm', 'ML-KEM-768', '-out', mlkemKey])
+    await opensslExec(['pkey', '-in', mlkemKey, '-pubout', '-out', mlkemPub])
+    const ctFile = path.join(dir, 'mlkem.ct')
+    const bobMlkemSecretFile = path.join(dir, 'bob-mlkem.secret')
+    const aliceMlkemSecretFile = path.join(dir, 'alice-mlkem.secret')
+    await opensslExec([
+      'pkeyutl', '-encap', '-inkey', mlkemPub, '-pubin', '-out', ctFile,
+      '-secret', bobMlkemSecretFile,
+    ])
+    await opensslExec([
+      'pkeyutl', '-decap', '-inkey', mlkemKey, '-in', ctFile, '-secret', aliceMlkemSecretFile,
+    ])
+    const bobMlkemSecret = await readFile(bobMlkemSecretFile)
+    const aliceMlkemSecret = await readFile(aliceMlkemSecretFile)
+    const ciphertext = await readFile(ctFile)
+
+    const aliceCombined = Buffer.concat([aliceX25519Secret, aliceMlkemSecret])
+    const bobCombined = Buffer.concat([bobX25519Secret, bobMlkemSecret])
+
+    return {
+      x25519SecretHex: aliceX25519Secret.toString('hex'),
+      x25519SecretBytes: aliceX25519Secret.length,
+      x25519Matched: aliceX25519Secret.equals(bobX25519Secret),
+      mlkemCiphertextBytes: ciphertext.length,
+      mlkemSecretHex: aliceMlkemSecret.toString('hex'),
+      mlkemSecretBytes: aliceMlkemSecret.length,
+      mlkemMatched: aliceMlkemSecret.equals(bobMlkemSecret),
+      combinedSecretHex: aliceCombined.toString('hex'),
+      combinedSecretBytes: aliceCombined.length,
+      combinedMatched: aliceCombined.equals(bobCombined),
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
 // HQC has no assigned OID yet (still pre-standardisation), so OpenSSL's
 // oqs-provider can't serialise HQC keys to PEM/DER at all - confirmed
 // directly, every genpkey/pkeyutl invocation fails with "No encoders
@@ -586,6 +658,11 @@ const server = http.createServer(async (req, res) => {
 
   if (route === '/ml-kem/speed') {
     respond(res, measureKemSpeed())
+    return
+  }
+
+  if (route === '/hybrid/exchange') {
+    respond(res, hybridExchange())
     return
   }
 

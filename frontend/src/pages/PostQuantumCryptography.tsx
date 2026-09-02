@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import PostQuantumPlaceholder from './PostQuantumPlaceholder'
 import PqcBenchmark from './PqcBenchmark'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
@@ -84,7 +83,18 @@ function PostQuantumCryptography() {
           have a number of fallbacks if one of the main methods was
           found to be at risk in the future.
         </p>
-        <PostQuantumPlaceholder label="SIKE break article link" />
+        <a
+          href="https://eprint.iacr.org/2022/975.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Research paper - PDF</span>
+          <p className="article-title">An efficient key recovery attack on SIDH</p>
+          <p className="article-byline">
+            Wouter Castryck, Thomas Decru - EUROCRYPT 2023
+          </p>
+        </a>
         <p>
           NIST's additional digital-signature on-ramp has advanced
           candidates built on markedly different mathematical

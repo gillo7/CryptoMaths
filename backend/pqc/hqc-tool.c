@@ -1,13 +1,18 @@
 /*
- * Real liboqs-backed HQC keygen/encapsulate/decapsulate.
+ * Real liboqs-backed KEM keygen/encapsulate/decapsulate - HQC and
+ * FrodoKEM.
  *
- * Used because OpenSSL's oqs-provider can't serialise HQC keys at all
- * yet: HQC has no assigned OID pending standardisation (shown as NULL
- * in oqs-provider's own OID table), so every openssl genpkey/pkeyutl
- * invocation for it fails with "No encoders were found", verified
- * directly. This talks to liboqs's C API instead - the same real
- * reference implementation every other HQC tool uses, just without
- * going through OpenSSL's own key-encoding layer.
+ * Used because OpenSSL has no support for either: HQC has no assigned
+ * OID pending standardisation (shown as NULL in oqs-provider's own OID
+ * table), so every openssl genpkey/pkeyutl invocation for it fails
+ * with "No encoders were found", verified directly. FrodoKEM was ISO
+ * standardised in June 2026, but OpenSSL 3.5 still has no support for
+ * it at all (confirmed via `openssl list -kem-algorithms`) - this file
+ * started HQC-only and grew to cover FrodoKEM too once that came up,
+ * rather than duplicating an identical tool under a second name. Both
+ * talk to liboqs's C API directly - the same real reference
+ * implementation, just without going through OpenSSL's own
+ * key-encoding layer.
  *
  * Every hex buffer this reads is validated against the exact expected
  * length for the requested variant before being written into a
@@ -23,6 +28,12 @@ static const char *alg_for(const char *variant) {
   if (strcmp(variant, "HQC-128") == 0) return OQS_KEM_alg_hqc_1;
   if (strcmp(variant, "HQC-192") == 0) return OQS_KEM_alg_hqc_3;
   if (strcmp(variant, "HQC-256") == 0) return OQS_KEM_alg_hqc_5;
+  if (strcmp(variant, "FrodoKEM-640-AES") == 0) return OQS_KEM_alg_frodokem_640_aes;
+  if (strcmp(variant, "FrodoKEM-640-SHAKE") == 0) return OQS_KEM_alg_frodokem_640_shake;
+  if (strcmp(variant, "FrodoKEM-976-AES") == 0) return OQS_KEM_alg_frodokem_976_aes;
+  if (strcmp(variant, "FrodoKEM-976-SHAKE") == 0) return OQS_KEM_alg_frodokem_976_shake;
+  if (strcmp(variant, "FrodoKEM-1344-AES") == 0) return OQS_KEM_alg_frodokem_1344_aes;
+  if (strcmp(variant, "FrodoKEM-1344-SHAKE") == 0) return OQS_KEM_alg_frodokem_1344_shake;
   return NULL;
 }
 
@@ -124,7 +135,9 @@ int main(int argc, char **argv) {
   const char *variant = argv[2];
   const char *alg = alg_for(variant);
   if (alg == NULL) {
-    fprintf(stderr, "{\"error\":\"variant must be HQC-128, HQC-192, or HQC-256\"}\n");
+    fprintf(stderr,
+            "{\"error\":\"variant must be HQC-128/192/256 or "
+            "FrodoKEM-640/976/1344-AES/SHAKE\"}\n");
     return 1;
   }
 

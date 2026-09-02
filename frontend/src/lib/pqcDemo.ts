@@ -77,6 +77,49 @@ export async function hqcEncapAndDecap(variant: string): Promise<HqcEncapDecapRe
   return data
 }
 
+export interface FrodoKemKeypair {
+  variant: string
+  publicKeyHex: string
+  privateKeyHex: string
+  publicKeyBytes: number
+  privateKeyBytes: number
+}
+
+export async function generateFrodoKemKeypair(variant: string): Promise<FrodoKemKeypair> {
+  const response = await fetch('/api/pqc/frodokem/keygen', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ variant }),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}
+
+export interface FrodoKemEncapDecapResult {
+  variant: string
+  publicKeyHex: string
+  publicKeyBytes: number
+  ciphertextHex: string
+  ciphertextBytes: number
+  bobSecretHex: string
+  aliceSecretHex: string
+  matched: boolean
+}
+
+export async function frodoKemEncapAndDecap(
+  variant: string,
+): Promise<FrodoKemEncapDecapResult> {
+  const response = await fetch('/api/pqc/frodokem/encap-decap', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ variant }),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error ?? 'request failed')
+  return data
+}
+
 export interface SignResult {
   variant: string
   // FN-DSA has no assigned OID yet, so there's no PEM to show - only
@@ -145,4 +188,8 @@ export function fetchHqcSpeed() {
 
 export function fetchFnDsaSpeed() {
   return fetchSpeed('fn-dsa')
+}
+
+export function fetchFrodoKemSpeed() {
+  return fetchSpeed('frodokem')
 }

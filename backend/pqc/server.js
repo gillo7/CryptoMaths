@@ -26,6 +26,14 @@ const HQC_TOOL_BIN =
 const HQC_LIB_PATH =
   process.env.HQC_LIB_PATH || path.join(SCRIPT_DIR, 'vendor', 'liboqs-install', 'lib')
 const HQC_VARIANTS = ['HQC-128', 'HQC-192', 'HQC-256']
+// Same tool and liboqs install as HQC above - hqc-tool.c grew to cover
+// both once FrodoKEM came up, rather than duplicating an identical tool
+// under a second name.
+const FRODOKEM_VARIANTS = [
+  'FrodoKEM-640-AES', 'FrodoKEM-640-SHAKE',
+  'FrodoKEM-976-AES', 'FrodoKEM-976-SHAKE',
+  'FrodoKEM-1344-AES', 'FrodoKEM-1344-SHAKE',
+]
 
 // Same liboqs install HQC uses - Falcon is built into it too now.
 const SIG_TOOL_BIN =
@@ -203,6 +211,42 @@ async function hqcEncapDecap(variant) {
   }
 }
 
+async function generateFrodoKemKeypair(variant) {
+  if (!FRODOKEM_VARIANTS.includes(variant)) {
+    throw new Error(`variant must be one of ${FRODOKEM_VARIANTS.join(', ')}`)
+  }
+  const { stdout } = await hqcToolExec(['keygen', variant])
+  return JSON.parse(stdout)
+}
+
+async function frodoKemEncapDecap(variant) {
+  if (!FRODOKEM_VARIANTS.includes(variant)) {
+    throw new Error(`variant must be one of ${FRODOKEM_VARIANTS.join(', ')}`)
+  }
+  const keypair = JSON.parse((await hqcToolExec(['keygen', variant])).stdout)
+  const encapped = JSON.parse(
+    (await hqcToolExec(['encap', variant, keypair.publicKeyHex])).stdout,
+  )
+  const decapped = JSON.parse(
+    (
+      await hqcToolExec([
+        'decap', variant, keypair.privateKeyHex, encapped.ciphertextHex,
+      ])
+    ).stdout,
+  )
+  return {
+    variant,
+    publicKeyHex: keypair.publicKeyHex,
+    publicKeyBytes: keypair.publicKeyBytes,
+    privateKeyBytes: keypair.privateKeyBytes,
+    ciphertextHex: encapped.ciphertextHex,
+    ciphertextBytes: encapped.ciphertextBytes,
+    bobSecretHex: encapped.secretHex,
+    aliceSecretHex: decapped.secretHex,
+    matched: encapped.secretHex === decapped.secretHex,
+  }
+}
+
 // Keygen timing across matching NIST security levels: ML-KEM-512 vs
 // HQC-128 (Level 1), ML-KEM-768 vs HQC-192 (Level 3), ML-KEM-1024 vs
 // HQC-256 (Level 5) - both land in the same tens-of-ms range on this
@@ -224,6 +268,36 @@ async function measureHqcVsKemSpeed() {
       { label: 'HQC-192', ms: await hqcMs('HQC-192') },
       { label: 'ML-KEM-1024', ms: await mlKemMs('ML-KEM-1024') },
       { label: 'HQC-256', ms: await hqcMs('HQC-256') },
+    ]
+    return { results }
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+}
+
+// Keygen timing across matching NIST security levels: ML-KEM-512 vs
+// FrodoKEM-640 (Level 1), ML-KEM-768 vs FrodoKEM-976 (Level 3),
+// ML-KEM-1024 vs FrodoKEM-1344 (Level 5) - SHAKE variant throughout,
+// since that's the variant this chapter's own text and byte-size
+// figures use. FrodoKEM's unstructured matrices make this the one
+// keygen comparison on the site where the classical-structure cost is
+// expected to actually show up as a real, visible gap, not just noise.
+async function measureFrodoKemVsKemSpeed() {
+  const dir = await mkdtemp(path.join(tmpdir(), 'frodokem-speed-'))
+  try {
+    const mlKemMs = (variant) =>
+      measureMedianMs(() =>
+        opensslExec(['genpkey', '-algorithm', variant, '-out', path.join(dir, `${variant}.pem`)]),
+      )
+    const frodoKemMs = (variant) => measureMedianMs(() => hqcToolExec(['keygen', variant]))
+
+    const results = [
+      { label: 'ML-KEM-512', ms: await mlKemMs('ML-KEM-512') },
+      { label: 'FrodoKEM-640-SHAKE', ms: await frodoKemMs('FrodoKEM-640-SHAKE') },
+      { label: 'ML-KEM-768', ms: await mlKemMs('ML-KEM-768') },
+      { label: 'FrodoKEM-976-SHAKE', ms: await frodoKemMs('FrodoKEM-976-SHAKE') },
+      { label: 'ML-KEM-1024', ms: await mlKemMs('ML-KEM-1024') },
+      { label: 'FrodoKEM-1344-SHAKE', ms: await frodoKemMs('FrodoKEM-1344-SHAKE') },
     ]
     return { results }
   } finally {
@@ -529,6 +603,23 @@ const server = http.createServer(async (req, res) => {
 
   if (route === '/hqc/speed') {
     respond(res, measureHqcVsKemSpeed())
+    return
+  }
+
+  if (route === '/frodokem/keygen') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, generateFrodoKemKeypair(body.variant))
+    return
+  }
+
+  if (route === '/frodokem/encap-decap') {
+    const body = await readJsonBody(req).catch(() => ({}))
+    respond(res, frodoKemEncapDecap(body.variant))
+    return
+  }
+
+  if (route === '/frodokem/speed') {
+    respond(res, measureFrodoKemVsKemSpeed())
     return
   }
 

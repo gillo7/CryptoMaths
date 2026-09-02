@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
-import { fetchHqcSpeed } from '../lib/pqcDemo'
-import HqcEncapDecap from './HqcEncapDecap'
-import HqcExample from './HqcExample'
+import { fetchHqcSpeed, generateHqcKeypair, hqcEncapAndDecap } from '../lib/pqcDemo'
+import KemHexEncapDecap from './KemHexEncapDecap'
+import KemHexExample from './KemHexExample'
 import PqcSpeedCompare from './PqcSpeedCompare'
 import './PostQuantumCryptography.css'
 import './SymmetricEncryption.css'
 import './Hashing.css'
+
+const HQC_VARIANTS = ['HQC-128', 'HQC-192', 'HQC-256'] as const
 
 function Hqc() {
   return (
@@ -122,8 +124,26 @@ function Hqc() {
           revisions, so this is the version actually running here,
           right now.
         </p>
-        <HqcExample />
-        <HqcEncapDecap />
+        <KemHexExample
+          variants={HQC_VARIANTS}
+          defaultVariant="HQC-128"
+          generateKeypair={generateHqcKeypair}
+          buttonLabel="Generate a real HQC keypair"
+          note="not OpenSSL, since HQC has no assigned OID yet for
+            OpenSSL to encode a PEM file with."
+        />
+        <KemHexEncapDecap
+          variants={HQC_VARIANTS}
+          defaultVariant="HQC-128"
+          encapAndDecap={hqcEncapAndDecap}
+          description="The same encapsulate/decapsulate exchange as
+            ML-KEM's, just built on error-correcting codes instead of
+            lattices: Bob encapsulates against Alice's public key,
+            Alice decapsulates the resulting ciphertext with her
+            private key, and both sides should arrive at the identical
+            secret without ever transmitting it directly."
+          buttonLabel="Encapsulate and decapsulate for real"
+        />
         <PqcSpeedCompare
           description="ML-KEM vs HQC, keygen speed at matching NIST security levels:"
           buttonLabel="Run a live speed test on the server"

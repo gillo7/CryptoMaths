@@ -15,14 +15,14 @@ mkdir -p vendor/liboqs
   git fetch --depth 1 https://github.com/open-quantum-safe/liboqs.git "$LIBOQS_COMMIT" && \
   git checkout -q FETCH_HEAD)
 
-# Scoped to just HQC's three parameter sets plus Falcon-512/1024 - a
-# full liboqs build compiles dozens of algorithms this service never
-# uses.
+# Scoped to just HQC's three parameter sets, Falcon-512/1024, and
+# FrodoKEM's six (three levels x AES/SHAKE) - a full liboqs build
+# compiles dozens of algorithms this service never uses.
 cmake -S vendor/liboqs -B vendor/liboqs/build \
   -DCMAKE_INSTALL_PREFIX="$(pwd)/vendor/liboqs-install" \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_SHARED_LIBS=ON \
-  -DOQS_MINIMAL_BUILD='KEM_hqc_1;KEM_hqc_3;KEM_hqc_5;SIG_falcon_512;SIG_falcon_1024' \
+  -DOQS_MINIMAL_BUILD='KEM_hqc_1;KEM_hqc_3;KEM_hqc_5;SIG_falcon_512;SIG_falcon_1024;KEM_frodokem_640_aes;KEM_frodokem_640_shake;KEM_frodokem_976_aes;KEM_frodokem_976_shake;KEM_frodokem_1344_aes;KEM_frodokem_1344_shake' \
   -DOQS_BUILD_ONLY_LIB=ON
 cmake --build vendor/liboqs/build --parallel "$(nproc)"
 cmake --build vendor/liboqs/build --target install

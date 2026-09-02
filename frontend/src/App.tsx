@@ -21,6 +21,7 @@ import MlDsa from './pages/MlDsa'
 import SlhDsa from './pages/SlhDsa'
 import Hqc from './pages/Hqc'
 import FnDsa from './pages/FnDsa'
+import FrodoKem from './pages/FrodoKem'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -75,6 +76,7 @@ function App() {
         <Route path="/post-quantum-cryptography/slh-dsa" element={<SlhDsa />} />
         <Route path="/post-quantum-cryptography/hqc" element={<Hqc />} />
         <Route path="/post-quantum-cryptography/fn-dsa" element={<FnDsa />} />
+        <Route path="/post-quantum-cryptography/frodokem" element={<FrodoKem />} />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

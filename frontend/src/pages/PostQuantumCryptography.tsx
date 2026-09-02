@@ -79,9 +79,11 @@ function PostQuantumCryptography() {
           key-generation, signing and, crucially, signing-versus-
           verification cost asymmetries, which cannot be assumed to
           resemble those of the lattice-based and hash-based standards.
-          Also, separate from NIST, FrodoKEM has been established by
-          Germany, and is now formally recommended, as confirmed by
-          ENISA's June 2026 draft.
+          Also, separate from NIST, FrodoKEM, not selected for NIST
+          standardisation but adopted independently since, was
+          formally standardised by ISO in June 2026 as ISO/IEC
+          18033-2:2006/Amd 2:2026, and is recommended by both
+          Germany's BSI and ENISA.
         </p>
         <p>
           This also explains why, rather than migrating directly to a
@@ -118,9 +120,11 @@ function PostQuantumCryptography() {
           </Link>
         </div>
 
-        <h3>European candidate</h3>
+        <h3>Independently adopted</h3>
         <div className="spec-link-row">
-          <a href="#frodokem" className="spec-link">FrodoKEM</a>
+          <Link to="/post-quantum-cryptography/frodokem" className="spec-link">
+            FrodoKEM
+          </Link>
         </div>
 
         <h3>Hybrid</h3>

@@ -1,7 +1,15 @@
 import { useState } from 'react'
-import { hqcEncapAndDecap, type HqcEncapDecapResult } from '../lib/pqcDemo'
 
-const VARIANTS = ['HQC-128', 'HQC-192', 'HQC-256'] as const
+export interface KemHexEncapDecapResult {
+  variant: string
+  publicKeyHex: string
+  publicKeyBytes: number
+  ciphertextHex: string
+  ciphertextBytes: number
+  bobSecretHex: string
+  aliceSecretHex: string
+  matched: boolean
+}
 
 function wrapHex(hex: string, width = 64): string {
   const lines = []
@@ -9,16 +17,30 @@ function wrapHex(hex: string, width = 64): string {
   return lines.join('\n')
 }
 
-function HqcEncapDecap() {
-  const [variant, setVariant] = useState<(typeof VARIANTS)[number]>('HQC-128')
+interface KemHexEncapDecapProps {
+  variants: readonly string[]
+  defaultVariant: string
+  encapAndDecap: (variant: string) => Promise<KemHexEncapDecapResult>
+  description: string
+  buttonLabel: string
+}
+
+function KemHexEncapDecap({
+  variants,
+  defaultVariant,
+  encapAndDecap,
+  description,
+  buttonLabel,
+}: KemHexEncapDecapProps) {
+  const [variant, setVariant] = useState(defaultVariant)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
-  const [result, setResult] = useState<HqcEncapDecapResult | null>(null)
+  const [result, setResult] = useState<KemHexEncapDecapResult | null>(null)
 
   async function handleRun() {
     setStatus('loading')
     setResult(null)
     try {
-      const data = await hqcEncapAndDecap(variant)
+      const data = await encapAndDecap(variant)
       setResult(data)
       setStatus('idle')
     } catch {
@@ -29,17 +51,10 @@ function HqcEncapDecap() {
   return (
     <div className="explorer">
       <span className="exercise-badge">Explore</span>
-      <p>
-        The same encapsulate/decapsulate exchange as ML-KEM's, just
-        built on error-correcting codes instead of lattices: Bob
-        encapsulates against Alice's public key, Alice decapsulates the
-        resulting ciphertext with her private key, and both sides
-        should arrive at the identical secret without ever
-        transmitting it directly.
-      </p>
+      <p>{description}</p>
 
       <div className="cost-selector">
-        {VARIANTS.map((option) => (
+        {variants.map((option) => (
           <button
             key={option}
             type="button"
@@ -60,7 +75,7 @@ function HqcEncapDecap() {
         disabled={status === 'loading'}
         className="compute-button"
       >
-        {status === 'loading' ? 'Running…' : 'Encapsulate and decapsulate for real'}
+        {status === 'loading' ? 'Running…' : buttonLabel}
       </button>
 
       {status === 'error' && (
@@ -99,4 +114,4 @@ function HqcEncapDecap() {
   )
 }
 
-export default HqcEncapDecap
+export default KemHexEncapDecap

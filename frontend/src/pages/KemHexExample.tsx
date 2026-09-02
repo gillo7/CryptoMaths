@@ -1,7 +1,12 @@
 import { useState } from 'react'
-import { generateHqcKeypair, type HqcKeypair } from '../lib/pqcDemo'
 
-const VARIANTS = ['HQC-128', 'HQC-192', 'HQC-256'] as const
+export interface KemHexKeypair {
+  variant: string
+  publicKeyHex: string
+  privateKeyHex: string
+  publicKeyBytes: number
+  privateKeyBytes: number
+}
 
 function wrapHex(hex: string, width = 64): string {
   const lines = []
@@ -9,16 +14,30 @@ function wrapHex(hex: string, width = 64): string {
   return lines.join('\n')
 }
 
-function HqcExample() {
-  const [variant, setVariant] = useState<(typeof VARIANTS)[number]>('HQC-128')
+interface KemHexExampleProps {
+  variants: readonly string[]
+  defaultVariant: string
+  generateKeypair: (variant: string) => Promise<KemHexKeypair>
+  buttonLabel: string
+  note: string
+}
+
+function KemHexExample({
+  variants,
+  defaultVariant,
+  generateKeypair,
+  buttonLabel,
+  note,
+}: KemHexExampleProps) {
+  const [variant, setVariant] = useState(defaultVariant)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
-  const [keypair, setKeypair] = useState<HqcKeypair | null>(null)
+  const [keypair, setKeypair] = useState<KemHexKeypair | null>(null)
 
   async function handleGenerate() {
     setStatus('loading')
     setKeypair(null)
     try {
-      const result = await generateHqcKeypair(variant)
+      const result = await generateKeypair(variant)
       setKeypair(result)
       setStatus('idle')
     } catch {
@@ -31,7 +50,7 @@ function HqcExample() {
       <span className="exercise-badge">Explore</span>
 
       <div className="cost-selector">
-        {VARIANTS.map((option) => (
+        {variants.map((option) => (
           <button
             key={option}
             type="button"
@@ -52,7 +71,7 @@ function HqcExample() {
         disabled={status === 'loading'}
         className="compute-button"
       >
-        {status === 'loading' ? 'Generating…' : 'Generate a real HQC keypair'}
+        {status === 'loading' ? 'Generating…' : buttonLabel}
       </button>
 
       {status === 'error' && (
@@ -63,9 +82,8 @@ function HqcExample() {
         <>
           <p className="demo-note">
             A genuine {keypair.variant} keypair, generated for real by
-            this server via liboqs directly, not OpenSSL, since HQC has
-            no assigned OID yet for OpenSSL to encode a PEM file with.
-            Public key: {keypair.publicKeyBytes} bytes, private key:{' '}
+            this server via liboqs directly, {note} Public key:{' '}
+            {keypair.publicKeyBytes} bytes, private key:{' '}
             {keypair.privateKeyBytes} bytes.
           </p>
           <p className="demo-note">
@@ -88,4 +106,4 @@ function HqcExample() {
   )
 }
 
-export default HqcExample
+export default KemHexExample

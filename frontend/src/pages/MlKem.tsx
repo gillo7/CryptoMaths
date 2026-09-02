@@ -151,48 +151,50 @@ function MlKem() {
           by the module rank k, the dimension of the vectors and matrix
           above, which sets the security level:
         </p>
-        <table className="ref-table">
-          <thead>
-            <tr>
-              <th>Module rank</th>
-              <th>Name</th>
-              <th>NIST level</th>
-              <th>Comparable to</th>
-              <th>Public key</th>
-              <th>Private key</th>
-              <th>Ciphertext</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>k = 2</td>
-              <td>ML-KEM-512</td>
-              <td>Level 1</td>
-              <td>AES-128</td>
-              <td>800 bytes</td>
-              <td>1,632 bytes</td>
-              <td>768 bytes</td>
-            </tr>
-            <tr>
-              <td>k = 3</td>
-              <td>ML-KEM-768</td>
-              <td>Level 3</td>
-              <td>AES-192</td>
-              <td>1,184 bytes</td>
-              <td>2,400 bytes</td>
-              <td>1,088 bytes</td>
-            </tr>
-            <tr>
-              <td>k = 4</td>
-              <td>ML-KEM-1024</td>
-              <td>Level 5</td>
-              <td>AES-256</td>
-              <td>1,568 bytes</td>
-              <td>3,168 bytes</td>
-              <td>1,568 bytes</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="table-scroll-x">
+          <table className="ref-table">
+            <thead>
+              <tr>
+                <th>Module rank</th>
+                <th>Name</th>
+                <th>NIST level</th>
+                <th>Comparable to</th>
+                <th>Public key</th>
+                <th>Private key</th>
+                <th>Ciphertext</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>k = 2</td>
+                <td>ML-KEM-512</td>
+                <td>Level 1</td>
+                <td>AES-128</td>
+                <td>800 bytes</td>
+                <td>1,632 bytes</td>
+                <td>768 bytes</td>
+              </tr>
+              <tr>
+                <td>k = 3</td>
+                <td>ML-KEM-768</td>
+                <td>Level 3</td>
+                <td>AES-192</td>
+                <td>1,184 bytes</td>
+                <td>2,400 bytes</td>
+                <td>1,088 bytes</td>
+              </tr>
+              <tr>
+                <td>k = 4</td>
+                <td>ML-KEM-1024</td>
+                <td>Level 5</td>
+                <td>AES-256</td>
+                <td>1,568 bytes</td>
+                <td>3,168 bytes</td>
+                <td>1,568 bytes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p>
           Increasing k means more polynomials per key and per
           ciphertext, so both key and ciphertext size grow with it, as

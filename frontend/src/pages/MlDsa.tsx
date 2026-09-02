@@ -111,36 +111,38 @@ function MlDsa() {
           multi-kilobyte signature adds real, measurable overhead to
           every connection compared to the classical alternatives.
         </p>
-        <table className="ref-table">
-          <thead>
-            <tr>
-              <th>Parameter set</th>
-              <th>NIST level</th>
-              <th>Comparable to</th>
-              <th>Signature size</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>ML-DSA-44</td>
-              <td>Level 2</td>
-              <td>AES-128</td>
-              <td>2,420 bytes</td>
-            </tr>
-            <tr>
-              <td>ML-DSA-65</td>
-              <td>Level 3</td>
-              <td>AES-192</td>
-              <td>3,293 bytes</td>
-            </tr>
-            <tr>
-              <td>ML-DSA-87</td>
-              <td>Level 5</td>
-              <td>AES-256</td>
-              <td>4,595 bytes</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="table-scroll-x">
+          <table className="ref-table">
+            <thead>
+              <tr>
+                <th>Parameter set</th>
+                <th>NIST level</th>
+                <th>Comparable to</th>
+                <th>Signature size</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ML-DSA-44</td>
+                <td>Level 2</td>
+                <td>AES-128</td>
+                <td>2,420 bytes</td>
+              </tr>
+              <tr>
+                <td>ML-DSA-65</td>
+                <td>Level 3</td>
+                <td>AES-192</td>
+                <td>3,293 bytes</td>
+              </tr>
+              <tr>
+                <td>ML-DSA-87</td>
+                <td>Level 5</td>
+                <td>AES-256</td>
+                <td>4,595 bytes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <PqcSignExample
           variants={ML_DSA_VARIANTS}
           defaultVariant="ML-DSA-65"

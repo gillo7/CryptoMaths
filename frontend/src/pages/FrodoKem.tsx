@@ -91,48 +91,50 @@ function FrodoKem() {
           exchange for security resting on nothing but the plainest
           possible version of the underlying hard problem.
         </p>
-        <table className="ref-table">
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th>ML-KEM-512</th>
-              <th>FrodoKEM-640</th>
-              <th>ML-KEM-768</th>
-              <th>FrodoKEM-976</th>
-              <th>ML-KEM-1024</th>
-              <th>FrodoKEM-1344</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Public key</td>
-              <td>800 bytes</td>
-              <td>9,616 bytes</td>
-              <td>1,184 bytes</td>
-              <td>15,632 bytes</td>
-              <td>1,568 bytes</td>
-              <td>21,520 bytes</td>
-            </tr>
-            <tr>
-              <td>Private key</td>
-              <td>1,632 bytes</td>
-              <td>19,888 bytes</td>
-              <td>2,400 bytes</td>
-              <td>31,296 bytes</td>
-              <td>3,168 bytes</td>
-              <td>43,088 bytes</td>
-            </tr>
-            <tr>
-              <td>Ciphertext</td>
-              <td>768 bytes</td>
-              <td>9,752 bytes</td>
-              <td>1,088 bytes</td>
-              <td>15,792 bytes</td>
-              <td>1,568 bytes</td>
-              <td>21,696 bytes</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="table-scroll-x">
+          <table className="ref-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>ML-KEM-512</th>
+                <th>FrodoKEM-640</th>
+                <th>ML-KEM-768</th>
+                <th>FrodoKEM-976</th>
+                <th>ML-KEM-1024</th>
+                <th>FrodoKEM-1344</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Public key</td>
+                <td>800 bytes</td>
+                <td>9,616 bytes</td>
+                <td>1,184 bytes</td>
+                <td>15,632 bytes</td>
+                <td>1,568 bytes</td>
+                <td>21,520 bytes</td>
+              </tr>
+              <tr>
+                <td>Private key</td>
+                <td>1,632 bytes</td>
+                <td>19,888 bytes</td>
+                <td>2,400 bytes</td>
+                <td>31,296 bytes</td>
+                <td>3,168 bytes</td>
+                <td>43,088 bytes</td>
+              </tr>
+              <tr>
+                <td>Ciphertext</td>
+                <td>768 bytes</td>
+                <td>9,752 bytes</td>
+                <td>1,088 bytes</td>
+                <td>15,792 bytes</td>
+                <td>1,568 bytes</td>
+                <td>21,696 bytes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p>
           The FrodoKEM figures above (SHAKE variant) are read straight
           off this server's own live demo below, not copied from a

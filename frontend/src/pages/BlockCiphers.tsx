@@ -73,76 +73,78 @@ function BlockCiphers() {
           produces for the same case, 3 bytes of padding needed:
         </p>
         <div className="table-scroll">
-          <table className="ref-table">
-            <thead>
-              <tr>
-                <th>Method</th>
-                <th>How it pads</th>
-                <th>Example</th>
-                <th>Trade-off</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>CMS / PKCS#7</td>
-                <td>Every padding byte equals the padding length</td>
-                <td>
-                  <code>03 03 03</code>
-                </td>
-                <td>Unambiguous, binary-safe - the default almost everywhere today</td>
-              </tr>
-              <tr>
-                <td>Bits (ISO/IEC 7816-4)</td>
-                <td>
-                  Append <code>0x80</code>, then zero-fill the rest
-                </td>
-                <td>
-                  <code>80 00 00</code>
-                </td>
-                <td>Unambiguous, binary-safe</td>
-              </tr>
-              <tr>
-                <td>ZeroLength (ANSI X9.23)</td>
-                <td>Zero-fill, but the last byte holds the padding length</td>
-                <td>
-                  <code>00 00 03</code>
-                </td>
-                <td>Unambiguous, binary-safe</td>
-              </tr>
-              <tr>
-                <td>Null (zero padding)</td>
-                <td>Zero-fill, with no length marker at all</td>
-                <td>
-                  <code>00 00 00</code>
-                </td>
-                <td>
-                  Ambiguous if the real data itself ends in zero bytes
-                </td>
-              </tr>
-              <tr>
-                <td>Space</td>
-                <td>
-                  Fill with ASCII space (<code>0x20</code>)
-                </td>
-                <td>
-                  <code>20 20 20</code>
-                </td>
-                <td>Only sensible for text data, not general binary</td>
-              </tr>
-              <tr>
-                <td>Random (ISO 10126)</td>
-                <td>Random filler bytes, last byte holds the padding length</td>
-                <td>
-                  <code>a4 f1 03</code> (random each time, only the last
-                  byte is fixed)
-                </td>
-                <td>
-                  Unambiguous, though the randomness adds no real security
-                  benefit over ANSI X9.23
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="table-scroll-x">
+            <table className="ref-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>How it pads</th>
+                  <th>Example</th>
+                  <th>Trade-off</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>CMS / PKCS#7</td>
+                  <td>Every padding byte equals the padding length</td>
+                  <td>
+                    <code>03 03 03</code>
+                  </td>
+                  <td>Unambiguous, binary-safe - the default almost everywhere today</td>
+                </tr>
+                <tr>
+                  <td>Bits (ISO/IEC 7816-4)</td>
+                  <td>
+                    Append <code>0x80</code>, then zero-fill the rest
+                  </td>
+                  <td>
+                    <code>80 00 00</code>
+                  </td>
+                  <td>Unambiguous, binary-safe</td>
+                </tr>
+                <tr>
+                  <td>ZeroLength (ANSI X9.23)</td>
+                  <td>Zero-fill, but the last byte holds the padding length</td>
+                  <td>
+                    <code>00 00 03</code>
+                  </td>
+                  <td>Unambiguous, binary-safe</td>
+                </tr>
+                <tr>
+                  <td>Null (zero padding)</td>
+                  <td>Zero-fill, with no length marker at all</td>
+                  <td>
+                    <code>00 00 00</code>
+                  </td>
+                  <td>
+                    Ambiguous if the real data itself ends in zero bytes
+                  </td>
+                </tr>
+                <tr>
+                  <td>Space</td>
+                  <td>
+                    Fill with ASCII space (<code>0x20</code>)
+                  </td>
+                  <td>
+                    <code>20 20 20</code>
+                  </td>
+                  <td>Only sensible for text data, not general binary</td>
+                </tr>
+                <tr>
+                  <td>Random (ISO 10126)</td>
+                  <td>Random filler bytes, last byte holds the padding length</td>
+                  <td>
+                    <code>a4 f1 03</code> (random each time, only the last
+                    byte is fixed)
+                  </td>
+                  <td>
+                    Unambiguous, though the randomness adds no real security
+                    benefit over ANSI X9.23
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 

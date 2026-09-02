@@ -63,43 +63,45 @@ function Ecdh() {
 
         <h2>The ECDH Exchange Flow</h2>
         <div className="table-scroll">
-          <table className="ref-table">
-            <thead>
-              <tr>
-                <th>Step</th>
-                <th>Alice</th>
-                <th>Bob</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Private key</td>
-                <td>a (secret)</td>
-                <td>b (secret)</td>
-              </tr>
-              <tr>
-                <td>Public key</td>
-                <td>A = a × G</td>
-                <td>B = b × G</td>
-              </tr>
-              <tr>
-                <td>Exchange</td>
-                <td>Sends A to Bob</td>
-                <td>Sends B to Alice</td>
-              </tr>
-              <tr>
-                <td>Shared secret</td>
-                <td>a × B = a × b × G</td>
-                <td>b × A = b × a × G</td>
-              </tr>
-              <tr>
-                <td>Result</td>
-                <td colSpan={2}>
-                  <strong>Same shared secret = a × b × G</strong>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="table-scroll-x">
+            <table className="ref-table">
+              <thead>
+                <tr>
+                  <th>Step</th>
+                  <th>Alice</th>
+                  <th>Bob</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Private key</td>
+                  <td>a (secret)</td>
+                  <td>b (secret)</td>
+                </tr>
+                <tr>
+                  <td>Public key</td>
+                  <td>A = a × G</td>
+                  <td>B = b × G</td>
+                </tr>
+                <tr>
+                  <td>Exchange</td>
+                  <td>Sends A to Bob</td>
+                  <td>Sends B to Alice</td>
+                </tr>
+                <tr>
+                  <td>Shared secret</td>
+                  <td>a × B = a × b × G</td>
+                  <td>b × A = b × a × G</td>
+                </tr>
+                <tr>
+                  <td>Result</td>
+                  <td colSpan={2}>
+                    <strong>Same shared secret = a × b × G</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <p>
           Eve sees G, A, and B, everything exchanged in the open, but

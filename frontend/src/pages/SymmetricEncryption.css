@@ -39,6 +39,12 @@
   border-radius: 8px;
 }
 
+.table-scroll-x {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .ref-table {
   width: 100%;
   border-collapse: collapse;
@@ -49,6 +55,7 @@
 .ref-table td {
   padding: 6px 12px;
   text-align: left;
+  white-space: nowrap;
   border-bottom: 1px solid var(--border);
 }
 

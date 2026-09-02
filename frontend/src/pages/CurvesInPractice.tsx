@@ -50,54 +50,56 @@ function CurvesInPractice() {
         </p>
 
         <div className="table-scroll">
-          <table className="ref-table">
-            <thead>
-              <tr>
-                <th>Curve</th>
-                <th>Also known as</th>
-                <th>Key size</th>
-                <th>Used in</th>
-                <th>Trust</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>P-256</td>
-                <td>secp256r1</td>
-                <td>256-bit</td>
-                <td>TLS, HTTPS, Apple, Google</td>
-                <td>Widely deployed, unexplained constants</td>
-              </tr>
-              <tr>
-                <td>P-384</td>
-                <td>secp384r1</td>
-                <td>384-bit</td>
-                <td>NSA Suite B, government systems</td>
-                <td>High security, same origin</td>
-              </tr>
-              <tr>
-                <td>P-521</td>
-                <td>secp521r1</td>
-                <td>521-bit</td>
-                <td>Very high security needs</td>
-                <td>Extremely strong, rarely needed</td>
-              </tr>
-              <tr>
-                <td>Curve25519</td>
-                <td>X25519 (in DH)</td>
-                <td>255-bit</td>
-                <td>TLS 1.3, Signal, WhatsApp, SSH</td>
-                <td>Transparent design, community favourite</td>
-              </tr>
-              <tr>
-                <td>secp256k1</td>
-                <td>—</td>
-                <td>256-bit</td>
-                <td>Bitcoin, Ethereum</td>
-                <td>Not a NIST curve, cryptocurrency standard</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="table-scroll-x">
+            <table className="ref-table">
+              <thead>
+                <tr>
+                  <th>Curve</th>
+                  <th>Also known as</th>
+                  <th>Key size</th>
+                  <th>Used in</th>
+                  <th>Trust</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>P-256</td>
+                  <td>secp256r1</td>
+                  <td>256-bit</td>
+                  <td>TLS, HTTPS, Apple, Google</td>
+                  <td>Widely deployed, unexplained constants</td>
+                </tr>
+                <tr>
+                  <td>P-384</td>
+                  <td>secp384r1</td>
+                  <td>384-bit</td>
+                  <td>NSA Suite B, government systems</td>
+                  <td>High security, same origin</td>
+                </tr>
+                <tr>
+                  <td>P-521</td>
+                  <td>secp521r1</td>
+                  <td>521-bit</td>
+                  <td>Very high security needs</td>
+                  <td>Extremely strong, rarely needed</td>
+                </tr>
+                <tr>
+                  <td>Curve25519</td>
+                  <td>X25519 (in DH)</td>
+                  <td>255-bit</td>
+                  <td>TLS 1.3, Signal, WhatsApp, SSH</td>
+                  <td>Transparent design, community favourite</td>
+                </tr>
+                <tr>
+                  <td>secp256k1</td>
+                  <td>—</td>
+                  <td>256-bit</td>
+                  <td>Bitcoin, Ethereum</td>
+                  <td>Not a NIST curve, cryptocurrency standard</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <CurvePemCompare />

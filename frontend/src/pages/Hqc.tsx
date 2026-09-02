@@ -84,39 +84,41 @@ function Hqc() {
           what convinced reviewers it was worth the cost as an
           insurance policy.
         </p>
-        <table className="ref-table">
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th>ML-KEM-512</th>
-              <th>HQC-128</th>
-              <th>ML-KEM-768</th>
-              <th>HQC-192</th>
-              <th>ML-KEM-1024</th>
-              <th>HQC-256</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Public key</td>
-              <td>800 bytes</td>
-              <td>2,241 bytes</td>
-              <td>1,184 bytes</td>
-              <td>4,514 bytes</td>
-              <td>1,568 bytes</td>
-              <td>7,237 bytes</td>
-            </tr>
-            <tr>
-              <td>Ciphertext</td>
-              <td>768 bytes</td>
-              <td>4,433 bytes</td>
-              <td>1,088 bytes</td>
-              <td>8,978 bytes</td>
-              <td>1,568 bytes</td>
-              <td>14,421 bytes</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="table-scroll-x">
+          <table className="ref-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>ML-KEM-512</th>
+                <th>HQC-128</th>
+                <th>ML-KEM-768</th>
+                <th>HQC-192</th>
+                <th>ML-KEM-1024</th>
+                <th>HQC-256</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Public key</td>
+                <td>800 bytes</td>
+                <td>2,241 bytes</td>
+                <td>1,184 bytes</td>
+                <td>4,514 bytes</td>
+                <td>1,568 bytes</td>
+                <td>7,237 bytes</td>
+              </tr>
+              <tr>
+                <td>Ciphertext</td>
+                <td>768 bytes</td>
+                <td>4,433 bytes</td>
+                <td>1,088 bytes</td>
+                <td>8,978 bytes</td>
+                <td>1,568 bytes</td>
+                <td>14,421 bytes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p>
           The HQC figures above are read straight off this server's
           own live demo below, not copied from a spec document -

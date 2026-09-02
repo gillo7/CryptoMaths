@@ -83,35 +83,37 @@ function AsciiExplorer() {
       />
       {chars.length > 0 && (
         <div className="table-scroll">
-          <table className="ref-table">
-            <thead>
-              <tr>
-                <th>Char</th>
-                <th>Decimal</th>
-                <th>Hex</th>
-                <th>Binary</th>
-              </tr>
-            </thead>
-            <tbody>
-              {chars.map((char, i) => {
-                const code = char.codePointAt(0) ?? 0
-                return (
-                  <tr key={i}>
-                    <td>
-                      <code>{char === ' ' ? 'space' : char}</code>
-                    </td>
-                    <td>{code}</td>
-                    <td>
-                      <code>{code.toString(16).toUpperCase().padStart(2, '0')}</code>
-                    </td>
-                    <td>
-                      <code>{code.toString(2).padStart(8, '0')}</code>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+          <div className="table-scroll-x">
+            <table className="ref-table">
+              <thead>
+                <tr>
+                  <th>Char</th>
+                  <th>Decimal</th>
+                  <th>Hex</th>
+                  <th>Binary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {chars.map((char, i) => {
+                  const code = char.codePointAt(0) ?? 0
+                  return (
+                    <tr key={i}>
+                      <td>
+                        <code>{char === ' ' ? 'space' : char}</code>
+                      </td>
+                      <td>{code}</td>
+                      <td>
+                        <code>{code.toString(16).toUpperCase().padStart(2, '0')}</code>
+                      </td>
+                      <td>
+                        <code>{code.toString(2).padStart(8, '0')}</code>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
@@ -273,32 +275,34 @@ function Encoding() {
         </p>
 
         <div className="table-scroll">
-          <table className="ref-table">
-            <thead>
-              <tr>
-                <th>Char</th>
-                <th>Decimal</th>
-                <th>Hex</th>
-                <th>Binary</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ASCII_PRINTABLE.map((row) => (
-                <tr key={row.decimal}>
-                  <td>
-                    <code>{row.char}</code>
-                  </td>
-                  <td>{row.decimal}</td>
-                  <td>
-                    <code>{row.hex}</code>
-                  </td>
-                  <td>
-                    <code>{row.binary}</code>
-                  </td>
+          <div className="table-scroll-x">
+            <table className="ref-table">
+              <thead>
+                <tr>
+                  <th>Char</th>
+                  <th>Decimal</th>
+                  <th>Hex</th>
+                  <th>Binary</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {ASCII_PRINTABLE.map((row) => (
+                  <tr key={row.decimal}>
+                    <td>
+                      <code>{row.char}</code>
+                    </td>
+                    <td>{row.decimal}</td>
+                    <td>
+                      <code>{row.hex}</code>
+                    </td>
+                    <td>
+                      <code>{row.binary}</code>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <p>
@@ -321,28 +325,30 @@ function Encoding() {
         </p>
 
         <div className="table-scroll">
-          <table className="ref-table">
-            <thead>
-              <tr>
-                <th>Hex</th>
-                <th>Decimal</th>
-                <th>Binary</th>
-              </tr>
-            </thead>
-            <tbody>
-              {HEX_DIGITS.map((row) => (
-                <tr key={row.hex}>
-                  <td>
-                    <code>{row.hex}</code>
-                  </td>
-                  <td>{row.decimal}</td>
-                  <td>
-                    <code>{row.binary}</code>
-                  </td>
+          <div className="table-scroll-x">
+            <table className="ref-table">
+              <thead>
+                <tr>
+                  <th>Hex</th>
+                  <th>Decimal</th>
+                  <th>Binary</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {HEX_DIGITS.map((row) => (
+                  <tr key={row.hex}>
+                    <td>
+                      <code>{row.hex}</code>
+                    </td>
+                    <td>{row.decimal}</td>
+                    <td>
+                      <code>{row.binary}</code>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <p>

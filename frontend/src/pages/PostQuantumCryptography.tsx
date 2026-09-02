@@ -170,6 +170,18 @@ function PostQuantumCryptography() {
         </p>
         <PqcBenchmark />
       </section>
+
+      <section>
+        <h2>Quiz!</h2>
+        <a
+          href="https://www.wikiclass.org/exercise/hjbkmabpq8m6ic7"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-link"
+        >
+          Take the Post-Quantum Cryptography quiz on Wikiclass →
+        </a>
+      </section>
     </main>
   )
 }

@@ -27,7 +27,22 @@ function PostQuantumCryptography() {
           solvable in polynomial time instead of exponential time,
           effectively breaking RSA and Elliptic Curve security.
         </p>
-        <PostQuantumPlaceholder label="Shor's algorithm article link" />
+        <a
+          href="https://arxiv.org/abs/quant-ph/9508027"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Research paper</span>
+          <p className="article-title">
+            Polynomial-Time Algorithms for Prime Factorization and
+            Discrete Logarithms on a Quantum Computer
+          </p>
+          <p className="article-byline">
+            Peter W. Shor - SIAM Journal on Computing, 1997 (the
+            extended version of his original 1994 FOCS paper)
+          </p>
+        </a>
         <p>
           Today (as I write this, in summer 2026), quantum computers are
           no longer conceptual, but have become a reality at a small

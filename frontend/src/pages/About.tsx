@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import './About.css'
-import './Hashing.css'
 
 function About() {
   return (
@@ -55,19 +54,17 @@ function About() {
           href="https://asecuritysite.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="article-preview"
+          className="about-banner-link"
         >
-          <span className="article-kicker">Official site</span>
-          <p className="article-title">ASecuritySite.com</p>
-          <p className="article-byline">Prof Bill Buchanan OBE</p>
+          <img
+            src="/images/notes-banner.webp"
+            alt="A page of Olivier's own hand-written revision notes on
+              Diffie-Hellman and key exchange, with Prof Buchanan's Bob
+              mug sitting on top"
+            className="about-banner"
+          />
+          <span className="about-banner-caption">ASecuritySite.com</span>
         </a>
-        <img
-          src="/images/notes-banner.webp"
-          alt="A page of Olivier's own hand-written revision notes on
-            Diffie-Hellman and key exchange, with Prof Buchanan's Bob
-            mug sitting on top"
-          className="about-banner"
-        />
         <p>
           If you would like to use any of the contents found on this
           site, be my guest! Whilst I have done my best to keep

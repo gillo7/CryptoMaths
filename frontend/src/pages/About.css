@@ -21,12 +21,37 @@
   margin: 4px 0;
 }
 
+.about-banner-link {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.about-banner-link:hover {
+  border-color: var(--accent-border);
+  transform: translateY(-2px);
+}
+
 .about-banner {
   width: 100%;
   height: auto;
   object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid var(--border);
+  display: block;
+}
+
+.about-banner-caption {
+  padding: 10px 14px;
+  background: var(--code-bg);
+  color: var(--accent);
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 15px;
 }
 
 .about-page section {

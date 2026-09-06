@@ -39,9 +39,10 @@ function About() {
           dissertation subject.
         </p>
         <p>
-          This web-app came to be when I realised that if I did revise
-          my course over the summer, why not make it available to
-          everyone? This is how this started, and hopefully I will
+          This web-app came to be when I realised that if I was going
+          to spend the summer revising my own notes from the course,
+          why not turn that revision into something everyone could
+          use? This is how this started, and hopefully I will
           keep adding things as time goes by. The contents are all
           strongly inspired by Prof. Buchanan’s ideas found on his own
           site asecuritysite.com, whilst the frontend and backend

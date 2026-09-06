@@ -21,6 +21,14 @@
   margin: 4px 0;
 }
 
+.about-banner {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
 .about-page section {
   margin-top: 32px;
   display: flex;

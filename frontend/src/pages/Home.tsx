@@ -15,6 +15,9 @@ function Home() {
             {topic.name}
           </Link>
         ))}
+        <Link to="/about" className="topic-card">
+          About
+        </Link>
       </nav>
     </main>
   )

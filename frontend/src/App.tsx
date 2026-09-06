@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
+import About from './pages/About'
 import TopicPage from './pages/TopicPage'
 import Encoding from './pages/Encoding'
 import Hashing from './pages/Hashing'
@@ -42,6 +43,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
         <Route path="/encoding" element={<Encoding />} />
         <Route path="/hashing" element={<Hashing />} />
         <Route path="/hashing/:algo" element={<HashingAlgorithm />} />

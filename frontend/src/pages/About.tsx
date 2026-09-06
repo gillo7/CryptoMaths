@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import './About.css'
+import './Hashing.css'
 
 function About() {
   return (
@@ -9,6 +10,12 @@ function About() {
       </Link>
 
       <h1>About</h1>
+
+      <img
+        src="/images/olivier-gillot.jpg"
+        alt="Olivier Gillot"
+        className="about-photo"
+      />
 
       <section>
         <p>
@@ -37,14 +44,21 @@ function About() {
           everyone? This is how this started, and hopefully I will
           keep adding things as time goes by. The contents are all
           strongly inspired by Prof. Buchanan’s ideas found on his own
-          site{' '}
-          <a href="https://asecuritysite.com/" target="_blank" rel="noopener noreferrer">
-            asecuritysite.com
-          </a>
-          , whilst the frontend and backend crypto exercises and
-          benchmarks are all mine, I just followed his examples and
-          try to learn more by creating my own implementation.
+          site asecuritysite.com, whilst the frontend and backend
+          crypto exercises and benchmarks are all mine, I just
+          followed his examples and try to learn more by creating my
+          own implementation.
         </p>
+        <a
+          href="https://asecuritysite.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Official site</span>
+          <p className="article-title">ASecuritySite.com</p>
+          <p className="article-byline">Prof Bill Buchanan OBE</p>
+        </a>
         <p>
           If you would like to use any of the contents found on this
           site, be my guest! Whilst I have done my best to keep
@@ -53,8 +67,9 @@ function About() {
           fast-moving area and some information that might have been
           correct when I wrote it may be out-of-date when you find it.
           If you find any of these inaccuracies, I would greatly
-          appreciate it if you’d let me know via email so I can check
-          these.
+          appreciate it if you’d let me know via{' '}
+          <a href="mailto:gillot.olivier6@gmail.com">email</a> so I
+          can check these.
         </p>
       </section>
     </main>

@@ -11,6 +11,15 @@
   box-sizing: border-box;
 }
 
+.about-photo {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
 .about-page section {
   margin-top: 32px;
   display: flex;

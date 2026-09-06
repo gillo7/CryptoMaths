@@ -15,6 +15,11 @@ function Home() {
             {topic.name}
           </Link>
         ))}
+      </nav>
+
+      <hr className="home-divider" />
+
+      <nav className="topics topics-secondary">
         <Link to="/about" className="topic-card">
           About
         </Link>

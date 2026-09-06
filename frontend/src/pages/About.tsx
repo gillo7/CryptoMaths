@@ -67,7 +67,15 @@ function About() {
         </a>
         <p>
           If you would like to use any of the contents found on this
-          site, be my guest! Whilst I have done my best to keep
+          site, be my guest! The full source is available on{' '}
+          <a
+            href="https://github.com/gillo7/CryptoMaths"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+          . Whilst I have done my best to keep
           everything as accurate and relevant as possible, I cannot
           guarantee that everything is perfect and this is a
           fast-moving area and some information that might have been

@@ -17,7 +17,8 @@
   object-fit: cover;
   border-radius: 50%;
   border: 1px solid var(--border);
-  margin-bottom: 8px;
+  align-self: center;
+  margin: 4px 0;
 }
 
 .about-page section {

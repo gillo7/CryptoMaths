@@ -11,12 +11,6 @@ function About() {
 
       <h1>About</h1>
 
-      <img
-        src="/images/olivier-gillot.jpg"
-        alt="Olivier Gillot"
-        className="about-photo"
-      />
-
       <section>
         <p>
           My name is Olivier Gillot, I am a Belgian long settled in
@@ -27,6 +21,13 @@ function About() {
           IT degree with the Open University in 2025, then an on-going
           Master in Cybersecurity with the Edinburgh Napier University.
         </p>
+
+        <img
+          src="/images/olivier-gillot.jpg"
+          alt="Olivier Gillot"
+          className="about-photo"
+        />
+
         <p>
           There, I had the chance to discover the universe of Applied
           Cryptography through the teachings of Prof. Buchanan.

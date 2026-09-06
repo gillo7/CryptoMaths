@@ -35,9 +35,16 @@
   margin: 24px 0 0;
 }
 
-.topics.topics-secondary {
-  grid-template-columns: minmax(220px, 1fr);
-  max-width: 300px;
+.about-link {
+  margin-top: 24px;
+  color: var(--text);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.about-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
 }
 
 .topic-card {

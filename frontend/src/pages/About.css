@@ -22,8 +22,8 @@
 }
 
 .about-banner-link {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  display: block;
   border: 1px solid var(--border);
   border-radius: 10px;
   overflow: hidden;
@@ -46,8 +46,14 @@
 }
 
 .about-banner-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   padding: 10px 14px;
-  background: var(--code-bg);
+  background: var(--social-bg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   color: var(--accent);
   font-family: var(--heading);
   font-weight: 500;

@@ -14,6 +14,19 @@ function Tls() {
       <h1>TLS</h1>
 
       <section>
+        <p>
+          Once upon a time, most web traffic went by unencrypted, via
+          the HTTP protocol. Following a push from Google, who declared
+          any unencrypted website insecure and made Chrome put you
+          through real hoops just to access one, the web overwhelmingly
+          runs on the securely encrypted HTTPS protocol today instead.
+          You can check this yourself on any site you visit, just look
+          at the URL bar. And how does that encryption actually happen?
+          Through Transport Layer Security, TLS.
+        </p>
+      </section>
+
+      <section>
         <h2>Before TLS 1.3</h2>
         <p>
           SSL 1.0 never actually shipped publicly. An internal security

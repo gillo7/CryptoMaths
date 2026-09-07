@@ -1,0 +1,11 @@
+<svg width="300" height="100" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .word-crypto { font-family: 'Georgia', 'Iowan Old Style', serif; font-weight: 700; fill: #F6F1E7; }
+      .word-maths { font-family: 'Georgia', 'Iowan Old Style', serif; font-weight: 700; fill: #C9A227; }
+      .tagline { font-family: 'Courier New', monospace; fill: #9CA8B4; letter-spacing: 0.5px; }
+    </style>
+  </defs>
+  <text x="0" y="52" font-size="46" class="word-crypto">Crypto<tspan class="word-maths">Maths</tspan></text>
+  <text x="2" y="82" font-size="15" class="tagline">learn cryptography by using it</text>
+</svg>

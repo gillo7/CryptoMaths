@@ -5,7 +5,24 @@ import './Home.css'
 function Home() {
   return (
     <main className="home">
-      <h1>CryptoMaths</h1>
+      <h1 className="logo-lockup">
+        <img
+          src="/images/cryptomaths_favicon.svg"
+          alt=""
+          className="logo-mark"
+        />
+        <picture>
+          <source
+            srcSet="/images/wordmark_dark.svg"
+            media="(prefers-color-scheme: dark)"
+          />
+          <img
+            src="/images/wordmark.svg"
+            alt="CryptoMaths"
+            className="logo-wordmark"
+          />
+        </picture>
+      </h1>
       <p className="subtitle">
         Cryptography keeps the web secure, ever asked yourself how it works?
       </p>

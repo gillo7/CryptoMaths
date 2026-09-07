@@ -4,6 +4,7 @@ export interface TlsCheckResult {
   supported: boolean
   protocol?: string
   cipher?: string
+  group?: string
 }
 
 export interface TlsScanResult {
@@ -12,6 +13,7 @@ export interface TlsScanResult {
     cipher: string | null
   }
   serverChecks: TlsCheckResult[]
+  groupChecks: TlsCheckResult[]
 }
 
 export async function runTlsScan(): Promise<TlsScanResult> {

@@ -65,7 +65,8 @@ function TlsScan() {
           </div>
 
           <p className="demo-note">
-            <strong>This server</strong>, tested live just now:
+            <strong>This server's symmetric side</strong> (protocol
+            versions and cipher suites), tested live just now:
           </p>
           <div className="multibox">
             {result.serverChecks.map((check) => (
@@ -74,6 +75,24 @@ function TlsScan() {
                 <code className="multibox-value">
                   {check.supported
                     ? `Accepted (${check.cipher})`
+                    : 'Rejected'}
+                </code>
+              </div>
+            ))}
+          </div>
+
+          <p className="demo-note">
+            <strong>This server's asymmetric side</strong> (the
+            ClientHello key-exchange options from the handshake above),
+            tested live just now:
+          </p>
+          <div className="multibox">
+            {result.groupChecks.map((check) => (
+              <div className="multibox-row" key={check.id}>
+                <span className="multibox-label">{check.label}</span>
+                <code className="multibox-value">
+                  {check.supported
+                    ? `Accepted (${check.group})`
                     : 'Rejected'}
                 </code>
               </div>

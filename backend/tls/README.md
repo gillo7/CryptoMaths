@@ -2,15 +2,19 @@
 
 Powers the live demo on the TLS chapter's own page: real proof of what
 protocol/cipher your own browser just negotiated to load the page, and
-a live scan of what this server's own nginx listener accepts.
+a live scan of what this server's own nginx listener accepts on both
+the symmetric side (protocol versions, cipher suites) and the
+asymmetric side (key-exchange groups).
 
 ```
-POST /scan   -> { yourConnection: { protocol, cipher }, serverChecks: [{ id, label, supported, protocol?, cipher? }] }
+POST /scan   -> { yourConnection: { protocol, cipher }, serverChecks: [...], groupChecks: [...] }
 ```
 
-No request body - the browser's own connection info arrives as nginx
-headers on every request to this location already (see below), and the
-server checks are a fixed set run fresh on every call.
+Both `serverChecks` and `groupChecks` are arrays of
+`{ id, label, supported, protocol?, cipher?, group? }`. No request body
+- the browser's own connection info arrives as nginx headers on every
+request to this location already (see below), and both check arrays
+are fixed sets run fresh on every call.
 
 ## Your connection: real, not simulated
 
@@ -30,7 +34,7 @@ page, not anything this service could fabricate or cache.
 
 ## Server checks: real handshakes, every call
 
-`scanServer()` runs six genuine `openssl s_client` connections against
+`CIPHER_CHECKS` runs six genuine `openssl s_client` connections against
 `127.0.0.1:443` (loopback, not out over the internet to this box's own
 public IP) with `-servername cryptomaths.org` so nginx's SNI-based
 config picks the exact same certificate/cipher policy a real visitor
@@ -55,12 +59,29 @@ directly while building this: `ECDHE-RSA-AES128-GCM-SHA256`, a
 perfectly modern, unremarkable cipher, fails here purely because of
 the certificate type mismatch, not because nginx disabled it.
 
-Each check spawns `openssl s_client` via `spawn` (not `execFile`),
-closes its stdin immediately, and parses `-brief` output for
-`Protocol version:`/`Ciphersuite:` lines - same client-side pattern as
-the PQC chapter's own TLS handshake benchmark (`backend/pqc/`), reused
-here since it already solves the "s_client needs its stdin closed to
-exit cleanly" problem.
+`GROUP_CHECKS` runs four more, one per `-groups <name>` forced to TLS
+1.3 - the exact four key-exchange options the chapter's own ClientHello
+step names: ECC P-256 (`secp256r1`), X25519, ML-KEM-768 (`MLKEM768`),
+and the hybrid (`X25519MLKEM768`). Forcing a single named group works
+the same way forcing a single cipher does: success proves the server
+genuinely accepted that specific group. **Real, current result**: P-256
+and X25519 are accepted, ML-KEM-768 and the hybrid are rejected - this
+server's nginx doesn't offer PQC key exchange at all yet, an honest
+reflection of where this specific deployment actually stands, not a
+staged result. Client-side, this needed pointing `openssl s_client` at
+the same separately-built OpenSSL 3.5.8 the `pqc/` service already
+uses (`OPENSSL_BIN`/`OPENSSL_LIB_PATH`, same defaults) - the system
+openssl (3.0.20) has no `MLKEM768`/`X25519MLKEM768` group support at
+all, confirmed directly (`openssl list -tls-groups` on the system
+build has no MLKEM entries whatsoever).
+
+Every check, cipher or group, spawns `openssl s_client` via `spawn`
+(not `execFile`), closes its stdin immediately, and parses `-brief`
+output for `Protocol version:`/`Ciphersuite:`/`Peer Temp Key:` lines -
+the client-side pattern is the same one the PQC chapter's own TLS
+handshake benchmark (`backend/pqc/`) already established, reused here
+since it already solves the "s_client needs its stdin closed to exit
+cleanly" problem.
 
 ## Run
 
@@ -81,13 +102,17 @@ always returns `null` for `yourConnection`.
 
 ## Safety notes
 
-Six real TCP connections and TLS handshakes per call, each capped at
-an 8s timeout and `kill()`ed if it hangs - in practice every check
-resolves in well under a second on loopback (either a handshake
-completes or the rejection is immediate), but the true worst case, if
-every single check somehow hung, is 6 x 8s = 48s. nginx's
-`proxy_read_timeout` for `/api/tls/` is set to 60s specifically to stay
-above that ceiling - it was initially left at 30s (copied from a
-neighbouring location) and only caught while writing this file, fixed
-before it could ever actually bite. No user input at all - `/scan`
-takes no request body, so there's nothing to validate or sanitise.
+Ten real TCP connections and TLS handshakes per call (six cipher checks
+plus four group checks), each capped at an 8s timeout and `kill()`ed if
+it hangs - in practice every check resolves in well under a second on
+loopback (either a handshake completes or the rejection is immediate,
+confirmed live: a full `/scan` call takes ~0.5s end to end), but the
+true worst case, if every single check somehow hung, is 10 x 8s = 80s.
+nginx's `proxy_read_timeout` for `/api/tls/` is set to 120s specifically
+to stay above that ceiling - it was 30s, then 60s (copied from a
+neighbouring location, then bumped once for the original six checks),
+then raised again to 120s once `GROUP_CHECKS` doubled the check count
+- caught each time before it could actually bite, but worth remembering
+the timeout needs revisiting whenever `CIPHER_CHECKS`/`GROUP_CHECKS`
+grows. No user input at all - `/scan` takes no request body, so there's
+nothing to validate or sanitise.

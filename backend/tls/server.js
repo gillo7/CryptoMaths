@@ -11,6 +11,14 @@ const TARGET_HOST = process.env.TARGET_HOST || 'cryptomaths.org'
 const TARGET_ADDR = process.env.TARGET_ADDR || '127.0.0.1:443'
 const TIMEOUT_MS = 8_000
 
+// The system openssl (3.0.20) has no ML-KEM/hybrid group support at
+// all - checking those needs the same separately-built OpenSSL 3.5.8
+// the pqc/ service already uses (OPENSSL_BIN/OPENSSL_LIB_PATH, same
+// defaults). Every check below runs through this one build for
+// consistency, not just the PQC-group ones.
+const OPENSSL_BIN = process.env.OPENSSL_BIN || '/usr/local/ssl/bin/openssl'
+const OPENSSL_LIB_PATH = process.env.OPENSSL_LIB_PATH || '/usr/local/ssl/lib'
+
 // Every check nginx's own listener is actually asked to answer, live,
 // each time this endpoint is called - nothing here is precomputed or
 // hardcoded from a past run. TLS 1.0/1.1 are expected to be rejected
@@ -21,7 +29,7 @@ const TIMEOUT_MS = 8_000
 // deliberately avoiding any ECDHE-RSA-* names, which would fail here
 // for an unrelated reason (this server's certificate is ECDSA, not
 // RSA, so no RSA-keyexchange suite could work regardless of policy).
-const CHECKS = [
+const CIPHER_CHECKS = [
   { id: 'tls1', label: 'TLS 1.0', args: ['-tls1'] },
   { id: 'tls1_1', label: 'TLS 1.1', args: ['-tls1_1'] },
   { id: 'tls1_2', label: 'TLS 1.2', args: ['-tls1_2'] },
@@ -38,12 +46,29 @@ const CHECKS = [
   { id: 'tls1_3', label: 'TLS 1.3', args: ['-tls1_3'] },
 ]
 
+// The asymmetric side: exactly the four key-exchange options this
+// chapter's own ClientHello step names. Forcing a single named group
+// (rather than letting the client offer several) means a successful
+// handshake proves the server genuinely accepted that specific group,
+// same logic as the cipher checks above. All forced to TLS 1.3, since
+// that's the only version the ML-KEM/hybrid groups exist in at all.
+const GROUP_CHECKS = [
+  { id: 'p256', label: 'ECC P-256', args: ['-tls1_3', '-groups', 'secp256r1'] },
+  { id: 'x25519', label: 'X25519', args: ['-tls1_3', '-groups', 'x25519'] },
+  { id: 'mlkem768', label: 'ML-KEM-768', args: ['-tls1_3', '-groups', 'MLKEM768'] },
+  {
+    id: 'hybrid',
+    label: 'X25519 + ML-KEM-768 (hybrid)',
+    args: ['-tls1_3', '-groups', 'X25519MLKEM768'],
+  },
+]
+
 function runOpensslCheck(args) {
   return new Promise((resolve) => {
-    const child = spawn('openssl', [
+    const child = spawn(OPENSSL_BIN, [
       's_client', '-connect', TARGET_ADDR, '-servername', TARGET_HOST,
       ...args, '-brief',
-    ])
+    ], { env: { ...process.env, LD_LIBRARY_PATH: OPENSSL_LIB_PATH } })
     let out = ''
     child.stdout.on('data', (d) => (out += d))
     child.stderr.on('data', (d) => (out += d))
@@ -56,8 +81,14 @@ function runOpensslCheck(args) {
       clearTimeout(timer)
       const protocolMatch = out.match(/Protocol version:\s*(\S+)/)
       const cipherMatch = out.match(/Ciphersuite:\s*(\S+)/)
+      const groupMatch = out.match(/Peer Temp Key:\s*(.+)/)
       if (protocolMatch && cipherMatch) {
-        resolve({ supported: true, protocol: protocolMatch[1], cipher: cipherMatch[1] })
+        resolve({
+          supported: true,
+          protocol: protocolMatch[1],
+          cipher: cipherMatch[1],
+          ...(groupMatch ? { group: groupMatch[1].trim() } : {}),
+        })
       } else {
         resolve({ supported: false })
       }
@@ -69,9 +100,9 @@ function runOpensslCheck(args) {
   })
 }
 
-async function scanServer() {
+async function runChecks(catalog) {
   const results = []
-  for (const check of CHECKS) {
+  for (const check of catalog) {
     const outcome = await runOpensslCheck(check.args)
     results.push({ id: check.id, label: check.label, ...outcome })
   }
@@ -90,9 +121,10 @@ const server = http.createServer(async (req, res) => {
         protocol: req.headers['x-client-tls-protocol'] || null,
         cipher: req.headers['x-client-tls-cipher'] || null,
       }
-      const serverChecks = await scanServer()
+      const serverChecks = await runChecks(CIPHER_CHECKS)
+      const groupChecks = await runChecks(GROUP_CHECKS)
       res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ yourConnection, serverChecks }))
+      res.end(JSON.stringify({ yourConnection, serverChecks, groupChecks }))
     } catch (err) {
       res.writeHead(500, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify({ error: err.message }))

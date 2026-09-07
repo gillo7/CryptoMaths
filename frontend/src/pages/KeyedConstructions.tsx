@@ -99,6 +99,79 @@ function KeyedConstructions() {
           covers.
         </p>
       </section>
+
+      <section>
+        <h2>HKDF (HMAC-based Key Derivation Function)</h2>
+        <p>
+          Formalised by Hugo Krawczyk in 2010, standardised as{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc5869"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            RFC 5869
+          </a>
+          . HKDF takes HMAC, the construction covered above, and uses
+          it as a building block for a different problem entirely: not
+          proving who sent something, but turning one shared secret
+          into several usable keys.
+        </p>
+        <p>
+          Sometimes the secret two parties end up with isn't a nice,
+          uniformly random, correctly-sized key ready to use directly.
+          A shared secret from a{' '}
+          <Link to="/key-exchange/diffie-hellman">
+            Diffie-Hellman exchange
+          </Link>{' '}
+          or an{' '}
+          <Link to="/post-quantum-cryptography/ml-kem">
+            ML-KEM encapsulation
+          </Link>
+          , covered elsewhere in this app, is cryptographically strong,
+          but not necessarily evenly distributed across every bit, and
+          usually the wrong size for what actually comes next, maybe a
+          256-bit AES key, a separate key for HMAC itself, and an IV,
+          all needed from that one shared secret. HKDF turns one blob
+          of decent-but-awkward keying material into as many
+          well-formed, independent, properly-sized keys as required.
+        </p>
+        <p>
+          The process runs in two steps. <strong>Extract</strong>{' '}
+          takes the raw shared secret and, using HMAC with a salt,
+          concentrates it into a single, fixed-length, uniformly-strong
+          key, cleaning up whatever irregularities existed in the
+          input. <strong>Expand</strong> takes that clean key and
+          stretches it into however much output keying material is
+          needed, often labelling each derived key with what it's
+          actually for, so that even several keys pulled from the same
+          source secret are cryptographically independent of one
+          another, not just copies with different names attached.
+        </p>
+        <a
+          href="https://eprint.iacr.org/2010/264.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-preview"
+        >
+          <span className="article-kicker">Research paper - PDF</span>
+          <p className="article-title">
+            Cryptographic Extraction and Key Derivation: The HKDF
+            Scheme
+          </p>
+          <p className="article-byline">Hugo Krawczyk - CRYPTO 2010</p>
+        </a>
+        <p>
+          This is where the whole chapter actually meets in one place.
+          AES and ChaCha20 need a key before they can do anything. HMAC
+          needs a key too, and can also help build one. HKDF is the
+          mechanism that takes a single shared secret, however it was
+          obtained, and turns it into every key the rest of this
+          chapter actually runs on. It's the quiet, unglamorous last
+          step, run once, every time two parties agree on a secret,
+          before any of the ciphers covered above ever encrypt a
+          single byte.
+        </p>
+      </section>
     </main>
   )
 }

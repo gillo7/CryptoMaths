@@ -11,4 +11,5 @@ export const topics: Topic[] = [
   { slug: 'key-exchange', name: 'Key Exchange' },
   { slug: 'certificates', name: 'Certificates' },
   { slug: 'post-quantum-cryptography', name: 'Post-Quantum Cryptography' },
+  { slug: 'tls', name: 'TLS' },
 ]

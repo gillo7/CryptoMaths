@@ -25,6 +25,7 @@ import Hqc from './pages/Hqc'
 import FnDsa from './pages/FnDsa'
 import FrodoKem from './pages/FrodoKem'
 import Hybrid from './pages/Hybrid'
+import Tls from './pages/Tls'
 import ScrollToTop from './ScrollToTop'
 import { topics } from './topics'
 
@@ -36,6 +37,7 @@ const CUSTOM_TOPIC_SLUGS = new Set([
   'key-exchange',
   'certificates',
   'post-quantum-cryptography',
+  'tls',
 ])
 
 function App() {
@@ -86,6 +88,7 @@ function App() {
         <Route path="/post-quantum-cryptography/fn-dsa" element={<FnDsa />} />
         <Route path="/post-quantum-cryptography/frodokem" element={<FrodoKem />} />
         <Route path="/post-quantum-cryptography/hybrid" element={<Hybrid />} />
+        <Route path="/tls" element={<Tls />} />
         {topics
           .filter((topic) => !CUSTOM_TOPIC_SLUGS.has(topic.slug))
           .map((topic) => (

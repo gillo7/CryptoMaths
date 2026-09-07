@@ -13,12 +13,12 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin: 32px 0;
+  margin: 32px 0 40px;
 
   @media (max-width: 480px) {
     flex-direction: column;
-    gap: 10px;
-    margin: 20px 0;
+    gap: 12px;
+    margin: 20px 0 32px;
   }
 }
 
@@ -28,8 +28,8 @@
   flex-shrink: 0;
 
   @media (max-width: 480px) {
-    width: 72px;
-    height: 72px;
+    width: 84px;
+    height: 84px;
   }
 }
 
@@ -38,15 +38,8 @@
   width: auto;
 
   @media (max-width: 480px) {
-    height: 48px;
+    height: 68px;
   }
-}
-
-.subtitle {
-  max-width: 520px;
-  font-size: 18px;
-  line-height: 145%;
-  margin-bottom: 40px;
 }
 
 .topics {

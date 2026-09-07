@@ -23,9 +23,6 @@ function Home() {
           />
         </picture>
       </h1>
-      <p className="subtitle">
-        Cryptography keeps the web secure, ever asked yourself how it works?
-      </p>
       <nav className="topics">
         {topics.map((topic) => (
           <Link key={topic.slug} to={`/${topic.slug}`} className="topic-card">

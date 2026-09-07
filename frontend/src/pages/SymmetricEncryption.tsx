@@ -51,6 +51,9 @@ function SymmetricEncryption() {
           <Link to="/symmetric-encryption/stream-ciphers" className="section-button">
             Stream Ciphers
           </Link>
+          <Link to="/symmetric-encryption/keyed-constructions" className="section-button">
+            Keyed Constructions
+          </Link>
         </div>
       </section>
 

@@ -9,6 +9,7 @@ import SymmetricEncryption from './pages/SymmetricEncryption'
 import BlockCiphers from './pages/BlockCiphers'
 import BlockCipherAlgorithm from './pages/BlockCipherAlgorithm'
 import StreamCiphers from './pages/StreamCiphers'
+import KeyedConstructions from './pages/KeyedConstructions'
 import StreamCipherAlgorithm from './pages/StreamCipherAlgorithm'
 import PublicKeyEncryption from './pages/PublicKeyEncryption'
 import KeyExchange from './pages/KeyExchange'
@@ -63,6 +64,10 @@ function App() {
         <Route
           path="/symmetric-encryption/stream-ciphers/:algo"
           element={<StreamCipherAlgorithm />}
+        />
+        <Route
+          path="/symmetric-encryption/keyed-constructions"
+          element={<KeyedConstructions />}
         />
         <Route path="/public-key-encryption" element={<PublicKeyEncryption />} />
         <Route path="/key-exchange" element={<KeyExchange />} />

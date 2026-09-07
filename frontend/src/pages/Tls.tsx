@@ -225,6 +225,18 @@ function Tls() {
         <h2>Live demo</h2>
         <TlsScan />
       </section>
+
+      <section>
+        <h2>Quiz!</h2>
+        <a
+          href="https://www.wikiclass.org/exercise/ufa2bj5ej0hxyoh"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-link"
+        >
+          Take the TLS quiz on Wikiclass →
+        </a>
+      </section>
     </main>
   )
 }

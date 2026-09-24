@@ -52,10 +52,20 @@ function About() {
           to spend the summer revising my own notes from the course,
           why not turn that revision into something everyone could
           use? This is how this started, and hopefully I will
-          keep adding things as time goes by. The contents are all
-          strongly inspired by Prof. Buchanan’s ideas found on his own
-          site asecuritysite.com, whilst the frontend and backend
-          crypto exercises and benchmarks are all mine, I just
+          keep adding things as time goes by. The contents draw
+          directly on Prof. Buchanan’s Applied Cryptography course,
+          also freely available on{' '}
+          <a
+            href="https://www.youtube.com/@BillBuchanan"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            YouTube
+          </a>{' '}
+          alongside interviews with some of the world's leading names
+          in cryptography, and his work on asecuritysite.com, whilst
+          the frontend and backend crypto exercises and benchmarks are
+          all mine, I just
           followed his examples and try to learn more by creating my
           own implementation.
         </p>

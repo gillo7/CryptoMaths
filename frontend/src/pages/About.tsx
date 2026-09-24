@@ -43,7 +43,9 @@ function About() {
           alt="Prof Bill Buchanan OBE"
           className="about-photo"
         />
-        <p className="about-photo-caption">Prof Bill Buchanan OBE</p>
+        <p className="about-photo-caption">
+          Prof Bill Buchanan OBE, Edinburgh Napier University
+        </p>
 
         <p>
           This web-app came to be when I realised that if I was going

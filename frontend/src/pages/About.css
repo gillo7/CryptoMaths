@@ -21,6 +21,16 @@
   margin: 4px 0;
 }
 
+.about-photo-rect {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  align-self: center;
+  margin: 4px 0;
+}
+
 .about-photo-caption {
   align-self: center;
   margin: -8px 0 4px;

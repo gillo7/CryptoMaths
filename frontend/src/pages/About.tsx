@@ -41,7 +41,7 @@ function About() {
         <img
           src="/images/bill.png"
           alt="Prof Bill Buchanan OBE"
-          className="about-photo"
+          className="about-photo-rect"
         />
         <p className="about-photo-caption">
           Prof Bill Buchanan OBE, Edinburgh Napier University

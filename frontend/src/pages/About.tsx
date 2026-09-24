@@ -38,6 +38,13 @@ function About() {
           these, and this in turn became a published paper and my
           dissertation subject.
         </p>
+        <img
+          src="/images/bill.png"
+          alt="Prof Bill Buchanan OBE"
+          className="about-photo"
+        />
+        <p className="about-photo-caption">Prof Bill Buchanan OBE</p>
+
         <p>
           This web-app came to be when I realised that if I was going
           to spend the summer revising my own notes from the course,

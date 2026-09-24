@@ -21,6 +21,13 @@
   margin: 4px 0;
 }
 
+.about-photo-caption {
+  align-self: center;
+  margin: -8px 0 4px;
+  font-size: 13px;
+  color: var(--text);
+}
+
 .about-banner-link {
   position: relative;
   display: block;

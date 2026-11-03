@@ -1,14 +1,16 @@
-# The Book (working title)
+# The Cryptography Lab
 
-Learning cryptography by using it: see how it works, break it, then make it stronger.
+*From ancient ciphers to post-quantum, on a Raspberry Pi*
 
-A book and a matching lecture series, written with Prof Bill Buchanan and built on CryptoMaths and our other projects. The theory mostly exists already. The practical labs are what make this book different.
+Learning cryptography by using it: read about the history, the concepts and the theory, see how it works, build it, break it, then make it stronger.
+
+A book project, written with Prof Bill Buchanan and built on CryptoMaths and our other projects. 
 
 ## The idea
 
-Every chapter ends with the reader running real cryptography on a computer they own, with a challenge to solve alone.
+Every chapter provides a historical and theoritical background, interspersed with practical exercises and examples of implementations, with the reader running real cryptography on a computer they own, with a final challenge to solve alone.
 
-All you need is a cheap Raspberry Pi, a computer to connect from, and this book. If a Pi isn't available, an appendix covers a virtual machine setup that can emulate the real thing.
+All you need is a cheap Raspberry Pi board (pizero 2 is ideal) and a raspberry pi pico microcontroller, a computer to connect from, and this book. If a Pi isn't available, an appendix covers a virtual machine setup that can emulate the real thing.
 
 Only break what you own: every attack in this book runs on your own kit or on targets built for testing.
 
@@ -186,20 +188,32 @@ Prelude: setting up the lab
 - Challenge
   - Audit your own Pi, score its risk and write its migration plan. Then carry it out!
 
-Each chapter has four parts:
+11. Cryptography on tiny devices
+- Theory
+  - IoT: billions of small devices, in service for years, all needing crypto
+  - Microcontrollers against computers: no operating system, kilobytes of memory
+  - Where does randomness come from with no operating system?
+  - Keeping keys safe: separate devices, secure elements, secure boot
+  - Side channels: when timing gives away secrets
+  - wolfSSL: a TLS library built for small devices, compared to OpenSSL
+  - PQC on microcontrollers: what fits, and what does not
+- Practical
+  - Set up your Pico 2 W, flash your first program
+  - Generate keys from a badly seeded generator, then use the Pico 2's true random number generator instead
+  - Turn the Pico into a signing device: it signs what your Pi sends it, and never reveals its key
+  - Make a TLS 1.3 connection from the Pico to a server on your Pi, using wolfSSL
+- Advanced
+  - Perform a timing attack against a naive password check on the Pico, then fix it
+  - Push the Pico until it runs out of memory, and find which PQC algorithms fit
+  - Secure boot: make a spare Pico refuse firmware you have not signed (permanent, use a spare board!)
+- Challenge
+  - Find the strongest TLS setup the Pico can run, and prove it with a packet capture
 
-- **Theory** - the ideas and where they came from
-- **Practical** - a guided lab
-- **Advanced** - a harder lab: break it or measure it
-- **Challenge** - a problem to solve alone
 
-## Lectures
+#### References
+#### Appendix
+- VM setup
+  - Windows (VMware, VirtualBox)
+  - Mac (UTM)
+  - Linux (VirtualBox)
 
-One lecture per chapter, each with a live demo from the Pi and the lab as follow-up work.
-
-## To agree with Bill
-
-- The chapter plan
-- How his course material can be reused
-- Publishing route
-- Lecture dates

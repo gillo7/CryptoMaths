@@ -205,7 +205,6 @@ Prelude: setting up the lab
 - Advanced
   - Perform a timing attack against a naive password check on the Pico, then fix it
   - Push the Pico until it runs out of memory, and find which PQC algorithms fit
-  - Secure boot: make a spare Pico refuse firmware you have not signed (permanent, use a spare board!)
 - Challenge
   - Find the strongest TLS setup the Pico can run, and prove it with a packet capture
 

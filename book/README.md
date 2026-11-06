@@ -1,22 +1,33 @@
 # The Cryptography Lab
 
-*From ancient ciphers to post-quantum, on a Raspberry Pi*
+*From ancient ciphers to post-quantum*
 
 Learning cryptography by using it: read about the history, the concepts and the theory, see how it works, build it, break it, then make it stronger.
 
-A book project, written with Prof Bill Buchanan and built on CryptoMaths and our other projects. 
+A book project, written with Prof Bill Buchanan and built on the Applied Cryptography MSc module, our own CryptoMaths.org and our other projects and current research. 
 
 ## The idea
 
-Every chapter provides a historical and theoritical background, interspersed with practical exercises and examples of implementations, with the reader running real cryptography on a computer they own, with a final challenge to solve alone.
+Every chapter provides a historical and theoretical background, interspersed with practical exercises and examples of implementations, with the reader running real cryptography on a computer they own, with a final challenge to solve alone.
 
-All you need is a cheap Raspberry Pi board (pizero 2 is ideal) and a raspberry pi pico microcontroller, a computer to connect from, and this book. If a Pi isn't available, an appendix covers a virtual machine setup that can emulate the real thing.
+All you need is a laptop/desktop computer (Windows, Linux or macOS) and this book. Every lab runs in the same Ubuntu Server virtual machine, so it works the same for everyone, whatever their laptop. 
+
+Almost everything happens on the command line: you connect to your VM and keep your work in your own GitHub repo. 
 
 Only break what you own: every attack in this book runs on your own kit or on targets built for testing.
 
 ## Chapters
 
 Prelude: setting up the lab
+- Create a GitHub account
+- Install VS Code and git, and sign in to GitHub
+- Clone the book's repo onto your laptop, to read it in VS Code
+- Install VirtualBox (Windows, Linux, Intel Mac) or UTM (Apple Silicon Mac)
+- Install Ubuntu Server 26.04 LTS in a VM, ticking "Install OpenSSH server"
+- Set up the VM's two networks: NAT to reach the internet (apt, curl), and a host-only network for SSH, the exercises and tcpdump captures
+- Open VS Code's terminal and ssh into your VM
+- Install the book's tools in the VM, with the one command supplied
+- Write "hello world" in python with nano, run it and cat it. Setup done!
 
 1. Ciphers and encoding
 - Theory
@@ -107,8 +118,8 @@ Prelude: setting up the lab
   - The selectable algorithms
   - The backbone of the internet
 - Practical
-  - Use wireshark to analyse http traffic
-  - Use wireshark to analyse https traffic
+  - Capture http traffic with tcpdump, analyse it in wireshark
+  - Capture https traffic with tcpdump, analyse it in wireshark
   - Analyse websites
 - Advanced
   - Create small webserver
@@ -126,8 +137,8 @@ Prelude: setting up the lab
 - Practical
   - Using OpenSSL 3.5+, create and explore keys and signatures, encapsulation and decapsulation
 - Advanced
-  - Change the current setup of the webserver config to hybrid key exchange, and see your browser use it
-  - Go fully post-quantum with an ML-DSA certificate from your own CA, and see why browsers refuse it while an OpenSSL client connects
+  - Change the current setup of the webserver config to hybrid key exchange, and prove it with an OpenSSL client and a capture
+  - Go fully post-quantum with an ML-DSA certificate from your own CA, and see why browsers would refuse it while an OpenSSL client connects
   - Look at the different packet sizes between EC and PQC methods
   - Quick speed and latency comparison between EC and PQC methods
 - Challenge
@@ -146,7 +157,7 @@ Prelude: setting up the lab
   - Mine blocks, and see how difficulty changes the time taken
   - Sign and verify transactions
 - Advanced
-  - Run a private test network on the Pi (no real coins!)
+  - Run a private test network in your VM (no real coins!)
   - Tamper with a block, and watch validation fail
   - Given two signatures which reused a nonce, recover the ECDSA private key
 - Challenge
@@ -178,41 +189,33 @@ Prelude: setting up the lab
   - CBOMs: knowing what crypto you actually run
   - Migration plans and government timelines
 - Practical
-  - Benchmark classical against PQC methods on your own board, compare with our published results
+  - Benchmark classical against PQC methods on your own laptop, and compare with your classmates' results
   - Run a benchmark once, then many times, and see why one number can't be trusted
-  - Create a CBOM of your own Pi
+  - Create a CBOM of your own VM
 - Advanced
-  - Measure energy using a USB power meter (optional kit)
-  - Run the same benchmark on a Pico or ESP32 (optional kit)
   - Perform a timing attack against a naive password check, then fix it
 - Challenge
-  - Audit your own Pi, score its risk and write its migration plan. Then carry it out!
+  - Audit your own VM, score its risk and write its migration plan. Then carry it out!
 
 11. Cryptography on tiny devices
 - Theory
   - IoT: billions of small devices, in service for years, all needing crypto
-  - Microcontrollers against computers: no operating system, kilobytes of memory
+  - Tiny computers and microcontrollers: a Pi Zero W runs Linux on very little, a Pico has no operating system and kilobytes of memory
   - Where does randomness come from with no operating system?
   - Keeping keys safe: separate devices, secure elements, secure boot
   - Side channels: when timing gives away secrets
   - wolfSSL: a TLS library built for small devices, compared to OpenSSL
   - PQC on microcontrollers: what fits, and what does not
 - Practical
-  - Set up your Pico 2 W, flash your first program
+  - Set up your Pi Zero W and Pico 2 W, flash your first program on the Pico
+  - Build wolfSSL on the Pi Zero W, and compare it with OpenSSL
   - Generate keys from a badly seeded generator, then use the Pico 2's true random number generator instead
-  - Turn the Pico into a signing device: it signs what your Pi sends it, and never reveals its key
-  - Make a TLS 1.3 connection from the Pico to a server on your Pi, using wolfSSL
+  - Turn the Pico into a signing device: it signs what your Pi Zero W sends it, and never reveals its key
+  - Make a TLS 1.3 connection from the Pico to a server on your Pi Zero W, using wolfSSL
 - Advanced
   - Perform a timing attack against a naive password check on the Pico, then fix it
   - Push the Pico until it runs out of memory, and find which PQC algorithms fit
+  - Run chapter 10's benchmark on the Pi Zero W and the Pico, measure their energy with a USB power meter (optional kit), and compare them with your laptop
 - Challenge
   - Find the strongest TLS setup the Pico can run, and prove it with a packet capture
-
-
-#### References
-#### Appendix
-- VM setup
-  - Windows (VMware, VirtualBox)
-  - Mac (UTM)
-  - Linux (VirtualBox)
 

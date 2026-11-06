@@ -20,13 +20,13 @@ Only break what you own: every attack in this book runs on your own kit or on ta
 
 Prelude: setting up the lab
 - Create a GitHub account
-- Install VS Code and git, and sign in to GitHub
-- Clone the book's repo onto your laptop, to read it in VS Code
-- Install VirtualBox (Windows, Linux, Intel Mac) or UTM (Apple Silicon Mac)
-- Install Ubuntu Server 26.04 LTS in a VM, ticking "Install OpenSSH server"
+- Install VS Code and git
+- Download the book's repo as a zip, open it in VS Code and publish it to your own private GitHub repo
+- Install VirtualBox (UTM as a fallback on Apple Silicon Macs)
 - Set up the VM's two networks: NAT to reach the internet (apt, curl), and a host-only network for SSH, the exercises and tcpdump captures
-- Open VS Code's terminal and ssh into your VM
-- Install the book's tools in the VM, with the one command supplied
+- Install Ubuntu Server 26.04 LTS in the VM, ticking "Install OpenSSH server"
+- Find the VM's IP address, then ssh into it from VS Code's terminal (password for now, keys come later)
+- Verify connectivity, and update and upgrade the VM
 - Write "hello world" in python with nano, run it and cat it. Setup done!
 
 1. Ciphers and encoding

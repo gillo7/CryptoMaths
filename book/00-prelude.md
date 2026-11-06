@@ -110,15 +110,24 @@ Now, click on the Branching icon on the left hand side of VScode panels
 ![Branch and pusing to Github](image-5.png)
 *Publish to Github*
 
-VS Code will prompt your to sign in to GitHub, click Allow and authorise VS Code. The browser will bring you back to VS Code and the publish will carry on. From now on, VS Code will remember that this folder is linked to your GitHub account, and you will be able to push and pull changes directly from the terminal at will!
+Click Publish to GitHub, and choose a private repository: this copy will contain your own work, so keep it to yourself, you can always invite friends or colleagues for cooperative work!
 
-There are several ways to commit changes to GitHub. But VS Code and GitHub have you covered.. just use the little icon next to the branch main at the bottom left of your screen for a shortcut. And you can do this as many times and as often as you want.
+VS Code will prompt you to sign in to GitHub, click Allow and authorise VS Code. The browser will bring you back to VS Code and the publish will carry on. From now on, VS Code will remember that this folder is linked to your GitHub account.
+
+Now, every time you want to save your work to GitHub:
+
+1. In the same Source Control panel, type a short message describing what you did (git will not accept a commit without one!), for example "Chapter 1 practical done"
+2. Click the little arrow next to the Commit button, and choose Commit & Sync
+
+That's it, your work is committed and uploaded in one go. Do this as many times and as often as you want.
+
+The first time, VS Code may ask whether to stage all your changes, and warn you that it will pull and push commits. Say yes to both, and tick "Don't Show Again" if you're offered it.
 
 ### Step 6 - VS Code, Markdown and adding your notes
 
 What follows are optional tips and tricks of the trade to make your life easier when working on VS Code and using Markdown.
 
-When you open a chapter .md file you can immediately notice that the text seems a bit strange? Normal, VS Code is showing you the code source. But press Control+Shift+V and you will actually see the text as it is meant to be seen! Click Control+Shift+V again if you ever need to add/modify any of the text (and remember to Control+S to save locally or click the icon at the bottom to upload your changes!)
+When you open a chapter .md file you can immediately notice that the text seems a bit strange? Normal, VS Code is showing you the code source. But press Control+Shift+V and you will actually see the text as it is meant to be seen! Click Control+Shift+V again if you ever need to add/modify any of the text.
 
 Markdown is a very simple way to write and save text. It is recognisible by the .md file extension, and as you probably noticed, is used for all the textual contents of the repo. Feel free to explore Markdown further, it is a brilliant thing, but essentially to add your notes and complete exercises efficiently, you should just know the following:
 

@@ -109,11 +109,17 @@ And to keep everything safe, we're now going to upload it into your very own rep
 Now, click on the Branching icon on the left hand side of VS Code panels
 
 ![Branch and pushing to GitHub](images/prelude-vscode-publish-github.png)
-*Publish to GitHub*
+*Initialize Repository and Publish it to GitHub*
 
-Click Publish to GitHub, and choose a private repository: this copy will contain your own work, so keep it to yourself, you can always invite friends or colleagues for cooperative work!
+First, we need to turn this folder into a git repository. Click Initialize Repository.
+
+All the files of the book now appear as changes. Type a message, for example "First commit", and click Commit (say yes if VS Code asks whether to stage all your changes).
+
+Now click Publish Branch, and choose a private repository: this copy will contain your own work, so keep it to yourself, you can always invite friends or colleagues for cooperative work!
 
 VS Code will prompt you to sign in to GitHub, click Allow and authorise VS Code. The browser will bring you back to VS Code and the publish will carry on. From now on, VS Code will remember that this folder is linked to your GitHub account.
+
+If it fails to authenticate the first time, don't worry, just publish again: it usually works the second time.
 
 Now, every time you want to save your work to GitHub:
 
@@ -128,7 +134,7 @@ The first time, VS Code may ask whether to stage all your changes, and warn you 
 
 What follows are optional tips and tricks of the trade to make your life easier when working on VS Code and using Markdown.
 
-When you open a chapter .md file you can immediately notice that the text seems a bit strange? Normal, VS Code is showing you the code source. But press Control+Shift+V and you will actually see the text as it is meant to be seen! Click Control+Shift+V again if you ever need to add/modify any of the text.
+When you open a chapter .md file you can immediately notice that the text seems a bit strange? Normal, VS Code is showing you the code source. But press **Control+Shift+V** (Command+Shift+V on a Mac) and you will actually see the text as it is meant to be seen! Press it again if you ever need to add/modify any of the text. Alternatively, especially if you have two screens, you can have the text open on GitHub on one side, and the .md source code to modify on the other. Remember to push your changes!
 
 Markdown is a very simple way to write and save text. It is recognisable by the .md file extension, and as you probably noticed, is used for all the textual contents of the repo. Feel free to explore Markdown further, it is a brilliant thing, but essentially to add your notes and complete exercises efficiently, you should just know the following:
 
@@ -166,13 +172,15 @@ For our hypervisor, we will use VirtualBox. It is an open-source, free to use so
 
 Head to [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
-[SCREENSHOT: VirtualBox downloads page]
+![VirtualBox downloads page](images/prelude-vbox-download-page.png)
+*The VirtualBox downloads page: pick the package for your computer*
 
-Now you can download and install it. It conveniently works on pretty much every hardware and OS combination. See the appendix if you need an alternative.
+You only need the platform package for your computer, not the Extension Pack.
 
-[SCREENSHOT: VirtualBox installer]
+Now you can download and install it. It conveniently should work on pretty much every hardware and OS combination. 
 
-[SCREENSHOT: VirtualBox Manager, first launch]
+![VirtualBox Manager](images/prelude-vbox-manager.png)
+*VirtualBox Manager, first launch*
 
 ### Step 2 - Getting the Ubuntu image
 
@@ -184,7 +192,7 @@ And because nothing is simple, we are actually going to select a specific versio
 
 The reason is twofold: It is a long term serviced (LTS) version, which means it will be supported at least until 2031, which means that I won't have to update this part of the repo every year. Secondly, headless does not mean decapitated, it means that it is very light, because it doesn't have a graphic user interface (GUI)! This might be a bit disconcerting if you have never used the command line before. Don't worry about it, this guide will show you how to work it out! The main reason behind this choice is that you won't need much RAM, CPU cores or storage to run this, and so even an older laptop or a tired uni desktop computer will still be perfectly able to run all our experiments! 
 
-So now we need to download the Ubuntu image. Which image? It depends on your computer's processor:
+So now we need to download the Ubuntu image. (.iso file) Which image? It depends on your computer's processor:
 
 | Your computer | Image | Download |
 |---|---|---|
@@ -193,21 +201,23 @@ So now we need to download the Ubuntu image. Which image? It depends on your com
 
 Not sure which Mac you have? Apple menu > About This Mac: "Chip: Apple M..." means Apple Silicon.
 
-[SCREENSHOT: Ubuntu Server download page]
-
-[SCREENSHOT: About This Mac, showing the chip]
+![Ubuntu Server download page](images/prelude-ubuntu-download-page.png)
+*Ubuntu Server Download Page*
 
 ### Step 3 - Configuring the VM and the Network
 
 We have our hypervisor, we have our image, now let's do some computer magic! 
 
-Open VirtualBox and click New. Give your VM a name (cryptolab, say), and select the Ubuntu image you have just downloaded as the ISO Image.
+
+![VirtualBox Manager, no VM yet](images/prelude-vbox-manager-empty.png)
+*Virtual Box*
+
+Open VirtualBox and click Machine>New (or Ctrl+N). Give your VM a name (Crypto-Lab-Ubuntu, say), and select the Ubuntu image you have just downloaded as the ISO Image.
 
 Important: tick Skip Unattended Installation! Otherwise VirtualBox will install Ubuntu for you, and skip options we need.
 
-[SCREENSHOT: New VM, name and ISO image]
-
-[SCREENSHOT: Skip Unattended Installation ticked]
+![New VM, name and ISO image](images/prelude-vm-name-iso.png)
+*Creating your new Virtual Machine*
 
 You will need to select a few options before running your virtual machine (VM) for the first time. Essentially, this is the process of telling the hypervisor exactly how much of your computer resources you are ready to share with the newly spawned machine. Because we chose a headless box, you can keep it quite small so it will run without impacting your day-to-day work on your machine.
 
@@ -221,28 +231,31 @@ Look at the following table for which recommended specs might fit your machine b
 
 Don't worry about the disk size: the virtual disk only grows as it fills up, it won't take the full 25 GB straight away.
 
-[SCREENSHOT: VM hardware, RAM and CPUs]
+![VM hardware, RAM and CPUs](images/prelude-vm-ram-cpu.png)
+*RAM and CPUs*
 
-[SCREENSHOT: VM virtual hard disk]
+![VM virtual hard disk](images/prelude-vm-disk.png)
+*VM virtual hard disk*
 
-[SCREENSHOT: VM summary]
+![VM summary](images/prelude-vm-summary.png)
+*VM Summary*
 
 Now, do not start the machine quite yet. A computer is not very useful if it cannot communicate! We need to set up the networking rules. 
 
+![VM created](images/prelude-vm-created.png)
+*VM created*
+
 For our work, we will need effectively two connections: a NAT (Network Address Translation) where VirtualBox acts as a router connecting our VM to the internet, and a Host-Only network which will create a private network between your machine and our new box. This will be very important for many exercises later on, so don't worry if you're not exactly clear about what it means, just follow the steps described below.
 
-First, check that VirtualBox has a host-only network. In VirtualBox's main window, go to Tools > Network > Host-only Networks. If the list is empty, click Create.
+First, right click on your VM and select settings, in settings, open the Network option.
 
-[SCREENSHOT: Tools > Network, host-only network list]
+![Network settings, Adapter 1 NAT](images/prelude-vm-network-nat.png)
+*Network Settings*
 
-Now select your VM, then Settings > Network:
+You should see NAT being there, good, leave it as it is! Now, select Adapter 2, Tick Enable Network Adapter and Attached to: Host-Only Adapter. Leave the name of the network (vboxnet0) as it is, and no need to change anything in the Advanced tab.
 
-1. Adapter 1 should already be enabled and attached to NAT. Leave it as it is.
-2. Adapter 2: tick Enable Network Adapter, set Attached to to Host-only Adapter, and select the host-only network from the list.
-
-[SCREENSHOT: Adapter 1, NAT]
-
-[SCREENSHOT: Adapter 2, Host-only Adapter]
+![Adapter 2, Host-only Adapter](images/prelude-vm-network-hostonly.png)
+*Host-Only Adapter settings*
 
 Click OK to save.
 
@@ -250,39 +263,74 @@ Now that we have configured everything we need with the hypervisor, we need to g
 
 ### Step 4 - Installing Ubuntu
 
-And now press start. It always does something the first time. Or maybe just me?
+And now press start. It always does something the first time. Or maybe it is just me?
 
 You will arrive in the setup of your new machine. 
 
-[SCREENSHOT: installer, language]
 
-[SCREENSHOT: installer, keyboard layout]
+![Installer, first start](images/prelude-install-first-start.png)
+*First start*
 
-[SCREENSHOT: installer, Ubuntu Server (not minimized)]
+Let Ubuntu initialise, then select the language, and the keyboard layout.
 
-[SCREENSHOT: installer, network, two interfaces listed]
+![Installer, language](images/prelude-install-language.png)
+*Language selection*
 
-[SCREENSHOT: installer, storage, keep the defaults]
+Choose Ubuntu Server, the default that's already selected, and leave Search for third-party drivers unticked.
 
-[SCREENSHOT: installer, profile: your name, server name, username and password]
+![Installer, type of installation](images/prelude-install-type.png)
+*Choose the type of installation*
 
-Write your username and password down!
+In the Network configuration, you should see the two networks adapters we have setup earlier. This is the right moment to write down the Virtual Machine's IP address, you will need it later. It is the 192.168.56.x
 
-[SCREENSHOT: installer, Ubuntu Pro, skip]
+Remember, if you are in VScode, you can use Ctrl+Shift+V to switch to edit mode, and use `>` to add your own comments, and you can add the IP address here directly! Then revert back to read-mode with Ctrl+Shift+V again. This is your repo, so modify anything you like!
 
-[SCREENSHOT: installer, SSH, tick Install OpenSSH server]
+![Installer, network, two interfaces listed](images/prelude-install-network.png)
+*Network, two interfaces listed*
 
-Don't miss this one, it is how we will connect to the VM later.
+Once you've noted the 192.168.56.x IP address, press enter, and skip the proxy configuration, and at the storage configuration page, go down to "Done" and press Enter (It might be below your visible screen, just scroll down).
 
-[SCREENSHOT: installer, featured snaps, select none]
+![Installer, storage configuration](images/prelude-install-storage.png)
+*Storage configuration*
 
-[SCREENSHOT: installer, install complete, Reboot Now]
+Then Enter again and select Continue
 
-[SCREENSHOT: first login on the console]
+![Installer, confirm and start installation](images/prelude-install-confirm.png)
+*Starting installation process*
 
-From now on, you can start your VM without its window: right-click the VM, then Start > Headless Start.
+Then fill in the details. For convenience's sake, I'd suggest using easy to remember credentials, because until the chapter on Symmetric Keys, you will need to type in the password often. Make sure you write your username and password down!
 
-[SCREENSHOT: Start > Headless Start menu]
+![Installer, profile configuration](images/prelude-install-profile.png)
+*Profile Configuration*
+
+Then skip the upgrade to Ubunto pro and continue. Make sure to Install OpenSSH server tick is on, and keep it with "Allow password authentication over SSH" (We will set it up with keys, but later in the course.)
+
+![Installer, SSH configuration](images/prelude-install-ssh.png)
+*SSH configuration*
+
+Then leave everything unticked in the Featured server snaps, we do not need any of them. Done and Enter.
+
+And the installation will take place. We're almost there! Once the installation is complete, select Reboot now.
+
+![Installer, installation complete](images/prelude-install-complete.png)
+*Installation complete!*
+
+When prompted to remove the installation medium, just press enter. The machine will boot for the first time and prompt you to login. Just use the credentials used in the installation (username/password)
+
+![First login on the console](images/prelude-first-login.png)
+*First Login*
+
+Now you can shutdown the VM, because we will access it remotely from now on. So just type: 
+
+```bash
+sudo poweroff
+```
+
+And give your password when prompted.
+
+And you'll be back to the VirtualBox menu. 
+
+From now on, you can start your VM without its window: right-click the VM, then Start > Headless Start. This will launch the machine, but without the screen.
 
 ### Step 5 - Connecting to the VM via SSH
 
@@ -290,15 +338,21 @@ A new computer lives on your machine now! Awesome. But going into VirtualBox, op
 
 SSH is a remote-control protocol. It effectively replaces Telnet (which was unencrypted and therefore tragically insecure) and is the protocol we will use to connect to our VM directly from VS Code!
 
-First, you will need the VM's private IP address. From the VirtualBox VM's console, use:
+If you forgot to write down your IP address during the installation process, follow the following steps to find your IP again.
+
+First, you will need the VM's private IP address. Launch the virtual machine normally - Normal Start- (not headless) and From the VirtualBox VM's console, after logging in, use:
+
 ```bash
 ip addr
 ```
 To find out which address was allocated to your VM.
 
-You'll see several addresses. Ignore lo (127.0.0.1) and the one starting with 10.0.2 (that's the NAT). The one you want starts with 192.168.56.
+You'll see several addresses. Ignore lo (127.0.0.1) and the one starting with 10.0.2 (that's the NAT). The one you want starts with 192.168.56.x
 
-[SCREENSHOT: ip addr output, 192.168.56 address highlighted]
+![ip addr output](images/prelude-ip-addr.png)
+*ip addr output*
+
+So this time make sure you write it down, and then power off the machine and re-start it headless.
 
 Now, open VS Code, open the Repo's folder, and open a new terminal. In it, type:
 
@@ -308,9 +362,13 @@ ssh <username>@<vm_ip>
 
 Type yes to the prompt, then type in the password you created when setting up Ubuntu, and if all went well.. you're in! You no longer need the console, every time we will interact with your VM, we will simply SSH into it. Later on we will swap the password for a set of keys, but at the moment this will do.
 
-[SCREENSHOT: first ssh, fingerprint prompt]
+![First ssh, fingerprint prompt](images/prelude-first-ssh.png)
+*First SSH into the VM*
 
-[SCREENSHOT: logged in to the VM]
+![Logged in to the VM over ssh](images/prelude-ssh-logged-in.png)
+*We're in!*
+
+Now, unless troubleshooting, we will not need the VirtualBox console, all the work we will do in the labs will be accessed via SSH and the Terminal (VScode or detached).
 
 ### Step 6 - Verifying connectivity and updates
 
@@ -319,8 +377,6 @@ Now that you are connected via SSH, you should start by updating and upgrading U
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
-
-[SCREENSHOT: apt upgrade running]
 
 If the upgrade mentions a new kernel or a reboot, run `sudo reboot`, wait a minute and ssh back in. Losing the connection is normal here.
 
@@ -342,8 +398,6 @@ print("Hello World!")
 
 Then press Ctrl + O, enter to save, Ctrl + X to exit (Ctrl, even on a Mac)
 
-[SCREENSHOT: nano with the code]
-
 And now launch your program:
 
 ```bash
@@ -352,7 +406,8 @@ python3 hello_world.py
 
 And your program should display the message!
 
-[SCREENSHOT: program output]
+![Hello World program output](images/prelude-hello-world.png)
+*Hello World!*
 
 There are hundreds of Linux tutorials out there if you would like to find out more about the commands. 
 
@@ -363,6 +418,10 @@ And when you've finished, shut it down properly:
 ```bash
 sudo poweroff
 ```
+
+## Conclusion
+
+In this Prelude, we have set up a GitHub repository with the course's contents, we have installed and connected VScode and Git, we have learned a little about .md and the way to navigate between Read-Only and editable course text (Ctrl+Shift+V) in VScode. Then we have created an entire new Virtual Machine Ubuntu Linux and accessed it via the terminal in VScode. We're ready for chapter 1!
 
 And now, let's talk Cryptography!
 

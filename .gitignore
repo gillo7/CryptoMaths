@@ -8,3 +8,6 @@ DEPLOY.md
 # Backend services: vendored third-party tools built on the server
 backend/*/vendor/
 backend/*/node_modules/
+
+# Local office documents
+*.odt

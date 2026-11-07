@@ -210,7 +210,7 @@ We have our hypervisor, we have our image, now let's do some computer magic!
 
 
 ![VirtualBox Manager, no VM yet](images/prelude-vbox-manager-empty.png)
-*Virtual Box*
+*VirtualBox*
 
 Open VirtualBox and click Machine>New (or Ctrl+N). Give your VM a name (Crypto-Lab-Ubuntu, say), and select the Ubuntu image you have just downloaded as the ISO Image.
 
@@ -303,7 +303,7 @@ Then fill in the details. For convenience's sake, I'd suggest using easy to reme
 ![Installer, profile configuration](images/prelude-install-profile.png)
 *Profile Configuration*
 
-Then skip the upgrade to Ubunto pro and continue. Make sure to Install OpenSSH server tick is on, and keep it with "Allow password authentication over SSH" (We will set it up with keys, but later in the course.)
+Then skip the upgrade to Ubuntu Pro and continue. Make sure to Install OpenSSH server tick is on, and keep it with "Allow password authentication over SSH" (We will set it up with keys, but later in the course.)
 
 ![Installer, SSH configuration](images/prelude-install-ssh.png)
 *SSH configuration*
